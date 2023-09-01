@@ -2,6 +2,8 @@ upgrade actions in the actual game don't give resources on complete, they modify
 area actions
 resources tooltips
 energies tooltips
+resources effects
+energies rewritten
 level up functionality
 dungeons
 astral plane
