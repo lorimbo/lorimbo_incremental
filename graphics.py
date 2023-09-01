@@ -161,18 +161,19 @@ class Graphics:
         imgui.set_next_window_position(1200, 35 * len(Gamelogic.unlockedenergies))
         imgui.begin('Resources', False, cls.resourcesflags)
         for key in Gamelogic.resources:
-            if imgui.tree_node(key, imgui.TREE_NODE_DEFAULT_OPEN):
-                for subkey in Gamelogic.resources[key]:
-                    if subkey.isvisible:
-                        space = ''
-                        numofspace = 13 - len(subkey.name)
-                        if not numofspace:
-                            numofspace = 0
-                        for i in range(numofspace):
-                            space += ' '
-                        imgui.text(subkey.name + space + str(subkey.quantity) + '/' + str(subkey.max))
+            if [e for e in Gamelogic.resources[key] if e.isvisible]:
+                if imgui.tree_node(key, imgui.TREE_NODE_DEFAULT_OPEN):
+                    for subkey in Gamelogic.resources[key]:
+                        if subkey.isvisible:
+                            space = ''
+                            numofspace = 20 - len(subkey.name)
+                            if not numofspace:
+                                numofspace = 0
+                            for i in range(numofspace):
+                                space += ' '
+                            imgui.text(subkey.name + space + str(subkey.quantity) + '/' + str(subkey.max))
 
-                imgui.tree_pop()
+                    imgui.tree_pop()
         imgui.end()
 
     @classmethod

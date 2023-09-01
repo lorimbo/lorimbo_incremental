@@ -7,7 +7,7 @@ class Resource:
         self.name = name
         self.quantity = quantity
         self.max = max
-        self.openflags = unlockflags
+        self.unlockflags = unlockflags
         self.regen = regen
         self.effect = effect
         self.category = category
@@ -407,7 +407,7 @@ def createmenu(parent):
 def createmainsubmenu(parent):
     menuelement(parent=parent, name='Village', isvisible=True, elementlist=parent.mainsubelements)
     menuelement(parent=parent, name='Forest', isvisible=True, elementlist=parent.mainsubelements)
-    menuelement(parent=parent, name='City', isvisible=True, elementlist=parent.mainsubelements)
+    menuelement(parent=parent, name='City', isvisible=True, elementlist=parent.mainsubelements,unlockflags={'Main':1})
     menuelement(parent=parent, name='Coast', isvisible=True, elementlist=parent.mainsubelements)
     menuelement(parent=parent, name='Jungle', isvisible=True, elementlist=parent.mainsubelements)
     menuelement(parent=parent, name='Astral plane', isvisible=True, elementlist=parent.mainsubelements)
@@ -458,8 +458,8 @@ def createupgradeactions(parent):
 
 def createresources(parent):
     Resource(parent,'Destiny',0,100,{'Dubious home':0},'Destiny',0,resources=parent.resources)
-    Resource(parent, 'Wood', 50, 100, {'Dubious home': 0}, 'Wood', 0, resources=parent.resources)
-    Resource(parent, 'Wooden statue', 0, 100, {'Dubious home': 0}, 'Accessories', 0, resources=parent.resources)
+    Resource(parent, 'Wood', 50, 100, {'Dubious home': 1}, 'Wood', 0, resources=parent.resources)
+    Resource(parent, 'Wooden statue', 0, 100, {'Dubious home': 2}, 'Accessories', 0, resources=parent.resources)
     Resource(parent, 'Stone', 0, 100, {'Dubious home': 0}, 'Minerals', 0, resources=parent.resources)
     Resource(parent, 'Firewood', 0, 100, {'Dubious home': 0}, 'Wood', 0, resources=parent.resources)
     Resource(parent, 'Pelt', 0, 100, {'Dubious home': 0}, 'Materials', 0, resources=parent.resources)

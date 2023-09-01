@@ -23,8 +23,8 @@ class Gamelogic:
         'Earth': {'max': 1, 'current': 0, 'regen': 1 / 120, 'color': brown}
     }
     unlockedenergies = []
-    resources={}
-    flags = {'Dubious home': 0}
+    resources = {}
+    flags = {'Main': 0, 'Dubious home': 0}
     action = None
     upgradeaction = None
     tab = 'Main'
@@ -35,7 +35,8 @@ class Gamelogic:
     partyelements = []
     instantactions = {'Common actions': [], 'Common actions 2': []}
     loopactions = {'Common loopactions': [], 'Common loopactions 2': []}
-    upgradeactions = {'Village': {'old house': [], 'old house 2': []},'Forest':{},'City':{'old house': []},'Coast':{},'Jungle':{},'Astral plane':{}}
+    upgradeactions = {'Village': {'old house': [], 'old house 2': []}, 'Forest': {}, 'City': {'old house': []},
+                      'Coast': {}, 'Jungle': {}, 'Astral plane': {}}
     nextactions = []
     pokemonlist = []
     reserve = []
@@ -62,7 +63,27 @@ class Gamelogic:
                     if temp:
                         action.isvisible = False
                     else:
-                            action.isvisible = True
+                        action.isvisible = True
+        for key in cls.resources:
+            for resource in cls.resources[key]:
+                resource.isvisible = False
+                temp = 1
+                if resource.unlockflags is not None:
+                    for key2 in resource.unlockflags.keys():
+                        if resource.unlockflags[key2] > cls.flags[key2]:
+                            temp = 0
+                if temp:
+                    resource.isvisible = True
+        for key in cls.mainsubelements:
+            key.isvisible= False
+            temp = 1
+            if key.unlockflags is not None:
+                for key2 in key.unlockflags.keys():
+                    if key.unlockflags[key2] > cls.flags[key2]:
+                        temp = 0
+            if temp:
+                key.isvisible = True
+
 
     @classmethod
     def deactivateloopactions(cls):
@@ -192,8 +213,6 @@ class Gamelogic:
         for key in cls.instantactions:
             for i in cls.instantactions[key]:
                 i.update()
-
-
 
     @classmethod
     def frameaction(cls):
