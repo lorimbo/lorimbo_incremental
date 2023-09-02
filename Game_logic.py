@@ -14,14 +14,7 @@ brown = (139, 69, 19)
 
 
 class Gamelogic:
-    energies = {
-        'Action': {'max': 5, 'current': 5, 'regen': 0 / 120, 'color': red},
-        'Stamina': {'max': 4, 'current': 0, 'regen': 0 / 120, 'color': green},
-        'Water': {'max': 1, 'current': 0, 'regen': 1 / 120, 'color': blue},
-        'Fire': {'max': 1, 'current': 0, 'regen': 1 / 120, 'color': orange},
-        'Wind': {'max': 1, 'current': 0, 'regen': 1 / 120, 'color': teal},
-        'Earth': {'max': 1, 'current': 0, 'regen': 1 / 120, 'color': brown}
-    }
+    energies=[]
     unlockedenergies = []
     resources = {}
     flags = {'Main': 0, 'Dubious home': 0}
@@ -45,6 +38,7 @@ class Gamelogic:
     remove = None
     add = None
     partylenmax = 7
+    fps=240
 
     @classmethod
     def checkflags(cls):
@@ -130,6 +124,9 @@ class Gamelogic:
         initialization_elements.createpartytabs(cls)
         initialization_elements.createupgradeactions(cls)
         initialization_elements.createresources(cls)
+        initialization_elements.createenergies(cls)
+        cls.corestats = initialization_elements.Corestats()
+
 
     @classmethod
     def savegame(cls):
@@ -193,13 +190,10 @@ class Gamelogic:
 
     @classmethod
     def regenenergies(cls):
-        for key in cls.energies:
-            if cls.energies[key]['current'] < cls.energies[key]['max']:
-                cls.energies[key]['current'] += cls.energies[key]['regen']
+        for energy in cls.energies:
+            if energy.quantity < energy.max:
+                energy.quantity += energy.regen
 
-    @classmethod
-    def unlockenergies(cls):
-        cls.unlockedenergies = [e for e in cls.energies if cls.energies[e]['max']]
 
     @classmethod
     def updatebuttons(cls):
@@ -218,7 +212,7 @@ class Gamelogic:
     def frameaction(cls):
         cls.updatebuttons()
         cls.regenenergies()
-        cls.unlockenergies()
+
         cls.loopactionprogress()
         cls.checkflags()
         if cls.switch is not None:

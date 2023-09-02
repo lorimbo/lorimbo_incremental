@@ -27,6 +27,7 @@ brown = (139, 69, 19)
 def main():
     pygame.init()
     Gamelogic.initializegame()
+    clock=pygame.time.Clock()
     size = 1500, 1000
 
     pygame.display.set_mode(size, pygame.DOUBLEBUF | pygame.OPENGL | pygame.RESIZABLE)
@@ -40,6 +41,7 @@ def main():
     impl.refresh_font_texture()
 
     # initialize variables here
+    fpslist=[]
 
     while 1:
         for event in pygame.event.get():
@@ -52,6 +54,14 @@ def main():
         # add imgui stuff here
         Graphics.creategui()
         Gamelogic.frameaction()
+        imgui.set_next_window_size(105, 68)
+        imgui.set_next_window_position(1200, 900)
+        imgui.begin('fps', False)
+        fpslist.append(round(clock.get_fps()))
+        if len(fpslist)>100:
+            fpslist=fpslist[-100:]
+        imgui.text(f'FPS:{round(sum(fpslist) / len(fpslist))}')
+        imgui.end()
 
 
         gl.glClearColor(119/255, 136/255, 153/255, 1)
@@ -60,6 +70,8 @@ def main():
         impl.render(imgui.get_draw_data())
 
         pygame.display.flip()
+        clock.tick(Gamelogic.fps)
+
 
 
 if __name__ == "__main__":

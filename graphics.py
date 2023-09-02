@@ -123,22 +123,23 @@ class Graphics:
 
     @classmethod
     def draw_energies(cls):
-        imgui.set_next_window_size(230, 35 * len(Gamelogic.unlockedenergies))
+        visible=[e for e in Gamelogic.energies if e.isvisible]
+        imgui.set_next_window_size(230, 35 * len(visible))
         imgui.set_next_window_position(1200, 0)
         imgui.begin('Energies', False, cls.resourcesflags)
         draw_list = imgui.get_window_draw_list()
         num = 0
-        for key in Gamelogic.unlockedenergies:
-            color = Gamelogic.energies[key]['color']
+        for energy in visible:
+            color = energy.color
             color = [c / 255 for c in color]
             draw_list.path_clear()
             draw_list.add_rect_filled(1210, 30 + num * 25,
-                                      1210 + 190 * Gamelogic.energies[key]['current'] / Gamelogic.energies[key]['max'],
+                                      1210 + 190 * energy.quantity / energy.max,
                                       50 + num * 25, imgui.get_color_u32_rgba(*color, 1), 0)
-            draw_list.add_text(1220, 35 + num * 25, imgui.get_color_u32_rgba(1, 1, 1, 1), key)
+            draw_list.add_text(1220, 35 + num * 25, imgui.get_color_u32_rgba(1, 1, 1, 1), energy.name)
             draw_list.add_text(1320, 35 + num * 25, imgui.get_color_u32_rgba(1, 1, 1, 1),
-                               str(round(Gamelogic.energies[key]['current'], 1)) + '/' + str(
-                                   round(Gamelogic.energies[key]['max'], 0)))
+                               str(round(energy.quantity, 1)) + '/' + str(
+                                   round(energy.max, 0)))
             draw_list.path_rect(1210, 30 + num * 25, 1210 + 190, 50 + num * 25)
             draw_list.path_stroke(imgui.get_color_u32_rgba(1, 1, 1, 1), flags=0, thickness=1)
             draw_list.path_clear()
@@ -151,14 +152,15 @@ class Graphics:
     @classmethod
     def draw_resources(cls):
         windowheight = len(Gamelogic.resources)
-        for key in Gamelogic.resources:
-            for subkey in Gamelogic.resources[key]:
-                if subkey.isvisible:
+        for category in Gamelogic.resources:
+            for resource in Gamelogic.resources[category]:
+                if resource.isvisible:
                     windowheight += 1
         if windowheight > 40:
             windowheight = 40
+        visible=[e for e in Gamelogic.energies if e.isvisible]
         imgui.set_next_window_size(230, 15 + 21 * windowheight)
-        imgui.set_next_window_position(1200, 35 * len(Gamelogic.unlockedenergies))
+        imgui.set_next_window_position(1200, 35 * len(visible))
         imgui.begin('Resources', False, cls.resourcesflags)
         for key in Gamelogic.resources:
             if [e for e in Gamelogic.resources[key] if e.isvisible]:
@@ -194,6 +196,16 @@ class Graphics:
         imgui.set_next_window_size(1050, 800)
         imgui.set_next_window_position(120, 100)
         imgui.begin('Partymenu', False, cls.flags)
+        imgui.begin_child("Child 3", height=55, border=True)
+        Stats = Gamelogic.corestats.finalstats()
+        with imgui.font(cls.new_font):
+            imgui.same_line(position=150)
+            imgui.text('Core Stats')
+            imgui.same_line()
+            for key in Stats:
+                imgui.text(key + ':' + str(Stats[key]))
+                imgui.same_line()
+        imgui.end_child()
         imgui.begin_child("Child 1", height=320, border=True)
         for num, pokemon in enumerate(Gamelogic.party):
             with imgui.font(cls.new_font):

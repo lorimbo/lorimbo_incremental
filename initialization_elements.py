@@ -1,11 +1,21 @@
 import json
 
+red = (255, 0, 0)
+green = (0, 255, 0)
+blue = (0, 0, 255)
+white = (255, 255, 255)
+black = (0, 0, 0)
+purple = (127, 0, 255)
+orange = (255, 100, 0)
+grey = (105, 105, 105)
+teal = (84, 186, 227)
+brown = (139, 69, 19)
+
+
 
 class Corestats:
     def __init__(self):
         self.basestats = {'hp': 10, 'patk': 10, 'pdef': 10, 'matk': 10, 'mdef': 10}
-        self.element = []
-        # 0 for adding 1 for multiplication
         self.modifiers = {'Upgradeactions': {'type': 'add', 'hp': 1, 'patk': 0, 'pdef': 0, 'matk': 0, 'mdef': 0}}
 
     def finalstats(self):
@@ -21,7 +31,7 @@ class Corestats:
 
 
 class Energy:
-    def __init__(self, parent, name, quantity, max, unlockflags, regen=0, effect=None,isvisible=True):
+    def __init__(self, parent, name, quantity, max, unlockflags,color, regen=0, effect=None,isvisible=True):
         self.parent = parent
         self.name = name
         self.quantity = quantity
@@ -30,7 +40,9 @@ class Energy:
         self.regen = regen
         self.effect = effect
         self.isvisible = isvisible
+        self.color = color
         parent.energies.append(self)
+
 
 
 class Resource:
@@ -69,7 +81,7 @@ class menuelement:
 
 class Upgradeactions(menuelement):
     def __init__(self, cost=[['Wood', 0, 0, 0]],
-                 complete=[['Wood', 0, 0, 0]], requirements=[['Wood', 0, 0, 0]], *args, **kwargs):
+                 complete=[['resource','Wood', 0, 0, 0]], requirements=[['Wood', 0, 0, 0]], *args, **kwargs):
         menuelement.__init__(self, *args, **kwargs)
         self.cost = cost
         self.complete = complete
@@ -86,9 +98,9 @@ class Upgradeactions(menuelement):
         if not temp:
             for i in self.cost:
                 costname = i[0]
-                if costname in self.parent.energies.keys():
-                    if self.parent.energies[costname]['current'] >= -i[1]:
-                        self.parent.energies[costname]['current'] += i[1]
+                for energy in [e for e in self.parent.energies if e.name == costname]:
+                    if energy.current >= -i[1]:
+                        energy.current += i[1]
                         self.docomplete()
                     continue
                 for x in self.parent.resources.keys():
@@ -100,16 +112,29 @@ class Upgradeactions(menuelement):
 
     def docomplete(self):
         for i in self.complete:
-            completename = i[0]
-            if completename in self.parent.energies.keys():
-                if self.parent.energies[completename]['max'] - self.parent.energies[completename]['current'] > -i[1]:
-                    self.parent.energies[completename]['current'] += i[1]
-                continue
-            for x in self.parent.resources.keys():
-                for resource in [e for e in self.parent.resources[x] if e.name == completename]:
-                    resource.quantity += i[1]
-                    if resource.quantity > resource.max:
-                        resource.quantity = resource.max
+            if i[0] == 'resource':
+                name = i[1]
+                for energy in [e for e in self.parent.energies if e.name == name]:
+                    if energy.max - energy.quantity > -i[2]:
+                        energy.quantity += i[2]
+                    continue
+                for x in self.parent.resources.keys():
+                    for resource in [e for e in self.parent.resources[x] if e.name == name]:
+                        resource.quantity += i[2]
+                        if resource.quantity > resource.max:
+                            resource.quantity = resource.max
+            elif i[0] == 'max':
+                name = i[1]
+                for energy in [e for e in self.parent.energies if e.name == name]:
+                    energy.max += i[2]
+                    continue
+                for x in self.parent.resources.keys():
+                    for resource in [e for e in self.parent.resources[x] if e.name == name]:
+                        resource.max += i[2]
+            elif i[0] == 'stat':
+                name = i[1]
+                self.parent.corestats.modifiers['Upgradeactions'][name] += i[2]
+
             if self.changeflags is not None:
                 for key in self.changeflags:
                     self.parent.flags[key] += self.changeflags[key]
@@ -118,9 +143,9 @@ class Upgradeactions(menuelement):
         self.isdisabled = False
         for i in self.cost:
             costname = i[0]
-            if costname in self.parent.energies.keys():
-                i[2] = round(self.parent.energies[costname]['current'], 2)
-                i[3] = self.parent.energies[costname]['max']
+            for energy in [e for e in self.parent.energies if e.name == costname]:
+                i[2] = round(energy.current, 2)
+                i[3] = energy.max
                 if i[2] < -i[1]:
                     self.isdisabled = True
                 continue
@@ -132,22 +157,22 @@ class Upgradeactions(menuelement):
                         self.isdisabled = True
                     continue
         for i in self.complete:
-            costname = i[0]
-            if costname in self.parent.energies.keys():
-                i[2] = self.parent.energies[costname]['current']
-                i[3] = self.parent.energies[costname]['max']
+            costname = i[1]
+            for energy in [e for e in self.parent.energies if e.name == costname]:
+                i[3] = energy.quantity
+                i[4] = energy.max
                 continue
             for x in self.parent.resources.keys():
                 for resource in [e for e in self.parent.resources[x] if e.name == costname]:
-                    i[2] = resource.quantity
-                    i[3] = resource.max
+                    i[3] = resource.quantity
+                    i[4] = resource.max
                     continue
 
         for i in self.requirements:
             costname = i[0]
-            if costname in self.parent.energies.keys():
-                i[2] = self.parent.energies[costname]['current']
-                i[3] = self.parent.energies[costname]['max']
+            for energy in [e for e in self.parent.energies if e.name == costname]:
+                i[2] = energy.current
+                i[3] = energy.max
                 if i[2] < i[1]:
                     self.isdisabled = True
                 continue
@@ -174,8 +199,8 @@ class Instantactions(menuelement):
         temp = 0
         for i in self.cost:
             costname = i[0]
-            if costname in self.parent.energies.keys():
-                if self.parent.energies[costname]['current'] < -i[1]:
+            for energy in [e for e in self.parent.energies if e.name == costname]:
+                if energy.quantity < -i[1]:
                     temp = 1
                 continue
             for x in self.parent.resources.keys():
@@ -185,8 +210,8 @@ class Instantactions(menuelement):
         if not temp:
             for i in self.cost:
                 costname = i[0]
-                if costname in self.parent.energies.keys():
-                    self.parent.energies[costname]['current'] += i[1]
+                for energy in [e for e in self.parent.energies if e.name == costname]:
+                    energy.quantity += i[1]
                     continue
                 for x in self.parent.resources.keys():
                     for resource in [e for e in self.parent.resources[x] if e.name == costname]:
@@ -196,13 +221,13 @@ class Instantactions(menuelement):
 
     def docomplete(self):
         for i in self.complete:
-            completename = i[0]
-            if completename in self.parent.energies.keys():
-                if self.parent.energies[completename]['max'] - self.parent.energies[completename]['current'] > -i[1]:
-                    self.parent.energies[completename]['current'] += i[1]
+            name = i[0]
+            for energy in [e for e in self.parent.energies if e.name == name]:
+                if energy.max - energy.quantity > -i[1]:
+                    energy.quantity += i[1]
                 continue
             for x in self.parent.resources.keys():
-                for resource in [e for e in self.parent.resources[x] if e.name == completename]:
+                for resource in [e for e in self.parent.resources[x] if e.name == name]:
                     resource.quantity += i[1]
                     if resource.quantity > resource.max:
                         resource.quantity = resource.max
@@ -211,9 +236,9 @@ class Instantactions(menuelement):
         self.isdisabled = False
         for i in self.cost:
             costname = i[0]
-            if costname in self.parent.energies.keys():
-                i[2] = round(self.parent.energies[costname]['current'], 2)
-                i[3] = self.parent.energies[costname]['max']
+            for energy in [e for e in self.parent.energies if e.name == costname]:
+                i[2] = round(energy.quantity, 2)
+                i[3] = energy.max
                 if i[2] < -i[1]:
                     self.isdisabled = True
                 continue
@@ -227,9 +252,9 @@ class Instantactions(menuelement):
         temp = 1
         for i in self.complete:
             costname = i[0]
-            if costname in self.parent.energies.keys():
-                i[2] = self.parent.energies[costname]['current']
-                i[3] = self.parent.energies[costname]['max']
+            for energy in [e for e in self.parent.energies if e.name == costname]:
+                i[2] = round(energy.quantity, 2)
+                i[3] = energy.max
                 if i[3] > i[2]:
                     temp = 0
                 continue
@@ -262,9 +287,9 @@ class Loopaction(menuelement):
         self.isdisabled = False
         for i in self.cost:
             costname = i[0]
-            if costname in self.parent.energies.keys():
-                i[2] = round(self.parent.energies[costname]['current'], 2)
-                i[3] = self.parent.energies[costname]['max']
+            for energy in [e for e in self.parent.energies if e.name == costname]:
+                i[2] = round(energy.quantity, 2)
+                i[3] = energy.max
                 if i[2] < -i[1]:
                     self.isdisabled = True
                 continue
@@ -277,9 +302,9 @@ class Loopaction(menuelement):
                     continue
         for i in self.progresscost:
             costname = i[0]
-            if costname in self.parent.energies.keys():
-                i[2] = round(self.parent.energies[costname]['current'], 2)
-                i[3] = self.parent.energies[costname]['max']
+            for energy in [e for e in self.parent.energies if e.name == costname]:
+                i[2] = round(energy.quantity, 2)
+                i[3] = energy.max
                 continue
             for x in self.parent.resources.keys():
                 for resource in [e for e in self.parent.resources[x] if e.name == costname]:
@@ -288,9 +313,9 @@ class Loopaction(menuelement):
                     continue
         for i in self.progresseffect:
             costname = i[0]
-            if costname in self.parent.energies.keys():
-                i[2] = round(self.parent.energies[costname]['current'], 2)
-                i[3] = self.parent.energies[costname]['max']
+            for energy in [e for e in self.parent.energies if e.name == costname]:
+                i[2] = round(energy.quantity, 2)
+                i[3] = energy.max
                 continue
             for x in self.parent.resources.keys():
                 for resource in [e for e in self.parent.resources[x] if e.name == costname]:
@@ -300,9 +325,9 @@ class Loopaction(menuelement):
         temp = 1
         for i in self.complete:
             costname = i[0]
-            if costname in self.parent.energies.keys():
-                i[2] = self.parent.energies[costname]['current']
-                i[3] = self.parent.energies[costname]['max']
+            for energy in [e for e in self.parent.energies if e.name == costname]:
+                i[2] = energy.current
+                i[3] = energy.max
                 if i[3] > i[2]:
                     temp = 0
                 continue
@@ -323,9 +348,9 @@ class Loopaction(menuelement):
     def docost(self):
         for i in self.cost:
             costname = i[0]
-            if costname in self.parent.energies.keys():
-                if self.parent.energies[costname]['current'] >= -i[1]:
-                    self.parent.energies[costname]['current'] += i[1]
+            for energy in [e for e in self.parent.energies if e.name == costname]:
+                if energy.quantity >= -i[1]:
+                    energy.quantity += i[1]
                 continue
             for x in self.parent.resources.keys():
                 for resource in [e for e in self.parent.resources[x] if e.name == costname]:
@@ -335,10 +360,10 @@ class Loopaction(menuelement):
     def dopassiveeffect(self):
         for i in self.progresseffect:
             costname = i[0]
-            if costname in self.parent.energies.keys():
-                if self.parent.energies[costname]['current'] >= -i[1] and self.parent.energies[costname]['current'] + i[
-                    1] < self.parent.energies[costname]['max']:
-                    self.parent.energies[costname]['current'] += i[1]
+            for energy in [e for e in self.parent.energies if e.name == costname]:
+                if energy.quantity>= -i[1] and energy.quantity + i[
+                    1] < energy.max:
+                    energy.quantity += i[1]
                 elif costname == 'Action':
                     for key in self.parent.loopactions:
                         for e in self.parent.loopactions[key]:
@@ -355,9 +380,9 @@ class Loopaction(menuelement):
     def dopassiveaction(self):
         for i in self.progresscost:
             costname = i[0]
-            if costname in self.parent.energies.keys():
-                if self.parent.energies[costname]['current'] >= -i[1]:
-                    self.parent.energies[costname]['current'] += i[1]
+            for energy in [e for e in self.parent.energies if e.name == costname]:
+                if energy.quantity >= -i[1]:
+                    energy.quantity += i[1]
                     self.dopassiveeffect()
                 elif costname == 'Action':
                     self.previouslyactive = True
@@ -373,9 +398,9 @@ class Loopaction(menuelement):
     def dofinishaction(self):
         for i in self.complete:
             costname = i[0]
-            if costname in self.parent.energies.keys():
-                if self.parent.energies[costname]['current'] >= -i[1]:
-                    self.parent.energies[costname]['current'] += i[1]
+            for energy in [e for e in self.parent.energies if e.name == costname]:
+                if energy.quantity >= -i[1]:
+                    energy.quantity += i[1]
                 continue
             for x in self.parent.resources.keys():
                 for resource in [e for e in self.parent.resources[x] if e.name == costname]:
@@ -479,12 +504,12 @@ def createupgradeactions(parent):
     Upgradeactions(parent=parent, name='Wood quest', isvisible=True,
                    elementlist=parent.upgradeactions['Village']['old house'],
                    unlockflags={'Dubious home': 0, }, closingflags={'Dubious home': 1}, changeflags={'Dubious home': 1},
-                   cost=[['Wood', -10, 0, 0]], complete=[['Wood', 20, 0, 0]], requirements=[['Destiny', 5, 0, 0]])
+                   cost=[['Wood', -10, 0, 0]], complete=[['max','Wood', 20, 0, 0]], requirements=[['Destiny', 5, 0, 0]])
     Upgradeactions(parent=parent, name='Wood quest2', isvisible=True,
                    elementlist=parent.upgradeactions['Village']['old house'],
-                   cost=[['Wood', -10, 0, 0]], complete=[['Wood', 20, 0, 0]],
+                   cost=[['Wood', -10, 0, 0]], complete=[['resource','Wood', 20, 0, 0]],
                    unlockflags={'Dubious home': 1, }, closingflags={'Dubious home': 2}, changeflags={'Dubious home': 1})
-    Upgradeactions(parent=parent, name='Wood quest3', isvisible=True,
+    Upgradeactions(parent=parent, name='Wood quest3', isvisible=True, complete=[['stat','hp', 20, 0, 0],['stat','patk', 1000, 0, 0],['stat','pdef', 70, 0, 0],['stat','matk', 5, 0, 0],['stat','mdef', 10, 0, 0]],
                    elementlist=parent.upgradeactions['Village']['old house 2'],
                    unlockflags={'Dubious home': 2, }, closingflags={'Dubious home': 3}, changeflags={'Dubious home': 1})
 
@@ -496,3 +521,15 @@ def createresources(parent):
     Resource(parent, 'Stone', 0, 100, {'Dubious home': 0}, 'Minerals', 0, resources=parent.resources)
     Resource(parent, 'Firewood', 0, 100, {'Dubious home': 0}, 'Wood', 0, resources=parent.resources)
     Resource(parent, 'Pelt', 0, 100, {'Dubious home': 0}, 'Materials', 0, resources=parent.resources)
+
+def createenergies(parent):
+    Energy(parent=parent,name='Action',quantity=0,max=5,unlockflags={'Dubious home':0},color=red,regen=0)
+    Energy(parent=parent, name='Stamina', quantity=0, max=1, unlockflags={'Dubious home': 0}, color=green,
+           regen=0)
+    Energy(parent=parent, name='Mana', quantity=0, max=1, unlockflags={'Dubious home': 0}, color=blue,
+           regen=1 / 240)
+    Energy(parent=parent, name='Fire', quantity=0, max=1, unlockflags={'Dubious home': 0}, color=orange,
+           regen=1 / 240)
+
+
+

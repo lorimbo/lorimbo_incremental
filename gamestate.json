@@ -45,7 +45,65 @@
                   "special": 0
             },
             {
+                  "name": "You6",
+                  "hp": 5,
+                  "atk": 1,
+                  "dif": 1,
+                  "satk": 1,
+                  "sdif": 1,
+                  "maxlvl": 1000,
+                  "unlocked": 0,
+                  "lvl": 0,
+                  "phys": 0,
+                  "magic": 0,
+                  "special": 0
+            },
+            {
+                  "name": "You2",
+                  "hp": 5,
+                  "atk": 1,
+                  "dif": 1,
+                  "satk": 1,
+                  "sdif": 1,
+                  "maxlvl": 1000,
+                  "unlocked": 0,
+                  "lvl": 0,
+                  "phys": 0,
+                  "magic": 0,
+                  "special": 0
+            }
+      ],
+      "reserve": [
+            {
                   "name": "You5",
+                  "hp": 5,
+                  "atk": 1,
+                  "dif": 1,
+                  "satk": 1,
+                  "sdif": 1,
+                  "maxlvl": 1000,
+                  "unlocked": 0,
+                  "lvl": 0,
+                  "phys": 0,
+                  "magic": 0,
+                  "special": 0
+            },
+            {
+                  "name": "You6",
+                  "hp": 5,
+                  "atk": 1,
+                  "dif": 1,
+                  "satk": 1,
+                  "sdif": 1,
+                  "maxlvl": 1000,
+                  "unlocked": 0,
+                  "lvl": 0,
+                  "phys": 0,
+                  "magic": 0,
+                  "special": 0
+            },
+            {
+                  "name": "You1",
                   "hp": 5,
                   "atk": 1,
                   "dif": 1,
@@ -73,65 +131,7 @@
                   "special": 0
             },
             {
-                  "name": "You6",
-                  "hp": 5,
-                  "atk": 1,
-                  "dif": 1,
-                  "satk": 1,
-                  "sdif": 1,
-                  "maxlvl": 1000,
-                  "unlocked": 0,
-                  "lvl": 0,
-                  "phys": 0,
-                  "magic": 0,
-                  "special": 0
-            }
-      ],
-      "reserve": [
-            {
                   "name": "You4",
-                  "hp": 5,
-                  "atk": 1,
-                  "dif": 1,
-                  "satk": 1,
-                  "sdif": 1,
-                  "maxlvl": 1000,
-                  "unlocked": 0,
-                  "lvl": 0,
-                  "phys": 0,
-                  "magic": 0,
-                  "special": 0
-            },
-            {
-                  "name": "You6",
-                  "hp": 5,
-                  "atk": 1,
-                  "dif": 1,
-                  "satk": 1,
-                  "sdif": 1,
-                  "maxlvl": 1000,
-                  "unlocked": 0,
-                  "lvl": 0,
-                  "phys": 0,
-                  "magic": 0,
-                  "special": 0
-            },
-            {
-                  "name": "You2",
-                  "hp": 5,
-                  "atk": 1,
-                  "dif": 1,
-                  "satk": 1,
-                  "sdif": 1,
-                  "maxlvl": 1000,
-                  "unlocked": 0,
-                  "lvl": 0,
-                  "phys": 0,
-                  "magic": 0,
-                  "special": 0
-            },
-            {
-                  "name": "You1",
                   "hp": 5,
                   "atk": 1,
                   "dif": 1,
