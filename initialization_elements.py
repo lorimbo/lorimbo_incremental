@@ -1,8 +1,41 @@
 import json
 
 
+class Corestats:
+    def __init__(self):
+        self.basestats = {'hp': 10, 'patk': 10, 'pdef': 10, 'matk': 10, 'mdef': 10}
+        self.element = []
+        # 0 for adding 1 for multiplication
+        self.modifiers = {'Upgradeactions': {'type': 'add', 'hp': 1, 'patk': 0, 'pdef': 0, 'matk': 0, 'mdef': 0}}
+
+    def finalstats(self):
+        final = {}
+        for key in self.basestats:
+            final[key] = self.basestats[key]
+            for modifier in self.modifiers:
+                if self.modifiers[modifier]['type'] == 'mul':
+                    final[key] *= self.modifiers[modifier][key]
+                elif self.modifiers[modifier]['type'] == 'add':
+                    final[key] += self.modifiers[modifier][key]
+        return final
+
+
+class Energy:
+    def __init__(self, parent, name, quantity, max, unlockflags, regen=0, effect=None,isvisible=True):
+        self.parent = parent
+        self.name = name
+        self.quantity = quantity
+        self.max = max
+        self.unlockflags = unlockflags
+        self.regen = regen
+        self.effect = effect
+        self.isvisible = isvisible
+        parent.energies.append(self)
+
+
 class Resource:
-    def __init__(self,parent, name, quantity, max, unlockflags, category, regen=0, effect=None, resources=None,isvisible= True):
+    def __init__(self, parent, name, quantity, max, unlockflags, category, regen=0, effect=None, resources=None,
+                 isvisible=True):
         self.parent = parent
         self.name = name
         self.quantity = quantity
@@ -11,7 +44,7 @@ class Resource:
         self.regen = regen
         self.effect = effect
         self.category = category
-        self.isvisible=isvisible
+        self.isvisible = isvisible
         if resources is not None:
             if category in resources.keys():
                 resources[category].append(self)
@@ -296,7 +329,7 @@ class Loopaction(menuelement):
                 continue
             for x in self.parent.resources.keys():
                 for resource in [e for e in self.parent.resources[x] if e.name == costname]:
-                    if resource.quantity> -i[1]:
+                    if resource.quantity > -i[1]:
                         resource.quantity += i[1]
 
     def dopassiveeffect(self):
@@ -407,7 +440,7 @@ def createmenu(parent):
 def createmainsubmenu(parent):
     menuelement(parent=parent, name='Village', isvisible=True, elementlist=parent.mainsubelements)
     menuelement(parent=parent, name='Forest', isvisible=True, elementlist=parent.mainsubelements)
-    menuelement(parent=parent, name='City', isvisible=True, elementlist=parent.mainsubelements,unlockflags={'Main':1})
+    menuelement(parent=parent, name='City', isvisible=True, elementlist=parent.mainsubelements, unlockflags={'Main': 1})
     menuelement(parent=parent, name='Coast', isvisible=True, elementlist=parent.mainsubelements)
     menuelement(parent=parent, name='Jungle', isvisible=True, elementlist=parent.mainsubelements)
     menuelement(parent=parent, name='Astral plane', isvisible=True, elementlist=parent.mainsubelements)
@@ -457,7 +490,7 @@ def createupgradeactions(parent):
 
 
 def createresources(parent):
-    Resource(parent,'Destiny',0,100,{'Dubious home':0},'Destiny',0,resources=parent.resources)
+    Resource(parent, 'Destiny', 0, 100, {'Dubious home': 0}, 'Destiny', 0, resources=parent.resources)
     Resource(parent, 'Wood', 50, 100, {'Dubious home': 1}, 'Wood', 0, resources=parent.resources)
     Resource(parent, 'Wooden statue', 0, 100, {'Dubious home': 2}, 'Accessories', 0, resources=parent.resources)
     Resource(parent, 'Stone', 0, 100, {'Dubious home': 0}, 'Minerals', 0, resources=parent.resources)

@@ -123,7 +123,7 @@ class Graphics:
 
     @classmethod
     def draw_energies(cls):
-        imgui.set_next_window_size(210, 35 * len(Gamelogic.unlockedenergies))
+        imgui.set_next_window_size(230, 35 * len(Gamelogic.unlockedenergies))
         imgui.set_next_window_position(1200, 0)
         imgui.begin('Energies', False, cls.resourcesflags)
         draw_list = imgui.get_window_draw_list()
@@ -157,7 +157,7 @@ class Graphics:
                     windowheight += 1
         if windowheight > 40:
             windowheight = 40
-        imgui.set_next_window_size(210, 15 + 21 * windowheight)
+        imgui.set_next_window_size(230, 15 + 21 * windowheight)
         imgui.set_next_window_position(1200, 35 * len(Gamelogic.unlockedenergies))
         imgui.begin('Resources', False, cls.resourcesflags)
         for key in Gamelogic.resources:
