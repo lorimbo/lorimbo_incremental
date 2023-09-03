@@ -11,22 +11,32 @@ grey = (105, 105, 105)
 teal = (84, 186, 227)
 brown = (139, 69, 19)
 
+
 def numcon(n):
-    if n>1000000:
-        return f'{round(n/1000000,2)}M'
-    elif n>100000:
-        return f'{round(n/1000,0)}K'
-    elif n>10000:
-        return f'{round(n/1000,1)}K'
-    elif n>1000:
-        return f'{round(n/1000,2)}K'
-    return str(n)
+    if n > 10000000:
+        return f'{round(n / 1000000, 1)}M'
+    elif n > 1000000:
+        return f'{round(n / 1000000, 2)}M'
+    elif n > 100000:
+        return f'{round(n / 1000, 0)}K'
+    elif n > 10000:
+        return f'{round(n / 1000, 1)}K'
+    elif n > 1000:
+        return f'{round(n / 1000, 2)}K'
+    return str(round(n, 1))
 
 
 class Corestats:
-    def __init__(self):
+    def __init__(self,parent):
+        self.parent=parent
         self.basestats = {'hp': 10, 'patk': 10, 'pdef': 10, 'matk': 10, 'mdef': 10}
         self.modifiers = {'Upgradeactions': {'type': 'add', 'hp': 1, 'patk': 0, 'pdef': 0, 'matk': 0, 'mdef': 0}}
+    def updatepokemons(self):
+        for pokemon in self.parent.party:
+            pokemon.updatestats()
+        for pokemon in self.parent.reserve:
+            pokemon.updatestats()
+
 
     def finalstats(self):
         final = {}
@@ -41,7 +51,7 @@ class Corestats:
 
 
 class Energy:
-    def __init__(self, parent, name, quantity, max, unlockflags,color, regen=0, effect=None,isvisible=True):
+    def __init__(self, parent, name, quantity, max, unlockflags, color, regen=0, effect=None, isvisible=True):
         self.parent = parent
         self.name = name
         self.quantity = quantity
@@ -52,7 +62,6 @@ class Energy:
         self.isvisible = isvisible
         self.color = color
         parent.energies.append(self)
-
 
 
 class Resource:
@@ -91,7 +100,7 @@ class menuelement:
 
 class Upgradeactions(menuelement):
     def __init__(self, cost=[['Wood', 0, 0, 0]],
-                 complete=[['resource','Wood', 0, 0, 0]], requirements=[['Wood', 0, 0, 0]], *args, **kwargs):
+                 complete=[['resource', 'Wood', 0, 0, 0]], requirements=[['Wood', 0, 0, 0]], *args, **kwargs):
         menuelement.__init__(self, *args, **kwargs)
         self.cost = cost
         self.complete = complete
@@ -144,6 +153,7 @@ class Upgradeactions(menuelement):
             elif i[0] == 'stat':
                 name = i[1]
                 self.parent.corestats.modifiers['Upgradeactions'][name] += i[2]
+                self.parent.corestats.updatepokemons()
 
             if self.changeflags is not None:
                 for key in self.changeflags:
@@ -371,7 +381,7 @@ class Loopaction(menuelement):
         for i in self.progresseffect:
             costname = i[0]
             for energy in [e for e in self.parent.energies if e.name == costname]:
-                if energy.quantity>= -i[1] and energy.quantity + i[
+                if energy.quantity >= -i[1] and energy.quantity + i[
                     1] < energy.max:
                     energy.quantity += i[1]
                 elif costname == 'Action':
@@ -423,11 +433,10 @@ class Pokemon(menuelement):
                  special=0,
                  skill=0, *args, **kwargs):
         menuelement.__init__(self, *args, **kwargs)
-        self.atk = atk
-        self.dif = dif
-        self.satk = satk
-        self.sdif = sdif
-        self.currenthp = hp
+        self.patk = atk
+        self.pdef = dif
+        self.matk = satk
+        self.mdef = sdif
         self.hp = hp
         self.lvl = lvl
         self.unlocked = unlocked
@@ -435,14 +444,40 @@ class Pokemon(menuelement):
         self.phys = phys
         self.magic = magic
         self.special = special
-        # self.skill=Skill('Tackle','phys',10,2)
-        self.timer = 0
-    # def useskill(self,enemy):
-    # self.skill.useskill(self,enemy)
-    # self.timer=0
-    # def checkcooldown(self):
-    # self.timer+=1
-    # return self.timer>self.skill.cooldown
+        self.updatestats()
+
+    def updatestats(self):
+        if self.name == 'You':
+            if self.lvl<=10:
+                scaling1=1/10+self.phys*9/100
+                scaling2=1/10+self.magic*9/100
+            else:
+                scaling1=1+self.lvl*8/100
+                scaling2 = 1 + self.magic * 8 / 100
+
+            self.actualhp = scaling1 * self.parent.corestats.finalstats()['hp']
+            self.actualpatk = scaling1 * self.parent.corestats.finalstats()['patk']
+            self.actualpdef = scaling1 * self.parent.corestats.finalstats()['pdef']
+            self.actualmatk = scaling2 * self.parent.corestats.finalstats()['matk']
+            self.actualmdef = scaling2 * self.parent.corestats.finalstats()['mdef']
+
+
+
+
+
+        else:
+            self.actualhp = round(
+                self.parent.corestats.finalstats()['hp'] * (self.phys + 1 / self.maxlvl) * (self.hp / 100), 1)
+            self.actualpatk = round(
+                self.parent.corestats.finalstats()['patk'] * (self.phys + 1 / self.maxlvl) * (self.patk / 100), 1)
+            self.actualpdef = round(
+                self.parent.corestats.finalstats()['pdef'] * (self.phys + 1 / self.maxlvl) * (self.pdef / 100), 1)
+            self.actualmatk = round(
+                self.parent.corestats.finalstats()['matk'] * (self.magic + 1 / self.maxlvl) * (self.matk / 100), 1)
+            self.actualmdef = round(
+                self.parent.corestats.finalstats()['mdef'] * (self.magic + 1 / self.maxlvl) * (self.mdef / 100), 1)
+
+            self.currenthp = self.actualhp
 
 
 def getgamestate():
@@ -514,32 +549,36 @@ def createupgradeactions(parent):
     Upgradeactions(parent=parent, name='Wood quest', isvisible=True,
                    elementlist=parent.upgradeactions['Village']['old house'],
                    unlockflags={'Dubious home': 0, }, closingflags={'Dubious home': 1}, changeflags={'Dubious home': 1},
-                   cost=[['Wood', -10, 0, 0]], complete=[['max','Wood', 20, 0, 0]], requirements=[['Destiny', 5, 0, 0]])
+                   cost=[['Wood', -10, 0, 0]], complete=[['max', 'Wood', 20, 0, 0]],
+                   requirements=[['Destiny', 5, 0, 0]])
     Upgradeactions(parent=parent, name='Wood quest2', isvisible=True,
                    elementlist=parent.upgradeactions['Village']['old house'],
-                   cost=[['Wood', -10, 0, 0]], complete=[['resource','Wood', 20, 0, 0]],
+                   cost=[['Wood', -10, 0, 0]], complete=[['resource', 'Wood', 20, 0, 0]],
                    unlockflags={'Dubious home': 1, }, closingflags={'Dubious home': 2}, changeflags={'Dubious home': 1})
-    Upgradeactions(parent=parent, name='Wood quest3', isvisible=True, complete=[['stat','hp', 20, 0, 0],['stat','patk', 1000, 0, 0],['stat','pdef', 70, 0, 0],['stat','matk', 5, 0, 0],['stat','mdef', 10, 0, 0]],
+    Upgradeactions(parent=parent, name='Wood quest3', isvisible=True,
+                   complete=[['stat', 'hp', 20, 0, 0], ['stat', 'patk', 1000, 0, 0], ['stat', 'pdef', 70, 0, 0],
+                             ['stat', 'matk', 5, 0, 0], ['stat', 'mdef', 10, 0, 0]],
                    elementlist=parent.upgradeactions['Village']['old house 2'],
                    unlockflags={'Dubious home': 2, }, closingflags={'Dubious home': 3}, changeflags={'Dubious home': 1})
 
 
 def createresources(parent):
-    Resource(parent, 'Destiny', 0, 100, {'Dubious home': 0}, 'Destiny', 0, resources=parent.resources)
+    parent.destiny=Resource(parent, 'Destiny', 0, 100, {'Dubious home': 0}, 'Destiny', 0, resources=parent.resources)
     Resource(parent, 'Wood', 50, 10000000, {'Dubious home': 1}, 'Wood', 0, resources=parent.resources)
     Resource(parent, 'Wooden statue', 0, 100, {'Dubious home': 2}, 'Accessories', 0, resources=parent.resources)
     Resource(parent, 'Stone', 0, 100, {'Dubious home': 0}, 'Minerals', 0, resources=parent.resources)
     Resource(parent, 'Firewood', 0, 100, {'Dubious home': 0}, 'Wood', 0, resources=parent.resources)
     Resource(parent, 'Pelt', 0, 100, {'Dubious home': 0}, 'Materials', 0, resources=parent.resources)
+    parent.physseeds=Resource(parent, 'Physical seeds', 10, 10000, {'Dubious home': 0}, 'Seeds', 0, resources=parent.resources)
+    parent.magicseeds=Resource(parent, 'Magical seeds', 100, 10000, {'Dubious home': 0}, 'Seeds', 0, resources=parent.resources)
+    parent.specialseeds=Resource(parent, 'Special seeds', 100, 10000, {'Dubious home': 0}, 'Seeds', 0, resources=parent.resources)
+
 
 def createenergies(parent):
-    Energy(parent=parent,name='Action',quantity=0,max=5,unlockflags={'Dubious home':0},color=red,regen=0)
+    Energy(parent=parent, name='Action', quantity=0, max=5, unlockflags={'Dubious home': 0}, color=red, regen=0)
     Energy(parent=parent, name='Stamina', quantity=0, max=1, unlockflags={'Dubious home': 0}, color=green,
            regen=0)
     Energy(parent=parent, name='Mana', quantity=0, max=1, unlockflags={'Dubious home': 0}, color=blue,
            regen=1 / 240)
     Energy(parent=parent, name='Fire', quantity=0, max=1, unlockflags={'Dubious home': 0}, color=orange,
            regen=1 / 240)
-
-
-

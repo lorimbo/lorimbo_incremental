@@ -14,7 +14,7 @@ brown = (139, 69, 19)
 
 
 class Gamelogic:
-    energies=[]
+    energies = []
     unlockedenergies = []
     resources = {}
     flags = {'Main': 0, 'Dubious home': 0}
@@ -37,8 +37,9 @@ class Gamelogic:
     switch = None
     remove = None
     add = None
+    levelup = None
     partylenmax = 7
-    fps=240
+    fps = 240
 
     @classmethod
     def checkflags(cls):
@@ -69,7 +70,7 @@ class Gamelogic:
                 if temp:
                     resource.isvisible = True
         for key in cls.mainsubelements:
-            key.isvisible= False
+            key.isvisible = False
             temp = 1
             if key.unlockflags is not None:
                 for key2 in key.unlockflags.keys():
@@ -77,7 +78,6 @@ class Gamelogic:
                         temp = 0
             if temp:
                 key.isvisible = True
-
 
     @classmethod
     def deactivateloopactions(cls):
@@ -116,6 +116,7 @@ class Gamelogic:
 
     @classmethod
     def initializegame(cls):
+        cls.corestats = initialization_elements.Corestats(cls)
         initialization_elements.createmenu(cls)
         initialization_elements.createmainsubmenu(cls)
         initialization_elements.createinstantactions(cls)
@@ -125,7 +126,6 @@ class Gamelogic:
         initialization_elements.createupgradeactions(cls)
         initialization_elements.createresources(cls)
         initialization_elements.createenergies(cls)
-        cls.corestats = initialization_elements.Corestats()
 
 
     @classmethod
@@ -140,10 +140,10 @@ class Gamelogic:
             pokemondict = {}
             pokemondict["name"] = x.name
             pokemondict["hp"] = x.hp
-            pokemondict["atk"] = x.atk
-            pokemondict["dif"] = x.dif
-            pokemondict["satk"] = x.satk
-            pokemondict["sdif"] = x.sdif
+            pokemondict["atk"] = x.patk
+            pokemondict["dif"] = x.pdef
+            pokemondict["satk"] = x.matk
+            pokemondict["sdif"] = x.mdef
             pokemondict["maxlvl"] = x.maxlvl
             pokemondict["unlocked"] = x.unlocked
             pokemondict["lvl"] = x.lvl
@@ -155,10 +155,10 @@ class Gamelogic:
             pokemondict = {}
             pokemondict["name"] = x.name
             pokemondict["hp"] = x.hp
-            pokemondict["atk"] = x.atk
-            pokemondict["dif"] = x.dif
-            pokemondict["satk"] = x.satk
-            pokemondict["sdif"] = x.sdif
+            pokemondict["atk"] = x.patk
+            pokemondict["dif"] = x.pdef
+            pokemondict["satk"] = x.matk
+            pokemondict["sdif"] = x.mdef
             pokemondict["maxlvl"] = x.maxlvl
             pokemondict["unlocked"] = x.unlocked
             pokemondict["lvl"] = x.lvl
@@ -170,10 +170,10 @@ class Gamelogic:
             pokemondict = {}
             pokemondict["name"] = x.name
             pokemondict["hp"] = x.hp
-            pokemondict["atk"] = x.atk
-            pokemondict["dif"] = x.dif
-            pokemondict["satk"] = x.satk
-            pokemondict["sdif"] = x.sdif
+            pokemondict["atk"] = x.patk
+            pokemondict["dif"] = x.pdef
+            pokemondict["satk"] = x.matk
+            pokemondict["sdif"] = x.mdef
             pokemondict["maxlvl"] = x.maxlvl
             pokemondict["unlocked"] = x.unlocked
             pokemondict["lvl"] = x.lvl
@@ -194,7 +194,6 @@ class Gamelogic:
             if energy.quantity < energy.max:
                 energy.quantity += energy.regen
 
-
     @classmethod
     def updatebuttons(cls):
         for key in cls.upgradeactions:
@@ -209,6 +208,33 @@ class Gamelogic:
                 i.update()
 
     @classmethod
+    def levelupfunction(cls, information):
+        num = information[2]
+        if information[0] == 'Party':
+            pokemon=cls.party[num]
+        else:
+            pokemon=cls.reserve[num]
+        if information[1] == 'Level':
+            if pokemon.lvl<pokemon.maxlvl:
+                pokemon.lvl+=1
+        elif information[1] == 'Physical':
+            if pokemon.phys < pokemon.lvl and cls.physseeds.quantity:
+                pokemon.phys += 1
+                cls.physseeds.quantity-=1
+
+        elif information[1] == 'Magical'and cls.magicseeds.quantity:
+            if pokemon.magic < pokemon.lvl:
+                pokemon.magic += 1
+                cls.magicseeds.quantity-=1
+
+        elif information[1] == 'Special' and cls.specialseeds.quantity:
+            if pokemon.special < pokemon.lvl:
+                pokemon.special += 1
+                cls.specialseeds.quantity -= 1
+        pokemon.updatestats()
+        cls.levelup = None
+
+    @classmethod
     def frameaction(cls):
         cls.updatebuttons()
         cls.regenenergies()
@@ -221,6 +247,8 @@ class Gamelogic:
             cls.removepokemonfromparty(cls.remove)
         if cls.add is not None:
             cls.addpokemontoparty(cls.add)
+        if cls.levelup is not None:
+            cls.levelupfunction(cls.levelup)
         if cls.action is not None:
             for key in cls.instantactions:
                 for i in cls.instantactions[key]:

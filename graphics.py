@@ -15,12 +15,13 @@ def numcon(n):
         return f'{round(n/1000,1)}K'
     elif n>1000:
         return f'{round(n/1000,2)}K'
-    return str(n)
+    return str(round(n,1))
 
 class Graphics:
     flags = imgui.WINDOW_NO_TITLE_BAR | imgui.WINDOW_NO_COLLAPSE | imgui.WINDOW_NO_RESIZE
     resourcesflags = imgui.WINDOW_NO_RESIZE
     new_font = None
+    new_font2 = None
 
     @classmethod
     def draw_main_menu(cls):
@@ -195,54 +196,60 @@ class Graphics:
                                     tooltip = tooltips.resourceTooltip(subkey.name, subkey.quantity, subkey.max)
                                     for i in tooltip:
                                         imgui.text(f"{i}")
-
                     imgui.tree_pop()
         imgui.end()
 
     @classmethod
 
     def draw_party_tabs(cls):
-        imgui.set_next_window_size(500, 70)
-        imgui.set_next_window_position(400, 0)
+        imgui.set_next_window_size(650, 70)
+        imgui.set_next_window_position(330, 0)
         imgui.begin('Partytabs', False, cls.flags)
         visible = cls.get_visible_elements(Gamelogic.partyelements)
         for element in visible:
-            if imgui.button(element.name,90,50):
-                Gamelogic.partysubtab = element.name
-            imgui.same_line()
-
+            with imgui.font(cls.new_font):
+                if imgui.button(element.name,120,50):
+                    Gamelogic.partysubtab = element.name
+                imgui.same_line()
         imgui.end()
+
+    @classmethod
+    def draw_Adventurer(cls):
+        imgui.set_next_window_size(1050, 65)
+        imgui.set_next_window_position(120, 70)
+        imgui.begin('Adventurer', False, cls.flags)
+        Stats = Gamelogic.corestats.finalstats()
+        with imgui.font(cls.new_font2):
+            imgui.same_line(position=150)
+            imgui.text('[Core Stats]')
+            imgui.same_line()
+            for key in Stats:
+                imgui.text(key + ':' + numcon(Stats[key]))
+                imgui.same_line()
+        imgui.end()
+
+
     @classmethod
     def draw_party_menu(cls):
         imgui.set_next_window_size(1050, 800)
-        imgui.set_next_window_position(120, 100)
+        imgui.set_next_window_position(120, 180)
         imgui.begin('Partymenu', False, cls.flags)
-        imgui.begin_child("Child 3", height=55, border=True)
-        Stats = Gamelogic.corestats.finalstats()
-        with imgui.font(cls.new_font):
-            imgui.same_line(position=150)
-            imgui.text('Core Stats')
-            imgui.same_line()
-            for key in Stats:
-                imgui.text(key + ':' + str(Stats[key]))
-                imgui.same_line()
-        imgui.end_child()
         imgui.begin_child("Child 1", height=320, border=True)
         for num, pokemon in enumerate(Gamelogic.party):
             with imgui.font(cls.new_font):
                 imgui.text(pokemon.name)
                 imgui.same_line(position=150)
-                imgui.text(str(pokemon.lvl) + '/' + str(pokemon.maxlvl))
+                imgui.text(numcon(pokemon.lvl) + '/' + numcon(pokemon.maxlvl))
                 imgui.same_line(position=225)
-                imgui.text(str(pokemon.hp))
+                imgui.text(numcon(pokemon.actualhp))
                 imgui.same_line(position=300)
-                imgui.text(str(pokemon.atk))
+                imgui.text(numcon(pokemon.actualpatk))
                 imgui.same_line(position=375)
-                imgui.text(str(pokemon.dif))
+                imgui.text(numcon(pokemon.actualpdef))
                 imgui.same_line(position=450)
-                imgui.text(str(pokemon.satk))
+                imgui.text(numcon(pokemon.actualmatk))
                 imgui.same_line(position=525)
-                imgui.text(str(pokemon.sdif))
+                imgui.text(numcon(pokemon.actualmdef))
                 imgui.same_line(position=600)
                 if imgui.arrow_button(f'downbutton##{num}', imgui.DIRECTION_UP):
                     Gamelogic.switch = num - 1
@@ -261,25 +268,119 @@ class Graphics:
             with imgui.font(cls.new_font):
                 imgui.text(pokemon.name)
                 imgui.same_line(position=150)
-                imgui.text(str(pokemon.lvl) + '/' + str(pokemon.maxlvl))
+                imgui.text(numcon(pokemon.lvl) + '/' + numcon(pokemon.maxlvl))
                 imgui.same_line(position=225)
-                imgui.text(str(pokemon.hp))
+                imgui.text(numcon(pokemon.actualhp))
                 imgui.same_line(position=300)
-                imgui.text(str(pokemon.atk))
+                imgui.text(numcon(pokemon.actualpatk))
                 imgui.same_line(position=375)
-                imgui.text(str(pokemon.dif))
+                imgui.text(numcon(pokemon.actualpdef))
                 imgui.same_line(position=450)
-                imgui.text(str(pokemon.satk))
+                imgui.text(numcon(pokemon.actualmatk))
                 imgui.same_line(position=525)
-                imgui.text(str(pokemon.sdif))
+                imgui.text(numcon(pokemon.actualmdef))
                 if len(Gamelogic.party) < Gamelogic.partylenmax:
                     imgui.same_line(position=698)
                     if imgui.button(f'Add##{num}', 90):
                         Gamelogic.add = num
 
         imgui.end_child()
+        imgui.end()
+
+    @classmethod
+    def draw_levelup_menu(cls):
+        imgui.set_next_window_size(1050, 800)
+        imgui.set_next_window_position(120, 180)
+        imgui.begin('Levelupmenu', False, cls.flags)
+        imgui.begin_child("Child 1", height=320, border=True)
+        for num, pokemon in enumerate(Gamelogic.party):
+            with imgui.font(cls.new_font):
+                imgui.text(pokemon.name)
+                imgui.same_line(position=150)
+                imgui.text(numcon(pokemon.lvl) + '/' + numcon(pokemon.maxlvl))
+                imgui.same_line(position=230)
+                if imgui.button(f'Summon##{num}', 90):
+                    Gamelogic.levelup = ['Party','Level',num]
+                imgui.same_line(position=530)
+                if not Gamelogic.physseeds.quantity:
+                    imgui.push_style_var(imgui.STYLE_ALPHA, 0.2)
+                if imgui.button(f'Physical##{num}', 90):
+                    Gamelogic.levelup = ['Party','Physical',num]
+                if not Gamelogic.physseeds.quantity:
+                    imgui.pop_style_var(1)
+                imgui.same_line(spacing=40)
+                if not Gamelogic.magicseeds.quantity:
+                    imgui.push_style_var(imgui.STYLE_ALPHA, 0.2)
+                if imgui.button(f'Magical##{num}', 90):
+                    Gamelogic.levelup = ['Party','Magical',num]
+                if not Gamelogic.magicseeds.quantity:
+                    imgui.pop_style_var(1)
+                imgui.same_line(spacing=40)
+                if not Gamelogic.specialseeds.quantity:
+                    imgui.push_style_var(imgui.STYLE_ALPHA, 0.2)
+                if imgui.button(f'Special##{num}', 90):
+                    Gamelogic.levelup = ['Party','Special',num]
+                if not Gamelogic.specialseeds.quantity:
+                    imgui.pop_style_var(1)
+
+            imgui.text('')
+            imgui.same_line(position=560)
+            imgui.text(numcon(pokemon.phys)+'/'+numcon(pokemon.lvl))
+            imgui.same_line(position=690)
+            imgui.text(numcon(pokemon.magic) + '/' + numcon(pokemon.lvl))
+            imgui.same_line(position=820)
+            imgui.text(numcon(pokemon.special) + '/' + numcon(pokemon.lvl))
+
+        imgui.end_child()
+        imgui.begin_child("Child 2", height=400, border=True)
+        for num, pokemon in enumerate(Gamelogic.reserve):
+            with imgui.font(cls.new_font):
+                imgui.text(pokemon.name)
+                imgui.same_line(position=150)
+                imgui.text(numcon(pokemon.lvl) + '/' + numcon(pokemon.maxlvl))
+                imgui.same_line(position=230)
+
+                if imgui.button(f'Summon##{1000+num}', 90):
+                    Gamelogic.levelup = ['Reserve','Level',num]
+                imgui.same_line(position=530)
+
+                if not Gamelogic.physseeds.quantity:
+                    imgui.push_style_var(imgui.STYLE_ALPHA, 0.2)
+                if imgui.button(f'Physical##{1000+num}', 90):
+                    Gamelogic.levelup = ['Reserve','Physical',num]
+                if not Gamelogic.physseeds.quantity:
+                    imgui.pop_style_var(1)
+
+                imgui.same_line(spacing=40)
+                if not Gamelogic.magicseeds.quantity:
+                    imgui.push_style_var(imgui.STYLE_ALPHA, 0.2)
+                if imgui.button(f'Magical##{1000+num}', 90):
+                    Gamelogic.levelup = ['Reserve','Magical',num]
+                if not Gamelogic.magicseeds.quantity:
+                    imgui.pop_style_var(1)
+
+                imgui.same_line(spacing=40)
+                if not Gamelogic.specialseeds.quantity:
+                    imgui.push_style_var(imgui.STYLE_ALPHA, 0.2)
+                if imgui.button(f'Special##{1000+num}', 90):
+                    Gamelogic.levelup = ['Reserve','Special',num]
+                if not Gamelogic.specialseeds.quantity:
+                    imgui.pop_style_var(1)
+
+            imgui.text('')
+            imgui.same_line(position=560)
+            imgui.text(numcon(pokemon.phys)+'/'+numcon(pokemon.lvl))
+            imgui.same_line(position=690)
+            imgui.text(numcon(pokemon.magic) + '/' + numcon(pokemon.lvl))
+            imgui.same_line(position=820)
+            imgui.text(numcon(pokemon.special) + '/' + numcon(pokemon.lvl))
+
+
+        imgui.end_child()
+
 
         imgui.end()
+
 
     @classmethod
     def creategui(cls):
@@ -294,6 +395,9 @@ class Graphics:
             cls.draw_main()
         if Gamelogic.tab == Gamelogic.mainelements[1].name:
             cls.draw_party_tabs()
+            cls.draw_Adventurer()
             if Gamelogic.partysubtab == Gamelogic.partyelements[0].name:
                 cls.draw_party_menu()
+            elif Gamelogic.partysubtab == Gamelogic.partyelements[1].name:
+                cls.draw_levelup_menu()
 

@@ -38,6 +38,7 @@ def main():
     io = imgui.get_io()
     io.display_size = size
     Graphics.new_font = io.fonts.add_font_from_file_ttf("orange kid.ttf", 35)
+    Graphics.new_font2 = io.fonts.add_font_from_file_ttf("orange kid.ttf", 45)
     impl.refresh_font_texture()
 
     # initialize variables here

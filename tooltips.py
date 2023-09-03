@@ -1,15 +1,18 @@
 description = {'Get motivated': ['test1', 'test2', 'test3'],'Wood': ['Suitable wood for','making firewood.']}
 
 def numcon(n):
-    if n>1000000:
-        return f'{round(n/1000000,2)}M'
-    elif n>100000:
-        return f'{round(n/1000,0)}K'
-    elif n>10000:
-        return f'{round(n/1000,1)}K'
-    elif n>1000:
-        return f'{round(n/1000,2)}K'
-    return str(n)
+    if n > 10000000:
+        return f'{round(n / 1000000, 1)}M'
+    elif n > 1000000:
+        return f'{round(n / 1000000, 2)}M'
+    elif n > 100000:
+        return f'{round(n / 1000, 0)}K'
+    elif n > 10000:
+        return f'{round(n / 1000, 1)}K'
+    elif n > 1000:
+        return f'{round(n / 1000, 2)}K'
+    return str(round(n, 1))
+
 
 def resourceTooltip(name,quantity,max,effect=None):
     finaltooltip = []
@@ -36,7 +39,7 @@ def actionTooltip(name, cost, complete):
     if cost[0][1] != 0:
         finaltooltip.append('<<cost>>')
         for i in cost:
-            finaltooltip.append(f'{i[0]}:{i[1]} ({numcon(i[2])}/{numcon(i[3])}')
+            finaltooltip.append(f'{i[0]}:{i[1]} ({numcon(i[2])}/{numcon(i[3])})')
     if complete[0][1] != 0:
         finaltooltip.append('[complete effect]')
         for i in complete:
