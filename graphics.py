@@ -56,7 +56,6 @@ class Graphics:
                 if imgui.is_item_hovered():
                     with imgui.begin_tooltip():
                         imgui.text(f"{button.name}")
-                        imgui.text(f"             ")
                         tooltip = tooltips.actionTooltip(button.name,button.cost,button.complete)
                         for i in tooltip:
                             imgui.text(f"{i}")
@@ -78,7 +77,6 @@ class Graphics:
                 if imgui.is_item_hovered():
                     with imgui.begin_tooltip():
                         imgui.text(f"{button.name}")
-                        imgui.text(f"             ")
                         tooltip = tooltips.loopTooltip(button.name,button.cost,button.complete,button.progresscost,button.progresseffect)
                         for i in tooltip:
                             imgui.text(f"{i}")
@@ -103,7 +101,6 @@ class Graphics:
                 if imgui.is_item_hovered():
                     with imgui.begin_tooltip():
                         imgui.text(f"{button.name}")
-                        imgui.text(f"             ")
                         tooltip = tooltips.upgradeTooltip(button.name,button.cost,button.complete,button.requirements)
                         for i in tooltip:
                             imgui.text(f"{i}")
@@ -136,6 +133,13 @@ class Graphics:
             draw_list.add_rect_filled(1210, 30 + num * 25,
                                       1210 + 190 * energy.quantity / energy.max,
                                       50 + num * 25, imgui.get_color_u32_rgba(*color, 1), 0)
+            imgui.invisible_button(energy.name,190,20)
+            if imgui.is_item_hovered():
+                with imgui.begin_tooltip():
+                    imgui.text(f"{energy.name}")
+                    tooltip = tooltips.energyTooltip(energy.name, energy.quantity, energy.max,energy.regen)
+                    for i in tooltip:
+                        imgui.text(f"{i}")
             draw_list.add_text(1220, 35 + num * 25, imgui.get_color_u32_rgba(1, 1, 1, 1), energy.name)
             draw_list.add_text(1320, 35 + num * 25, imgui.get_color_u32_rgba(1, 1, 1, 1),
                                str(round(energy.quantity, 1)) + '/' + str(
@@ -174,6 +178,12 @@ class Graphics:
                             for i in range(numofspace):
                                 space += ' '
                             imgui.text(subkey.name + space + str(subkey.quantity) + '/' + str(subkey.max))
+                            if imgui.is_item_hovered():
+                                with imgui.begin_tooltip():
+                                    imgui.text(f"{subkey.name}")
+                                    tooltip = tooltips.resourceTooltip(subkey.name, subkey.quantity, subkey.max)
+                                    for i in tooltip:
+                                        imgui.text(f"{i}")
 
                     imgui.tree_pop()
         imgui.end()

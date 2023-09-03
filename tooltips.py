@@ -1,5 +1,23 @@
-description = {'Get motivated': ['test1', 'test2', 'test3']}
+description = {'Get motivated': ['test1', 'test2', 'test3'],'Wood': ['Suitable wood for','making firewood.']}
 
+
+
+def resourceTooltip(name,quantity,max,effect=None):
+    finaltooltip = []
+    if name in description.keys():
+        for i in description[name]:
+            finaltooltip.append(i)
+    finaltooltip.append(f'{quantity}/{max}')
+    return finaltooltip
+
+def energyTooltip(name,quantity,max,regen,effect=None):
+    finaltooltip = []
+    if name in description.keys():
+        for i in description[name]:
+            finaltooltip.append(i)
+    finaltooltip.append(f'{round(quantity,1)}/{round(max,1)}')
+    finaltooltip.append(f'Regeneration    {regen*240}/s')
+    return finaltooltip
 
 def actionTooltip(name, cost, complete):
     finaltooltip = []
