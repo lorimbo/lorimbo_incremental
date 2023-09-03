@@ -24,6 +24,31 @@ class Graphics:
     new_font2 = None
 
     @classmethod
+    def notinusedecorator(cls,function,use):
+        def inner1(*args,**kwargs):
+            imgui.push_style_var(imgui.STYLE_ALPHA, 0.5)
+            func=function(*args,**kwargs)
+            imgui.pop_style_var(1)
+            return func
+        if use:
+            return inner1
+        else:
+            return function
+    @classmethod
+    def disabledecorator(cls,function,use):
+        def inner1(*args,**kwargs):
+            imgui.push_style_var(imgui.STYLE_ALPHA, 0.2)
+            func=function(*args,**kwargs)
+            imgui.pop_style_var(1)
+            return func
+        if use:
+            return inner1
+        else:
+            return function
+
+
+
+    @classmethod
     def draw_main_menu(cls):
         # Main menu
         visible = [e for e in Gamelogic.mainelements if e.isvisible]
@@ -31,9 +56,9 @@ class Graphics:
         imgui.set_next_window_position(10, 0)
         imgui.begin('Main', False, cls.flags)
         for button in visible:
-            if imgui.button(button.name, 90, 50):
+            use=not Gamelogic.tab == button.name
+            if cls.notinusedecorator(imgui.button,use)(button.name, 90, 50):
                 Gamelogic.tab = button.name
-
         if imgui.button('Save', 90, 50):
             Gamelogic.savegame()
         imgui.end()
@@ -42,7 +67,8 @@ class Graphics:
     def draw_main_submenu(cls):
         visible = [e for e in Gamelogic.mainsubelements if e.isvisible]
         for button in visible:
-            if imgui.button(button.name, 90, 50):
+            use= not Gamelogic.subtab == button.name
+            if cls.notinusedecorator(imgui.button,use)(button.name, 90, 50):
                 Gamelogic.subtab = button.name
 
     @classmethod
@@ -59,12 +85,9 @@ class Graphics:
             imgui.begin(key, False, cls.resourcesflags)
             finishline += 34 + 54 * len(visible)
             for button in visible:
-                if button.isdisabled:
-                    imgui.push_style_var(imgui.STYLE_ALPHA, 0.2)
-                if imgui.button(button.name, 120, 50) and not button.isdisabled:
+                use=button.isdisabled
+                if cls.disabledecorator(imgui.button,use)(button.name, 120, 50) and not button.isdisabled:
                     Gamelogic.action = button.name
-                if button.isdisabled:
-                    imgui.pop_style_var(1)
                 if imgui.is_item_hovered():
                     with imgui.begin_tooltip():
                         imgui.text(f"{button.name}")
@@ -80,12 +103,9 @@ class Graphics:
             imgui.begin(key, False, cls.resourcesflags)
             finishline+=34+77*len(visible)
             for button in visible:
-                if button.isdisabled:
-                    imgui.push_style_var(imgui.STYLE_ALPHA, 0.2)
-                if imgui.button(button.name, 120, 50) and not button.isdisabled:
+                use=button.isdisabled
+                if cls.disabledecorator(imgui.button,use)(button.name, 120, 50) and not button.isdisabled:
                     button.activation()
-                if button.isdisabled:
-                    imgui.pop_style_var(1)
                 if imgui.is_item_hovered():
                     with imgui.begin_tooltip():
                         imgui.text(f"{button.name}")
@@ -104,12 +124,9 @@ class Graphics:
             imgui.begin(key, False, cls.resourcesflags)
             finishline+= 34 + 54 * len(visible)
             for button in visible:
-                if button.isdisabled:
-                    imgui.push_style_var(imgui.STYLE_ALPHA, 0.2)
-                if imgui.button(button.name, 120, 50) and not button.isdisabled:
+                use= button.isdisabled
+                if cls.disabledecorator(imgui.button,use)(button.name, 120, 50) and not button.isdisabled:
                     Gamelogic.upgradeaction = button.name
-                if button.isdisabled:
-                    imgui.pop_style_var(1)
                 if imgui.is_item_hovered():
                     with imgui.begin_tooltip():
                         imgui.text(f"{button.name}")
@@ -208,7 +225,8 @@ class Graphics:
         visible = cls.get_visible_elements(Gamelogic.partyelements)
         for element in visible:
             with imgui.font(cls.new_font):
-                if imgui.button(element.name,120,50):
+                use= not Gamelogic.partysubtab == element.name
+                if cls.notinusedecorator(imgui.button,use)(element.name,120,50):
                     Gamelogic.partysubtab = element.name
                 imgui.same_line()
         imgui.end()
@@ -251,16 +269,21 @@ class Graphics:
                 imgui.same_line(position=525)
                 imgui.text(numcon(pokemon.actualmdef))
                 imgui.same_line(position=600)
-                if imgui.arrow_button(f'downbutton##{num}', imgui.DIRECTION_UP):
+                use= num==0
+                if cls.disabledecorator(imgui.arrow_button,use)(f'downbutton##{num}', imgui.DIRECTION_UP):
                     Gamelogic.switch = num - 1
+
                 imgui.same_line()
-                if imgui.arrow_button(f'upbutton##{num}', imgui.DIRECTION_DOWN):
+                use= num == len(Gamelogic.party)-1
+                if cls.disabledecorator(imgui.arrow_button,use)(f'upbutton##{num}', imgui.DIRECTION_DOWN):
                     Gamelogic.switch = num
+
+
                 imgui.same_line()
-                if len(Gamelogic.party) > 1:
-                    imgui.same_line(position=698)
-                    if imgui.button(f'Remove##{num}', width=90):
-                        Gamelogic.remove = num
+                use= (pokemon.name=='You')
+                imgui.same_line(position=698)
+                if cls.disabledecorator(imgui.button,use)(f'Remove##{num}', width=90) and not use:
+                    Gamelogic.remove = num
 
         imgui.end_child()
         imgui.begin_child("Child 2", height=400, border=True)
@@ -279,10 +302,10 @@ class Graphics:
                 imgui.text(numcon(pokemon.actualmatk))
                 imgui.same_line(position=525)
                 imgui.text(numcon(pokemon.actualmdef))
-                if len(Gamelogic.party) < Gamelogic.partylenmax:
-                    imgui.same_line(position=698)
-                    if imgui.button(f'Add##{num}', 90):
-                        Gamelogic.add = num
+                use=not len(Gamelogic.party) < Gamelogic.partylenmax
+                imgui.same_line(position=698)
+                if cls.disabledecorator(imgui.button,use)(f'Add##{num}', 90) and not use:
+                    Gamelogic.add = num
 
         imgui.end_child()
         imgui.end()
@@ -302,27 +325,17 @@ class Graphics:
                 if imgui.button(f'Summon##{num}', 90):
                     Gamelogic.levelup = ['Party','Level',num]
                 imgui.same_line(position=530)
-                if not Gamelogic.physseeds.quantity:
-                    imgui.push_style_var(imgui.STYLE_ALPHA, 0.2)
-                if imgui.button(f'Physical##{num}', 90):
+                use= not Gamelogic.physseeds.quantity
+                if cls.disabledecorator(imgui.button,use)(f'Physical##{num}', 90):
                     Gamelogic.levelup = ['Party','Physical',num]
-                if not Gamelogic.physseeds.quantity:
-                    imgui.pop_style_var(1)
                 imgui.same_line(spacing=40)
-                if not Gamelogic.magicseeds.quantity:
-                    imgui.push_style_var(imgui.STYLE_ALPHA, 0.2)
-                if imgui.button(f'Magical##{num}', 90):
+                use= not Gamelogic.magicseeds.quantity
+                if cls.disabledecorator(imgui.button,use)(f'Magical##{num}', 90):
                     Gamelogic.levelup = ['Party','Magical',num]
-                if not Gamelogic.magicseeds.quantity:
-                    imgui.pop_style_var(1)
                 imgui.same_line(spacing=40)
-                if not Gamelogic.specialseeds.quantity:
-                    imgui.push_style_var(imgui.STYLE_ALPHA, 0.2)
-                if imgui.button(f'Special##{num}', 90):
+                use= not Gamelogic.specialseeds.quantity
+                if cls.disabledecorator(imgui.button,use)(f'Special##{num}', 90):
                     Gamelogic.levelup = ['Party','Special',num]
-                if not Gamelogic.specialseeds.quantity:
-                    imgui.pop_style_var(1)
-
             imgui.text('')
             imgui.same_line(position=560)
             imgui.text(numcon(pokemon.phys)+'/'+numcon(pokemon.lvl))
@@ -344,28 +357,19 @@ class Graphics:
                     Gamelogic.levelup = ['Reserve','Level',num]
                 imgui.same_line(position=530)
 
-                if not Gamelogic.physseeds.quantity:
-                    imgui.push_style_var(imgui.STYLE_ALPHA, 0.2)
-                if imgui.button(f'Physical##{1000+num}', 90):
+                use= not Gamelogic.physseeds.quantity
+                if cls.disabledecorator(imgui.button,use)(f'Physical##{1000+num}', 90):
                     Gamelogic.levelup = ['Reserve','Physical',num]
-                if not Gamelogic.physseeds.quantity:
-                    imgui.pop_style_var(1)
 
                 imgui.same_line(spacing=40)
-                if not Gamelogic.magicseeds.quantity:
-                    imgui.push_style_var(imgui.STYLE_ALPHA, 0.2)
-                if imgui.button(f'Magical##{1000+num}', 90):
+                use= not Gamelogic.magicseeds.quantity
+                if cls.disabledecorator(imgui.button,use)(f'Magical##{1000+num}', 90):
                     Gamelogic.levelup = ['Reserve','Magical',num]
-                if not Gamelogic.magicseeds.quantity:
-                    imgui.pop_style_var(1)
 
                 imgui.same_line(spacing=40)
-                if not Gamelogic.specialseeds.quantity:
-                    imgui.push_style_var(imgui.STYLE_ALPHA, 0.2)
-                if imgui.button(f'Special##{1000+num}', 90):
+                use= not Gamelogic.specialseeds.quantity
+                if cls.disabledecorator(imgui.button,use)(f'Special##{1000+num}', 90):
                     Gamelogic.levelup = ['Reserve','Special',num]
-                if not Gamelogic.specialseeds.quantity:
-                    imgui.pop_style_var(1)
 
             imgui.text('')
             imgui.same_line(position=560)
