@@ -4,7 +4,18 @@ import imgui
 import tooltips
 from Game_logic import Gamelogic
 from tooltips import actionTooltip
-
+def numcon(n):
+    if n>10000000:
+        return f'{round(n/1000000,1)}M'
+    elif n>1000000:
+        return f'{round(n/1000000,2)}M'
+    elif n>100000:
+        return f'{round(n/1000,0)}K'
+    elif n>10000:
+        return f'{round(n/1000,1)}K'
+    elif n>1000:
+        return f'{round(n/1000,2)}K'
+    return str(n)
 
 class Graphics:
     flags = imgui.WINDOW_NO_TITLE_BAR | imgui.WINDOW_NO_COLLAPSE | imgui.WINDOW_NO_RESIZE
@@ -172,12 +183,12 @@ class Graphics:
                     for subkey in Gamelogic.resources[key]:
                         if subkey.isvisible:
                             space = ''
-                            numofspace = 20 - len(subkey.name)
+                            numofspace = 16 - len(subkey.name)
                             if not numofspace:
                                 numofspace = 0
                             for i in range(numofspace):
                                 space += ' '
-                            imgui.text(subkey.name + space + str(subkey.quantity) + '/' + str(subkey.max))
+                            imgui.text(subkey.name + space + numcon(subkey.quantity) + '/' + numcon(subkey.max))
                             if imgui.is_item_hovered():
                                 with imgui.begin_tooltip():
                                     imgui.text(f"{subkey.name}")

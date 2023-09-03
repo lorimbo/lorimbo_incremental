@@ -1,12 +1,9 @@
-
+next action/flags for submenu
 habits
 area actions
-resources tooltips
-energies tooltips
 resources effects
 level up functionality
 dungeons
 astral plane
 party tab functionality
 save function is incomplete
-function that tranforms 1000 in 1.00K and so on

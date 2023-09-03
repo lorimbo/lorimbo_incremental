@@ -11,6 +11,16 @@ grey = (105, 105, 105)
 teal = (84, 186, 227)
 brown = (139, 69, 19)
 
+def numcon(n):
+    if n>1000000:
+        return f'{round(n/1000000,2)}M'
+    elif n>100000:
+        return f'{round(n/1000,0)}K'
+    elif n>10000:
+        return f'{round(n/1000,1)}K'
+    elif n>1000:
+        return f'{round(n/1000,2)}K'
+    return str(n)
 
 
 class Corestats:
@@ -516,7 +526,7 @@ def createupgradeactions(parent):
 
 def createresources(parent):
     Resource(parent, 'Destiny', 0, 100, {'Dubious home': 0}, 'Destiny', 0, resources=parent.resources)
-    Resource(parent, 'Wood', 50, 100, {'Dubious home': 1}, 'Wood', 0, resources=parent.resources)
+    Resource(parent, 'Wood', 50, 10000000, {'Dubious home': 1}, 'Wood', 0, resources=parent.resources)
     Resource(parent, 'Wooden statue', 0, 100, {'Dubious home': 2}, 'Accessories', 0, resources=parent.resources)
     Resource(parent, 'Stone', 0, 100, {'Dubious home': 0}, 'Minerals', 0, resources=parent.resources)
     Resource(parent, 'Firewood', 0, 100, {'Dubious home': 0}, 'Wood', 0, resources=parent.resources)
