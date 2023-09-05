@@ -9,3 +9,5 @@ save function is incomplete
 party effects
 party templates
 screen size change
+menu inside of a menu for actions
+screen size changes font size

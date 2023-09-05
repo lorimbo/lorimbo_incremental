@@ -9,7 +9,7 @@
                   "sdif": 1,
                   "maxlvl": 1000,
                   "unlocked": 0,
-                  "lvl": 0,
+                  "lvl": 1000,
                   "phys": 0,
                   "magic": 0,
                   "special": 0
@@ -37,9 +37,9 @@
                   "dif": 1,
                   "satk": 1,
                   "sdif": 1,
-                  "maxlvl": 1000,
+                  "maxlvl": 1011,
                   "unlocked": 0,
-                  "lvl": 0,
+                  "lvl": 1011,
                   "phys": 0,
                   "magic": 0,
                   "special": 0
@@ -57,9 +57,7 @@
                   "phys": 0,
                   "magic": 0,
                   "special": 0
-            }
-      ],
-      "reserve": [
+            },
             {
                   "name": "Goblin",
                   "hp": 150,
@@ -129,7 +127,9 @@
                   "phys": 0,
                   "magic": 0,
                   "special": 0
-            },
+            }
+      ],
+      "reserve": [
             {
                   "name": "Slime",
                   "hp": 80,

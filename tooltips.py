@@ -1,15 +1,15 @@
 description = {'Get motivated': ['test1', 'test2', 'test3'],'Wood': ['Suitable wood for','making firewood.']}
 
 def numcon(n):
-    if n > 10000000:
+    if n >= 10000000:
         return f'{round(n / 1000000, 1)}M'
-    elif n > 1000000:
+    elif n >= 1000000:
         return f'{round(n / 1000000, 2)}M'
-    elif n > 100000:
+    elif n >= 100000:
         return f'{round(n / 1000, 0)}K'
-    elif n > 10000:
+    elif n >= 10000:
         return f'{round(n / 1000, 1)}K'
-    elif n > 1000:
+    elif n >= 1000:
         return f'{round(n / 1000, 2)}K'
     return str(round(n, 1))
 

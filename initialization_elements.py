@@ -13,15 +13,15 @@ brown = (139, 69, 19)
 
 
 def numcon(n):
-    if n > 10000000:
+    if n >= 10000000:
         return f'{round(n / 1000000, 1)}M'
-    elif n > 1000000:
+    elif n >= 1000000:
         return f'{round(n / 1000000, 2)}M'
-    elif n > 100000:
+    elif n >= 100000:
         return f'{round(n / 1000, 0)}K'
-    elif n > 10000:
+    elif n >= 10000:
         return f'{round(n / 1000, 1)}K'
-    elif n > 1000:
+    elif n >= 1000:
         return f'{round(n / 1000, 2)}K'
     return str(round(n, 1))
 
@@ -452,7 +452,7 @@ class Pokemon(menuelement):
                 scaling1=1/10+self.phys*9/100
                 scaling2=1/10+self.magic*9/100
             else:
-                scaling1=1+self.lvl*8/100
+                scaling1=1+self.phys*8/100
                 scaling2 = 1 + self.magic * 8 / 100
 
             self.actualhp = scaling1 * self.parent.corestats.finalstats()['hp']

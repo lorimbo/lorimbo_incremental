@@ -36,9 +36,10 @@ def main():
     impl = PygameRenderer()
 
     io = imgui.get_io()
+    Graphics.io = io
     io.display_size = size
-    Graphics.new_font = io.fonts.add_font_from_file_ttf("orange kid.ttf", 35)
-    Graphics.new_font2 = io.fonts.add_font_from_file_ttf("orange kid.ttf", 45)
+    for i in range(2,100):
+        Graphics.Fonts['Helvetica'][str(i)]=io.fonts.add_font_from_file_ttf("Helvetica.ttf", i)
     impl.refresh_font_texture()
 
     # initialize variables here
@@ -57,12 +58,15 @@ def main():
         Gamelogic.frameaction()
         imgui.set_next_window_size(105, 68)
         imgui.set_next_window_position(1200, 900)
+        Gamelogic.io = io
         imgui.begin('fps', False)
         fpslist.append(round(clock.get_fps()))
         if len(fpslist)>100:
             fpslist=fpslist[-100:]
         imgui.text(f'FPS:{round(sum(fpslist) / len(fpslist))}')
         imgui.end()
+
+
 
 
         gl.glClearColor(119/255, 136/255, 153/255, 1)
@@ -72,6 +76,7 @@ def main():
 
         pygame.display.flip()
         clock.tick(Gamelogic.fps)
+
 
 
 
