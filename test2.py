@@ -56,8 +56,8 @@ def main():
         # add imgui stuff here
         Graphics.creategui()
         Gamelogic.frameaction()
-        imgui.set_next_window_size(105, 68)
-        imgui.set_next_window_position(1200, 900)
+        imgui.set_next_window_size(105, 50)
+        imgui.set_next_window_position(Graphics.widthfactor*1200, Graphics.heightfactor*500)
         Gamelogic.io = io
         imgui.begin('fps', False)
         fpslist.append(round(clock.get_fps()))

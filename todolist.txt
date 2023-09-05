@@ -8,6 +8,6 @@ party tab functionality
 save function is incomplete
 party effects
 party templates
-screen size change
+energy tooltip interacts poorly with resizing due to 
 menu inside of a menu for actions
-screen size changes font size
+implement gitlab

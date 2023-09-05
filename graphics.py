@@ -185,7 +185,7 @@ class Graphics:
     @classmethod
     def draw_energies(cls):
         visible = [e for e in Gamelogic.energies if e.isvisible]
-        imgui.set_next_window_size(cls.resizewidth(300), 16*cls.resizeheight(37 * len(visible)))
+        imgui.set_next_window_size(cls.resizewidth(300),cls.resizeheight(37 * len(visible)))
         imgui.set_next_window_position(cls.resizewidth(660+540), 0)
         imgui.begin('Energies', False, cls.resourcesflags)
         draw_list = imgui.get_window_draw_list()
@@ -228,7 +228,7 @@ class Graphics:
             windowheight = 40
         visible = [e for e in Gamelogic.energies if e.isvisible]
         imgui.set_next_window_size(cls.resizewidth(300), 15 + cls.resizeheight(21 * windowheight))
-        imgui.set_next_window_position(cls.resizewidth(1200), cls.resizeheight(35 * len(visible)))
+        imgui.set_next_window_position(cls.resizewidth(1200), cls.resizeheight(37 * len(visible)))
         imgui.begin('Resources', False, cls.resourcesflags)
         with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor*15)}']):
             for key in Gamelogic.resources:
