@@ -38,7 +38,7 @@ def main():
     io = imgui.get_io()
     Graphics.io = io
     io.display_size = size
-    for i in range(2,100):
+    for i in range(1,100):
         Graphics.Fonts['Helvetica'][str(i)]=io.fonts.add_font_from_file_ttf("Helvetica.ttf", i)
     impl.refresh_font_texture()
 

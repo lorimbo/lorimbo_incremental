@@ -25,19 +25,18 @@ def numcon(n):
 class Graphics:
     flags = imgui.WINDOW_NO_TITLE_BAR | imgui.WINDOW_NO_COLLAPSE | imgui.WINDOW_NO_RESIZE
     resourcesflags = imgui.WINDOW_NO_RESIZE
-    Fonts={'Helvetica':{}}
+    Fonts = {'Helvetica': {}}
     heightfactor = 1
     widthfactor = 1
-    fontfactor=1
-
+    fontfactor = 1
+    toggles = {}
 
     @classmethod
     def update_window_size(cls):
         size = list(pygame.display.get_window_size())
         cls.heightfactor = size[1] / 600
         cls.widthfactor = size[0] / 1500
-        cls.fontfactor = min(cls.heightfactor,cls.widthfactor)
-
+        cls.fontfactor = min(cls.heightfactor, cls.widthfactor)
 
     @classmethod
     def resizeheight(cls, n):
@@ -63,11 +62,11 @@ class Graphics:
     @classmethod
     def disabledecorator(cls, function, use):
         def inner1(*args, **kwargs):
-            #style= imgui.get_style()
-            #style.colors[imgui.COLOR_TITLE_BACKGROUND] = (1, 0, 0, 1)
-            #style.colors[imgui.COLOR_TITLE_BACKGROUND_ACTIVE] = (1, 0, 0, 1)
-            #style.colors[imgui.COLOR_BUTTON] = (0, 0, 1, 1)
-            imgui.push_style_color(imgui.COLOR_BUTTON,1,0,0,1)
+            # style= imgui.get_style()
+            # style.colors[imgui.COLOR_TITLE_BACKGROUND] = (1, 0, 0, 1)
+            # style.colors[imgui.COLOR_TITLE_BACKGROUND_ACTIVE] = (1, 0, 0, 1)
+            # style.colors[imgui.COLOR_BUTTON] = (0, 0, 1, 1)
+            imgui.push_style_color(imgui.COLOR_BUTTON, 1, 0, 0, 1)
             imgui.push_style_color(imgui.COLOR_BUTTON_HOVERED, 1, 0, 0, 1)
 
             imgui.push_style_var(imgui.STYLE_ALPHA, 0.2)
@@ -88,10 +87,10 @@ class Graphics:
         # Main menu
         visible = [e for e in Gamelogic.mainelements if e.isvisible]
         imgui.set_next_window_size(15 + cls.resizewidth(90),
-                                   5 * (len(visible) -1) + 18 + cls.resizeheight(30 * (len(visible) + 1)))
+                                   5 * (len(visible) - 1) + 18 + cls.resizeheight(30 * (len(visible) + 1)))
         imgui.set_next_window_position(cls.resizewidth(10), 0)
         imgui.begin('Main', False, cls.flags)
-        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor*15)}']):
+        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
             for button in visible:
                 use = not Gamelogic.tab == button.name
                 if cls.notinusedecorator(imgui.button, use)(button.name, cls.resizewidth(90), cls.resizeheight(30)):
@@ -103,7 +102,7 @@ class Graphics:
     @classmethod
     def draw_main_submenu(cls):
         visible = [e for e in Gamelogic.mainsubelements if e.isvisible]
-        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor*15)}']):
+        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
             for button in visible:
                 use = not Gamelogic.subtab == button.name
                 if cls.notinusedecorator(imgui.button, use)(button.name, cls.resizewidth(90), cls.resizeheight(30)):
@@ -116,80 +115,158 @@ class Graphics:
     @classmethod
     def draw_area(cls):
         finishline = cls.resizeheight(50)
-        for key in Gamelogic.instantactions:
-            visible = cls.get_visible_elements(Gamelogic.instantactions[key])
-            imgui.set_next_window_size(15 + cls.resizewidth(160),
-                                       36 + 5 * (len(visible)-1) + cls.resizeheight(50 * len(visible)))
-            imgui.set_next_window_position(50 + cls.resizewidth(180), finishline)
-            imgui.begin(key, False, cls.resourcesflags)
+        if 'instantactions' not in cls.toggles.keys():
+            cls.toggles['instantactions'] = {}
+        numberoftoggles = 0
+        numberofbuttons = 0
+        for key in cls.toggles['instantactions']:
+            numberoftoggles += 1
+            if cls.toggles['instantactions'][key]:
+                visible = cls.get_visible_elements(Gamelogic.instantactions[key])
+                for i in visible:
+                    numberofbuttons += 1
 
+        imgui.set_next_window_size(16 + cls.resizewidth(160),
+                                   18 + cls.resizeheight(20 * numberoftoggles) + 5 * (numberoftoggles + numberofbuttons - 1) + cls.resizeheight(
+                                       50 * numberofbuttons))
+        imgui.set_next_window_position(50 + cls.resizewidth(180), finishline
+                                       )
+        imgui.begin('Instantactions', False, cls.resourcesflags)
+        for key in Gamelogic.instantactions:
+            if key not in cls.toggles['instantactions']:
+                cls.toggles['instantactions'][key] = True
+
+            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
+                if cls.toggles['instantactions'][key]:
+                    direction = imgui.DIRECTION_DOWN
+                else:
+                    direction = imgui.DIRECTION_RIGHT
+                if imgui.arrow_button(f'Toggle##{key}', direction):
+                    cls.toggles['instantactions'][key] = not cls.toggles['instantactions'][key]
+                imgui.same_line()
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
-                finishline += 36 + 5 * (len(visible)-1) + cls.resizeheight(50 * len(visible))
-                for button in visible:
-                    use = button.isdisabled
-                    if cls.disabledecorator(imgui.button, use)(button.name, cls.resizewidth(160),
-                                                               cls.resizeheight(50)) and not button.isdisabled:
-                        Gamelogic.action = button.name
-                    if imgui.is_item_hovered():
-                        with imgui.begin_tooltip():
-                            imgui.text(f"{button.name}")
-                            tooltip = tooltips.actionTooltip(button.name, button.cost, button.complete)
-                            for i in tooltip:
-                                imgui.text(f"{i}")
-            imgui.end()
-        finishline = cls.resizeheight(50)
+                imgui.text(f'{key}')
+            if cls.toggles['instantactions'][key]:
+                visible = cls.get_visible_elements(Gamelogic.instantactions[key])
+                with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
+                    for button in visible:
+                        use = button.isdisabled
+                        if cls.disabledecorator(imgui.button, use)(button.name, cls.resizewidth(160),
+                                                                   cls.resizeheight(50)) and not button.isdisabled:
+                            Gamelogic.action = button.name
+                        if imgui.is_item_hovered():
+                            with imgui.begin_tooltip():
+                                imgui.text(f"{button.name}")
+                                tooltip = tooltips.actionTooltip(button.name, button.cost, button.complete)
+                                for i in tooltip:
+                                    imgui.text(f"{i}")
+        imgui.end()
+        if 'loopactions' not in cls.toggles.keys():
+            cls.toggles['loopactions'] = {}
+        numberoftoggles = 0
+        height2 = 0
+        for key in cls.toggles['loopactions']:
+            numberoftoggles += 1
+            if cls.toggles['loopactions'][key]:
+                visible = cls.get_visible_elements(Gamelogic.loopactions[key])
+                for i in visible:
+                    height2 += 1
+        imgui.set_next_window_size(16 + cls.resizewidth(160),
+                                   25 + cls.resizeheight(20 * numberoftoggles) + 6 * (numberoftoggles + height2 - 1) + cls.resizeheight(
+                                       70 * height2))
+        imgui.set_next_window_position(75 + cls.resizewidth(340), finishline
+                                       )
+        imgui.begin('Loopactions', False, cls.resourcesflags)
+
+
         for key in Gamelogic.loopactions:
-            visible = cls.get_visible_elements(Gamelogic.loopactions[key])
-            imgui.set_next_window_size(15 + cls.resizewidth(160),
-                                       34 + 6 * len(visible) + cls.resizeheight(70 * len(visible)))
-            imgui.set_next_window_position(75 + cls.resizewidth(340), finishline)
-            imgui.begin(key, False, cls.resourcesflags)
-            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor*15)}']):
-                finishline += 34 + 6 * len(visible) + cls.resizeheight(70 * len(visible))
-                for button in visible:
-                    use = button.isdisabled
-                    if cls.disabledecorator(imgui.button, use)(button.name, cls.resizewidth(160),
-                                                               cls.resizeheight(50)) and not button.isdisabled:
-                        button.activation()
-                    if imgui.is_item_hovered():
-                        with imgui.begin_tooltip():
-                            imgui.text(f"{button.name}")
-                            tooltip = tooltips.loopTooltip(button.name, button.cost, button.complete, button.progresscost,
-                                                           button.progresseffect)
-                            for i in tooltip:
-                                imgui.text(f"{i}")
-                    imgui.progress_bar(button.progress, (cls.resizewidth(160), cls.resizeheight(20)), 'Progress')
-            imgui.end()
-        finishline = cls.resizeheight(50)
+            if key not in cls.toggles['loopactions']:
+                cls.toggles['loopactions'][key] = True
+
+            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
+                if cls.toggles['loopactions'][key]:
+                    direction = imgui.DIRECTION_DOWN
+                else:
+                    direction = imgui.DIRECTION_RIGHT
+                if imgui.arrow_button(f'Toggle##{key}', direction):
+                    cls.toggles['loopactions'][key] = not cls.toggles['loopactions'][key]
+                imgui.same_line()
+            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
+                imgui.text(f'{key}')
+            if cls.toggles['loopactions'][key]:
+                visible = cls.get_visible_elements(Gamelogic.loopactions[key])
+                with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
+                    for button in visible:
+                        use = button.isdisabled
+                        if cls.disabledecorator(imgui.button, use)(button.name, cls.resizewidth(160),
+                                                                   cls.resizeheight(50)) and not button.isdisabled:
+                            button.activation()
+                        if imgui.is_item_hovered():
+                            with imgui.begin_tooltip():
+                                imgui.text(f"{button.name}")
+                                tooltip = tooltips.loopTooltip(button.name, button.cost, button.complete,
+                                                               button.progresscost,
+                                                               button.progresseffect)
+                                for i in tooltip:
+                                    imgui.text(f"{i}")
+                        imgui.progress_bar(button.progress, (cls.resizewidth(160), cls.resizeheight(20)), 'Progress')
+        imgui.end()
+        if 'upgradeactions' not in cls.toggles.keys():
+            cls.toggles['upgradeactions'] = {}
+        numberoftoggles = 0
+        numberofbuttons = 0
+        for key in cls.toggles['upgradeactions']:
+            numberoftoggles += 1
+            if cls.toggles['upgradeactions'][key]:
+                visible = cls.get_visible_elements(Gamelogic.upgradeactions[Gamelogic.subtab][key])
+                for i in visible:
+                    numberofbuttons += 1
+        imgui.set_next_window_size(16 + cls.resizewidth(160),
+                                     cls.resizeheight(20 * numberoftoggles) + 5 * (numberoftoggles + numberofbuttons - 1) + cls.resizeheight(
+                                       50 * numberofbuttons))
+        imgui.set_next_window_position(100 + cls.resizewidth(500), finishline
+                                       )
+        imgui.begin('Upgradeactions', False, cls.resourcesflags)
+
         for key in Gamelogic.upgradeactions[Gamelogic.subtab]:
             visible = cls.get_visible_elements(Gamelogic.upgradeactions[Gamelogic.subtab][key])
             if not len(visible):
                 continue
-            imgui.set_next_window_size(16 + cls.resizewidth(160),
-                                       34 + 4 * len(visible) + cls.resizeheight(50 * len(visible)))
-            imgui.set_next_window_position(100 + cls.resizewidth(500), finishline)
-            imgui.begin(key, False, cls.resourcesflags)
-            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor*15)}']):
-                finishline += 34 + 4 * len(visible) + cls.resizeheight(50 * len(visible))
-                for button in visible:
-                    use = button.isdisabled
-                    if cls.disabledecorator(imgui.button, use)(button.name, cls.resizewidth(160), cls.resizeheight(50)) and not button.isdisabled:
-                        Gamelogic.upgradeaction = button.name
-                    if imgui.is_item_hovered():
-                        with imgui.begin_tooltip():
-                            imgui.text(f"{button.name}")
-                            tooltip = tooltips.upgradeTooltip(button.name, button.cost, button.complete,
-                                                              button.requirements)
-                            for i in tooltip:
-                                imgui.text(f"{i}")
+            if key not in cls.toggles['upgradeactions']:
+                cls.toggles['upgradeactions'][key] = True
 
-            imgui.end()
+            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
+                if cls.toggles['upgradeactions'][key]:
+                    direction = imgui.DIRECTION_DOWN
+                else:
+                    direction = imgui.DIRECTION_RIGHT
+                if imgui.arrow_button(f'Toggle##{key}', direction):
+                    cls.toggles['upgradeactions'][key] = not cls.toggles['upgradeactions'][key]
+                imgui.same_line()
+            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
+                imgui.text(f'{key}')
+            if cls.toggles['upgradeactions'][key]:
+                with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
+                    for button in visible:
+                        use = button.isdisabled
+                        if cls.disabledecorator(imgui.button, use)(button.name, cls.resizewidth(160),
+                                                                   cls.resizeheight(50)) and not button.isdisabled:
+                            Gamelogic.upgradeaction = button.name
+                        if imgui.is_item_hovered():
+                            with imgui.begin_tooltip():
+                                imgui.text(f"{button.name}")
+                                tooltip = tooltips.upgradeTooltip(button.name, button.cost, button.complete,
+                                                                  button.requirements)
+                                for i in tooltip:
+                                    imgui.text(f"{i}")
+
+        imgui.end()
 
     @classmethod
     def draw_main(cls):
         visible = [e for e in Gamelogic.mainsubelements if e.isvisible]
         imgui.set_next_window_size(16 + cls.resizewidth(90),
-                                   14 + cls.resizeheight(30 * len(visible)) + 5 * (len(visible)-1))
+                                   14 + cls.resizeheight(30 * len(visible)) + 5 * (len(visible) - 1))
         imgui.set_next_window_position(30 + cls.resizewidth(90), 0)
         imgui.begin('Submenu', False, cls.flags)
         cls.draw_main_submenu()
@@ -199,8 +276,8 @@ class Graphics:
     @classmethod
     def draw_energies(cls):
         visible = [e for e in Gamelogic.energies if e.isvisible]
-        imgui.set_next_window_size(cls.resizewidth(300),cls.resizeheight(37 * len(visible)))
-        imgui.set_next_window_position(cls.resizewidth(660+540), 0)
+        imgui.set_next_window_size(cls.resizewidth(300), cls.resizeheight(37 * len(visible)))
+        imgui.set_next_window_position(cls.resizewidth(660 + 540), 0)
         imgui.begin('Energies', False, cls.resourcesflags)
         draw_list = imgui.get_window_draw_list()
         num = 0
@@ -211,19 +288,24 @@ class Graphics:
             draw_list.add_rect_filled(cls.resizewidth(1210), cls.resizeheight(30 + num * 25),
                                       cls.resizewidth(1210 + 270 * energy.quantity / energy.max),
                                       cls.resizeheight(50 + num * 25), imgui.get_color_u32_rgba(*color, 1), 0)
-            imgui.invisible_button(energy.name, cls.resizewidth(270),+cls.resizeheight(27))
-            if imgui.is_item_hovered():
+            mousepos = imgui.get_mouse_pos()
+
+            if cls.resizewidth(1210) < mousepos[0] < cls.resizewidth(1210 + 270) and cls.resizeheight(30 + num * 25) < \
+                    mousepos[1] < cls.resizeheight(50 + num * 25):
                 with imgui.begin_tooltip():
                     imgui.text(f"{energy.name}")
                     tooltip = tooltips.energyTooltip(energy.name, energy.quantity, energy.max, energy.regen)
                     for i in tooltip:
                         imgui.text(f"{i}")
-            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor*15)}']):
-                draw_list.add_text(cls.resizewidth(1220), cls.resizeheight(35 + num * 25), imgui.get_color_u32_rgba(1, 1, 1, 1), energy.name)
-                draw_list.add_text(cls.resizewidth(1320), cls.resizeheight(35 + num * 25), imgui.get_color_u32_rgba(1, 1, 1, 1),
+            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
+                draw_list.add_text(cls.resizewidth(1220), cls.resizeheight(35 + num * 25),
+                                   imgui.get_color_u32_rgba(1, 1, 1, 1), energy.name)
+                draw_list.add_text(cls.resizewidth(1320), cls.resizeheight(35 + num * 25),
+                                   imgui.get_color_u32_rgba(1, 1, 1, 1),
                                    str(round(energy.quantity, 1)) + '/' + str(
                                        round(energy.max, 0)))
-                draw_list.path_rect(cls.resizewidth(1210), cls.resizeheight(30 + num * 25), cls.resizewidth(1210 + 270), cls.resizeheight(50 + num * 25))
+                draw_list.path_rect(cls.resizewidth(1210), cls.resizeheight(30 + num * 25), cls.resizewidth(1210 + 270),
+                                    cls.resizeheight(50 + num * 25))
             draw_list.path_stroke(imgui.get_color_u32_rgba(1, 1, 1, 1), flags=0, thickness=1)
             draw_list.path_clear()
             draw_list.path_line_to(cls.resizewidth(1210), cls.resizeheight(30 + num * 25))
@@ -245,7 +327,7 @@ class Graphics:
         imgui.set_next_window_size(cls.resizewidth(300), 15 + cls.resizeheight(21 * windowheight))
         imgui.set_next_window_position(cls.resizewidth(1200), cls.resizeheight(37 * len(visible)))
         imgui.begin('Resources', False, cls.resourcesflags)
-        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor*15)}']):
+        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
             for key in Gamelogic.resources:
                 if [e for e in Gamelogic.resources[key] if e.isvisible]:
                     if imgui.tree_node(key, imgui.TREE_NODE_DEFAULT_OPEN):
@@ -269,12 +351,12 @@ class Graphics:
 
     @classmethod
     def draw_party_tabs(cls):
-        imgui.set_next_window_size(48+cls.resizewidth(600), 16+cls.resizeheight(30))
+        imgui.set_next_window_size(48 + cls.resizewidth(600), 16 + cls.resizeheight(30))
         imgui.set_next_window_position(cls.resizewidth(330), 0)
         imgui.begin('Partytabs', False, cls.flags)
         visible = cls.get_visible_elements(Gamelogic.partyelements)
         for element in visible:
-            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor*20)}']):
+            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
                 use = not Gamelogic.partysubtab == element.name
                 if cls.notinusedecorator(imgui.button, use)(element.name, cls.resizewidth(120), cls.resizeheight(30)):
                     Gamelogic.partysubtab = element.name
@@ -284,10 +366,10 @@ class Graphics:
     @classmethod
     def draw_Adventurer(cls):
         imgui.set_next_window_size(cls.resizewidth(1050), cls.resizeheight(65))
-        imgui.set_next_window_position(cls.resizewidth(120), 16+cls.resizeheight(30))
+        imgui.set_next_window_position(cls.resizewidth(120), 16 + cls.resizeheight(30))
         imgui.begin('Adventurer', False, cls.flags)
         Stats = Gamelogic.corestats.finalstats()
-        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor*30)}']):
+        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 30)}']):
             imgui.same_line(position=cls.resizewidth(150))
             imgui.text('[Core Stats]')
             imgui.same_line()
@@ -298,12 +380,13 @@ class Graphics:
 
     @classmethod
     def draw_party_menu(cls):
-        imgui.set_next_window_size(cls.resizewidth(1050), 16+cls.resizeheight(450))
-        imgui.set_next_window_position(cls.resizewidth(120),16+cls.resizeheight(95))
+        imgui.set_next_window_size(cls.resizewidth(1050), 16 + cls.resizeheight(450))
+        imgui.set_next_window_position(cls.resizewidth(120), 16 + cls.resizeheight(95))
         imgui.begin('Partymenu', False, cls.flags)
-        imgui.begin_child("Child 1", height=cls.resizeheight(150), border=True)
+        imgui.begin_child("Child 1", height=cls.resizeheight(150), border=True, flags=cls.resourcesflags)
+
         for num, pokemon in enumerate(Gamelogic.party):
-            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor*20)}']):
+            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
                 imgui.text(pokemon.name)
                 imgui.same_line(position=cls.resizewidth(125))
                 imgui.text(numcon(pokemon.lvl) + '/' + numcon(pokemon.maxlvl))
@@ -336,7 +419,7 @@ class Graphics:
         imgui.end_child()
         imgui.begin_child("Child 2", height=cls.resizeheight(280), border=True)
         for num, pokemon in enumerate(Gamelogic.reserve):
-            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor*20)}']):
+            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
                 imgui.text(pokemon.name)
                 imgui.same_line(position=cls.resizewidth(125))
                 imgui.text(numcon(pokemon.lvl) + '/' + numcon(pokemon.maxlvl))
@@ -361,11 +444,11 @@ class Graphics:
     @classmethod
     def draw_levelup_menu(cls):
         imgui.set_next_window_size(cls.resizewidth(1050), cls.resizeheight(450))
-        imgui.set_next_window_position(cls.resizewidth(120), 16+cls.resizeheight(95))
+        imgui.set_next_window_position(cls.resizewidth(120), 16 + cls.resizeheight(95))
         imgui.begin('Levelupmenu', False, cls.flags)
         imgui.begin_child("Child 1", height=cls.resizeheight(150), border=True)
         for num, pokemon in enumerate(Gamelogic.party):
-            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor*20)}']):
+            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
                 imgui.text(pokemon.name)
                 imgui.same_line(position=cls.resizewidth(150))
                 imgui.text(numcon(pokemon.lvl) + '/' + numcon(pokemon.maxlvl))
@@ -395,7 +478,7 @@ class Graphics:
         imgui.end_child()
         imgui.begin_child("Child 2", height=cls.resizeheight(280), border=True)
         for num, pokemon in enumerate(Gamelogic.reserve):
-            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor*20)}']):
+            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
                 imgui.text(pokemon.name)
                 imgui.same_line(position=cls.resizewidth(150))
                 imgui.text(numcon(pokemon.lvl) + '/' + numcon(pokemon.maxlvl))
@@ -432,10 +515,24 @@ class Graphics:
         imgui.end()
 
     @classmethod
+    def combomenu(cls):
+        imgui.set_next_window_size(500, 500)
+        imgui.begin('Testingtoggles', False, cls.flags)
+        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 30)}']):
+            if cls.disabledecorator(imgui.arrow_button, False)(f'downbutton', imgui.DIRECTION_DOWN):
+                cls.show = not cls.show
+            imgui.same_line()
+            imgui.text('Toggle')
+            if cls.show:
+                imgui.button('Prova')
+        imgui.imag
+
+        imgui.end()
+
+    @classmethod
     def creategui(cls):
         # window size thingy
         cls.update_window_size()
-
 
         # Main menu
         cls.draw_main_menu()
@@ -452,3 +549,5 @@ class Graphics:
                 cls.draw_party_menu()
             elif Gamelogic.partysubtab == Gamelogic.partyelements[1].name:
                 cls.draw_levelup_menu()
+        if Gamelogic.tab == Gamelogic.mainelements[2].name:
+            cls.combomenu()
