@@ -49,6 +49,8 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit(0)
+            if event.type ==pygame.KEYDOWN and event.key==pygame.K_F11:
+                pygame.display.toggle_fullscreen()
             impl.process_event(event)
         impl.process_inputs()
 

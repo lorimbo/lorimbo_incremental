@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 import imgui
 import pygame.display
+from pygame.locals import *
 
 import tooltips
 from Game_logic import Gamelogic
@@ -32,9 +33,11 @@ class Graphics:
 
     @classmethod
     def update_window_size(cls):
-        cls.heightfactor = pygame.display.get_window_size()[1] / 600
-        cls.widthfactor = pygame.display.get_window_size()[0] / 1500
+        size = list(pygame.display.get_window_size())
+        cls.heightfactor = size[1] / 600
+        cls.widthfactor = size[0] / 1500
         cls.fontfactor = min(cls.heightfactor,cls.widthfactor)
+
 
     @classmethod
     def resizeheight(cls, n):
@@ -60,9 +63,19 @@ class Graphics:
     @classmethod
     def disabledecorator(cls, function, use):
         def inner1(*args, **kwargs):
+            #style= imgui.get_style()
+            #style.colors[imgui.COLOR_TITLE_BACKGROUND] = (1, 0, 0, 1)
+            #style.colors[imgui.COLOR_TITLE_BACKGROUND_ACTIVE] = (1, 0, 0, 1)
+            #style.colors[imgui.COLOR_BUTTON] = (0, 0, 1, 1)
+            imgui.push_style_color(imgui.COLOR_BUTTON,1,0,0,1)
+            imgui.push_style_color(imgui.COLOR_BUTTON_HOVERED, 1, 0, 0, 1)
+
             imgui.push_style_var(imgui.STYLE_ALPHA, 0.2)
+
             func = function(*args, **kwargs)
             imgui.pop_style_var(1)
+            imgui.pop_style_color(1)
+            imgui.pop_style_color(1)
             return func
 
         if use:
@@ -109,6 +122,7 @@ class Graphics:
                                        36 + 5 * (len(visible)-1) + cls.resizeheight(50 * len(visible)))
             imgui.set_next_window_position(50 + cls.resizewidth(180), finishline)
             imgui.begin(key, False, cls.resourcesflags)
+
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
                 finishline += 36 + 5 * (len(visible)-1) + cls.resizeheight(50 * len(visible))
                 for button in visible:
@@ -204,11 +218,12 @@ class Graphics:
                     tooltip = tooltips.energyTooltip(energy.name, energy.quantity, energy.max, energy.regen)
                     for i in tooltip:
                         imgui.text(f"{i}")
-            draw_list.add_text(cls.resizewidth(1220), cls.resizeheight(35 + num * 25), imgui.get_color_u32_rgba(1, 1, 1, 1), energy.name)
-            draw_list.add_text(cls.resizewidth(1320), cls.resizeheight(35 + num * 25), imgui.get_color_u32_rgba(1, 1, 1, 1),
-                               str(round(energy.quantity, 1)) + '/' + str(
-                                   round(energy.max, 0)))
-            draw_list.path_rect(cls.resizewidth(1210), cls.resizeheight(30 + num * 25), cls.resizewidth(1210 + 270), cls.resizeheight(50 + num * 25))
+            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor*15)}']):
+                draw_list.add_text(cls.resizewidth(1220), cls.resizeheight(35 + num * 25), imgui.get_color_u32_rgba(1, 1, 1, 1), energy.name)
+                draw_list.add_text(cls.resizewidth(1320), cls.resizeheight(35 + num * 25), imgui.get_color_u32_rgba(1, 1, 1, 1),
+                                   str(round(energy.quantity, 1)) + '/' + str(
+                                       round(energy.max, 0)))
+                draw_list.path_rect(cls.resizewidth(1210), cls.resizeheight(30 + num * 25), cls.resizewidth(1210 + 270), cls.resizeheight(50 + num * 25))
             draw_list.path_stroke(imgui.get_color_u32_rgba(1, 1, 1, 1), flags=0, thickness=1)
             draw_list.path_clear()
             draw_list.path_line_to(cls.resizewidth(1210), cls.resizeheight(30 + num * 25))
