@@ -6,6 +6,72 @@ from pygame.locals import *
 import tooltips
 from Game_logic import Gamelogic
 from tooltips import actionTooltip
+red = (255, 0, 0)
+green = (0, 255, 0)
+blue = (0, 0, 255)
+white = (255, 255, 255)
+black = (0, 0, 0)
+purple = (127, 0, 255)
+orange = (255, 100, 0)
+grey = (105, 105, 105)
+teal = (84, 186, 227)
+brown = (139, 69, 19)
+pink=(255, 161, 245)
+mediumblue=(0,0,205)
+violet=(188, 122, 249)
+steelblue=(39,73,114)
+beige=(245,245,220)
+backgroundpink=(145,108,173)
+buttoncolor=(82, 56, 116)
+buttontextcolor=(173, 241, 130)
+evangelionorange=(220, 125, 104)
+
+def progressbardecorator(function):
+    def inner1(*args,**kwargs):
+        imgui.push_style_color(imgui.COLOR_FRAME_BACKGROUND,*[e / 255 for e in buttoncolor])
+        imgui.push_style_color(imgui.COLOR_TEXT, *[e / 255 for e in evangelionorange])
+        imgui.push_style_color(imgui.COLOR_PLOT_HISTOGRAM, *[e / 255 for e in buttontextcolor])
+        func = function(*args, **kwargs)
+        imgui.pop_style_color(1)
+        imgui.pop_style_color(1)
+        imgui.pop_style_color(1)
+        return func
+    return inner1
+
+
+def backgroundecorator(function):
+    def inner1(*args, **kwargs):
+        imgui.push_style_color(imgui.COLOR_WINDOW_BACKGROUND, *[e / 255 for e in backgroundpink])
+        imgui.push_style_color(imgui.COLOR_TITLE_BACKGROUND,*[e/255 for e in buttoncolor])
+        imgui.push_style_color(imgui.COLOR_TITLE_BACKGROUND_ACTIVE, *[e/255 for e in buttoncolor])
+        imgui.push_style_color(imgui.COLOR_TITLE_BACKGROUND_COLLAPSED,*[e/255 for e in buttoncolor])
+        imgui.push_style_color(imgui.COLOR_BUTTON_HOVERED, *[e/255 for e in violet])
+        imgui.push_style_color(imgui.COLOR_TEXT, *[e / 255 for e in buttontextcolor])
+        func = function(*args, **kwargs)
+        imgui.pop_style_color(1)
+        imgui.pop_style_color(1)
+        imgui.pop_style_color(1)
+        imgui.pop_style_color(1)
+        imgui.pop_style_color(1)
+        imgui.pop_style_color(1)
+        return func
+
+    return inner1
+def actiondecorator(function):
+    def inner1(*args,**kwargs):
+        imgui.push_style_color(imgui.COLOR_BUTTON,*[e/255 for e in buttoncolor])
+        imgui.push_style_color(imgui.COLOR_BUTTON_HOVERED,*[e/255 for e in violet])
+        imgui.push_style_color(imgui.COLOR_TEXT, *[e / 255 for e in buttontextcolor])
+        imgui.push_style_color(imgui.COLOR_BUTTON_ACTIVE,*[e/255 for e in pink])
+        imgui.push_style_color(imgui.COLOR_HEADER_HOVERED,*[e/255 for e in violet])
+        func = function(*args,**kwargs)
+        imgui.pop_style_color(1)
+        imgui.pop_style_color(1)
+        imgui.pop_style_color(1)
+        imgui.pop_style_color(1)
+        imgui.pop_style_color(1)
+        return func
+    return inner1
 
 
 def numcon(n):
@@ -30,6 +96,7 @@ class Graphics:
     widthfactor = 1
     fontfactor = 1
     toggles = {}
+    beginbackground = backgroundecorator(imgui.begin)
 
     @classmethod
     def update_window_size(cls):
@@ -45,42 +112,47 @@ class Graphics:
     @classmethod
     def resizewidth(cls, n):
         return round(cls.widthfactor * n, 0)
-
     @classmethod
     def notinusedecorator(cls, function, use):
+        @actiondecorator
+        def inner1(*args, **kwargs):
+            imgui.push_style_var(imgui.STYLE_ALPHA, 0.7)
+            func = function(*args, **kwargs)
+            imgui.pop_style_var(1)
+            return func
+
+        @actiondecorator
+        def inner2(*args, **kwargs):
+            imgui.push_style_var(imgui.STYLE_ALPHA, 1)
+            func = function(*args, **kwargs)
+            imgui.pop_style_var(1)
+            return func
+
+        if use:
+            return inner1
+        else:
+            return inner2
+
+    @classmethod
+    def disabledecorator(cls, function, use):
+        @actiondecorator
         def inner1(*args, **kwargs):
             imgui.push_style_var(imgui.STYLE_ALPHA, 0.5)
             func = function(*args, **kwargs)
             imgui.pop_style_var(1)
+
             return func
-
-        if use:
-            return inner1
-        else:
-            return function
-
-    @classmethod
-    def disabledecorator(cls, function, use):
-        def inner1(*args, **kwargs):
-            # style= imgui.get_style()
-            # style.colors[imgui.COLOR_TITLE_BACKGROUND] = (1, 0, 0, 1)
-            # style.colors[imgui.COLOR_TITLE_BACKGROUND_ACTIVE] = (1, 0, 0, 1)
-            # style.colors[imgui.COLOR_BUTTON] = (0, 0, 1, 1)
-            imgui.push_style_color(imgui.COLOR_BUTTON, 1, 0, 0, 1)
-            imgui.push_style_color(imgui.COLOR_BUTTON_HOVERED, 1, 0, 0, 1)
-
-            imgui.push_style_var(imgui.STYLE_ALPHA, 0.2)
-
+        @actiondecorator
+        def inner2(*args,**kwargs):
+            imgui.push_style_var(imgui.STYLE_ALPHA, 1)
             func = function(*args, **kwargs)
             imgui.pop_style_var(1)
-            imgui.pop_style_color(1)
-            imgui.pop_style_color(1)
             return func
 
         if use:
             return inner1
         else:
-            return function
+            return inner2
 
     @classmethod
     def draw_main_menu(cls):
@@ -89,55 +161,46 @@ class Graphics:
         imgui.set_next_window_size(15 + cls.resizewidth(90),
                                    5 * (len(visible) - 1) + 18 + cls.resizeheight(30 * (len(visible) + 1)))
         imgui.set_next_window_position(cls.resizewidth(10), 0)
-        imgui.begin('Main', False, cls.flags)
+        cls.beginbackground('Main', False, cls.flags)
         with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
             for button in visible:
                 use = not Gamelogic.tab == button.name
                 if cls.notinusedecorator(imgui.button, use)(button.name, cls.resizewidth(90), cls.resizeheight(30)):
                     Gamelogic.tab = button.name
-            if imgui.button('Save', cls.resizewidth(90), cls.resizeheight(30)):
+            if actiondecorator(imgui.button)('Save', cls.resizewidth(90), cls.resizeheight(30)):
                 Gamelogic.savegame()
         imgui.end()
 
     @classmethod
     def draw_main_submenu(cls):
+        imgui.begin('Submenu')
         visible = [e for e in Gamelogic.mainsubelements if e.isvisible]
         with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
             for button in visible:
                 use = not Gamelogic.subtab == button.name
                 if cls.notinusedecorator(imgui.button, use)(button.name, cls.resizewidth(90), cls.resizeheight(30)):
                     Gamelogic.subtab = button.name
-
+        imgui.end()
     @classmethod
     def get_visible_elements(cls, list):
         return [e for e in list if e.isvisible]
-
     @classmethod
-    def draw_area(cls):
+    def draw_instantactions(cls):
         finishline = cls.resizeheight(50)
+
         if 'instantactions' not in cls.toggles.keys():
             cls.toggles['instantactions'] = {}
-        numberoftoggles = 0
-        numberofbuttons = 0
-        for key in cls.toggles['instantactions']:
-            numberoftoggles += 1
-            if cls.toggles['instantactions'][key]:
-                visible = cls.get_visible_elements(Gamelogic.instantactions[key])
-                for i in visible:
-                    numberofbuttons += 1
-
-        height=18 + cls.resizeheight(20 * numberoftoggles) + 5 * (
-                                               numberoftoggles + numberofbuttons - 1) + cls.resizeheight(
-                                       50 * numberofbuttons)
-        if height + 100 > list(pygame.display.get_window_size())[1]:
-            height = list(pygame.display.get_window_size())[1] - 100
+        height = list(pygame.display.get_window_size())[1] - cls.resizeheight(100)
 
         imgui.set_next_window_size(16 + cls.resizewidth(160),
                                    height)
         imgui.set_next_window_position(50 + cls.resizewidth(180), finishline
                                        )
-        imgui.begin('Instantactions', False, cls.resourcesflags)
+        cls.beginbackground('Instantactions', False, cls.resourcesflags)
         for key in Gamelogic.instantactions:
+            visible = cls.get_visible_elements(Gamelogic.instantactions[key])
+            if not len(visible):
+                continue
             if key not in cls.toggles['instantactions']:
                 cls.toggles['instantactions'][key] = True
 
@@ -146,13 +209,12 @@ class Graphics:
                     direction = imgui.DIRECTION_DOWN
                 else:
                     direction = imgui.DIRECTION_RIGHT
-                if imgui.arrow_button(f'Toggle##{key}', direction):
+                if actiondecorator(imgui.arrow_button)(f'Toggle##{key}', direction):
                     cls.toggles['instantactions'][key] = not cls.toggles['instantactions'][key]
                 imgui.same_line()
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
-                imgui.text(f'{key}')
+                actiondecorator(imgui.text)(f'{key}')
             if cls.toggles['instantactions'][key]:
-                visible = cls.get_visible_elements(Gamelogic.instantactions[key])
                 with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
                     for button in visible:
                         use = button.isdisabled
@@ -166,43 +228,35 @@ class Graphics:
                                 for i in tooltip:
                                     imgui.text(f"{i}")
         imgui.end()
+    @classmethod
+    def draw_loopactions(cls):
+        finishline = cls.resizeheight(50)
         if 'loopactions' not in cls.toggles.keys():
             cls.toggles['loopactions'] = {}
-        numberoftoggles = 0
-        numberofbuttons = 0
-        for key in cls.toggles['loopactions']:
-            numberoftoggles += 1
-            if cls.toggles['loopactions'][key]:
-                visible = cls.get_visible_elements(Gamelogic.loopactions[key])
-                for i in visible:
-                    numberofbuttons += 1
-        height = 16 + cls.resizeheight(19 * numberoftoggles) + 6 * (
-                    numberoftoggles + numberofbuttons - 1) + cls.resizeheight(
-            70 * numberofbuttons)
-        if height + 100 > list(pygame.display.get_window_size())[1]:
-            height = list(pygame.display.get_window_size())[1] - 100
+        height = list(pygame.display.get_window_size())[1]-cls.resizeheight(100)
         imgui.set_next_window_size(16 + cls.resizewidth(160),
                                    height)
         imgui.set_next_window_position(75 + cls.resizewidth(340), finishline
                                        )
-        imgui.begin('Loopactions', False, cls.resourcesflags)
+        cls.beginbackground('Loopactions', False, cls.resourcesflags)
 
         for key in Gamelogic.loopactions:
+            visible = cls.get_visible_elements(Gamelogic.loopactions[key])
+            if not len(visible):
+                continue
             if key not in cls.toggles['loopactions']:
                 cls.toggles['loopactions'][key] = True
-
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.resizeheight(10))}']):
                 if cls.toggles['loopactions'][key]:
                     direction = imgui.DIRECTION_DOWN
                 else:
                     direction = imgui.DIRECTION_RIGHT
-                if imgui.arrow_button(f'Toggle##{key}', direction):
+                if actiondecorator(imgui.arrow_button)(f'Toggle##{key}', direction):
                     cls.toggles['loopactions'][key] = not cls.toggles['loopactions'][key]
                 imgui.same_line()
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
-                imgui.text(f'{key}')
+                actiondecorator(imgui.text)(f'{key}')
             if cls.toggles['loopactions'][key]:
-                visible = cls.get_visible_elements(Gamelogic.loopactions[key])
                 with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
                     for button in visible:
                         use = button.isdisabled
@@ -217,28 +271,21 @@ class Graphics:
                                                                button.progresseffect)
                                 for i in tooltip:
                                     imgui.text(f"{i}")
-                        imgui.progress_bar(button.progress, (cls.resizewidth(160), cls.resizeheight(20)), 'Progress')
+
+                        progressbardecorator(imgui.progress_bar)(button.progress, (cls.resizewidth(160), cls.resizeheight(20)))
         imgui.end()
+    @classmethod
+    def draw_upgradeactions(cls):
+        finishline = cls.resizeheight(50)
+
         if 'upgradeactions' not in cls.toggles.keys():
             cls.toggles['upgradeactions'] = {}
-        numberoftoggles = 0
-        numberofbuttons = 0
-        for key in cls.toggles['upgradeactions']:
-            numberoftoggles += 1
-            if cls.toggles['upgradeactions'][key]:
-                visible = cls.get_visible_elements(Gamelogic.upgradeactions[Gamelogic.subtab][key])
-                for i in visible:
-                    numberofbuttons += 1
-        height = 40 + cls.resizeheight(10) * numberoftoggles + 6 * (
-                    numberoftoggles + numberofbuttons - 1) + cls.resizeheight(
-            51) * numberofbuttons
-        if height + 100 > list(pygame.display.get_window_size())[1]:
-            height = list(pygame.display.get_window_size())[1] - 100
+        height = list(pygame.display.get_window_size())[1] - cls.resizeheight(100)
         imgui.set_next_window_size(16 + cls.resizewidth(160),
                                    height)
         imgui.set_next_window_position(100 + cls.resizewidth(500), finishline
                                        )
-        imgui.begin('Upgradeactions', False, cls.resourcesflags)
+        cls.beginbackground('Upgradeactions', False, cls.resourcesflags)
 
         for key in Gamelogic.upgradeactions[Gamelogic.subtab]:
             visible = cls.get_visible_elements(Gamelogic.upgradeactions[Gamelogic.subtab][key])
@@ -252,11 +299,11 @@ class Graphics:
                     direction = imgui.DIRECTION_DOWN
                 else:
                     direction = imgui.DIRECTION_RIGHT
-                if imgui.arrow_button(f'Toggle##{key}', direction):
+                if actiondecorator(imgui.arrow_button)(f'Toggle##{key}', direction):
                     cls.toggles['upgradeactions'][key] = not cls.toggles['upgradeactions'][key]
                 imgui.same_line()
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
-                imgui.text(f'{key}')
+                actiondecorator(imgui.text)(f'{key}')
             if cls.toggles['upgradeactions'][key]:
                 with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
                     for button in visible:
@@ -274,23 +321,31 @@ class Graphics:
 
         imgui.end()
 
+
+    @classmethod
+    def draw_area(cls):
+        cls.draw_instantactions()
+        cls.draw_loopactions()
+        cls.draw_upgradeactions()
+
     @classmethod
     def draw_main(cls):
         visible = [e for e in Gamelogic.mainsubelements if e.isvisible]
         imgui.set_next_window_size(16 + cls.resizewidth(90),
                                    14 + cls.resizeheight(30 * len(visible)) + 5 * (len(visible) - 1))
         imgui.set_next_window_position(30 + cls.resizewidth(90), 0)
-        imgui.begin('Submenu', False, cls.flags)
+        cls.beginbackground('Submenu', False, cls.flags)
+        imgui.end()
         cls.draw_main_submenu()
         cls.draw_area()
-        imgui.end()
+
 
     @classmethod
     def draw_energies(cls):
         visible = [e for e in Gamelogic.energies if e.isvisible]
         imgui.set_next_window_size(cls.resizewidth(300), cls.resizeheight(37 * len(visible)))
         imgui.set_next_window_position(cls.resizewidth(660 + 540), 0)
-        imgui.begin('Energies', False, cls.resourcesflags)
+        cls.beginbackground('Energies', False, cls.resourcesflags)
         draw_list = imgui.get_window_draw_list()
         num = 0
         for energy in visible:
@@ -311,9 +366,9 @@ class Graphics:
                         imgui.text(f"{i}")
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
                 draw_list.add_text(cls.resizewidth(1220), cls.resizeheight(35 + num * 25),
-                                   imgui.get_color_u32_rgba(1, 1, 1, 1), energy.name)
+                                   imgui.get_color_u32_rgba(*[e/255 for e in buttontextcolor], 1), energy.name)
                 draw_list.add_text(cls.resizewidth(1320), cls.resizeheight(35 + num * 25),
-                                   imgui.get_color_u32_rgba(1, 1, 1, 1),
+                                   imgui.get_color_u32_rgba(*[e/255 for e in buttontextcolor], 1),
                                    str(round(energy.quantity, 1)) + '/' + str(
                                        round(energy.max, 0)))
                 draw_list.path_rect(cls.resizewidth(1210), cls.resizeheight(30 + num * 25), cls.resizewidth(1210 + 270),
@@ -338,11 +393,11 @@ class Graphics:
         visible = [e for e in Gamelogic.energies if e.isvisible]
         imgui.set_next_window_size(cls.resizewidth(300), 15 + cls.resizeheight(21 * windowheight))
         imgui.set_next_window_position(cls.resizewidth(1200), cls.resizeheight(37 * len(visible)))
-        imgui.begin('Resources', False, cls.resourcesflags)
+        cls.beginbackground('Resources', False, cls.resourcesflags)
         with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
             for key in Gamelogic.resources:
                 if [e for e in Gamelogic.resources[key] if e.isvisible]:
-                    if imgui.tree_node(key, imgui.TREE_NODE_DEFAULT_OPEN):
+                    if actiondecorator(imgui.tree_node)(key, imgui.TREE_NODE_DEFAULT_OPEN):
                         for subkey in Gamelogic.resources[key]:
                             if subkey.isvisible:
                                 space = ''
@@ -351,7 +406,8 @@ class Graphics:
                                     numofspace = 0
                                 for i in range(numofspace):
                                     space += ' '
-                                imgui.text(subkey.name + space + numcon(subkey.quantity) + '/' + numcon(subkey.max))
+
+                                actiondecorator(imgui.text)(subkey.name + space + numcon(subkey.quantity) + '/' + numcon(subkey.max))
                                 if imgui.is_item_hovered():
                                     with imgui.begin_tooltip():
                                         imgui.text(f"{subkey.name}")
@@ -527,6 +583,8 @@ class Graphics:
         imgui.end()
 
 
+
+
     @classmethod
     def creategui(cls):
         # window size thingy
@@ -547,3 +605,5 @@ class Graphics:
                 cls.draw_party_menu()
             elif Gamelogic.partysubtab == Gamelogic.partyelements[1].name:
                 cls.draw_levelup_menu()
+        if Gamelogic.tab == Gamelogic.mainelements[2].name:
+            pass

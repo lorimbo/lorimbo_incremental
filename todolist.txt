@@ -10,7 +10,4 @@ party effects
 party templates
 
 implement browser(LATER)
-implement exe(DONE)
-
-figure out how to change progress bar color
-figure out which colors i want my buttons to be
+implement exe(KINDA DONE)

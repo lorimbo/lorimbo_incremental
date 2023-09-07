@@ -533,10 +533,10 @@ def createloopactions(parent):
     Loopaction(parent=parent, name='Exercise', isvisible=loopactionvisibility[1],
                elementlist=parent.loopactions['Common loopactions 2'], speed=1 / 600,
                progresscost=[['Action', -1 / 240, 0, 0]], progresseffect=[['Stamina', 1 / 240, 0, 0]])
-    '''Loopaction(parent=parent, name='Exercise2', isvisible=loopactionvisibility[1],
-               elementlist=parent.loopactions['Common loopactions 3'], speed=1 / 600,
+    Loopaction(parent=parent, name='Exercise2', isvisible=False,
+               elementlist=parent.loopactions['Common loopactions 3'], speed=1 / 600,unlockflags={'Dubious home':1},
                progresscost=[['Action', -1 / 240, 0, 0]], progresseffect=[['Stamina', 1 / 240, 0, 0]])
-    Loopaction(parent=parent, name='Exercise3', isvisible=loopactionvisibility[1],
+    '''Loopaction(parent=parent, name='Exercise3', isvisible=loopactionvisibility[1],
                elementlist=parent.loopactions['Common loopactions 3'], speed=1 / 600,
                progresscost=[['Action', -1 / 240, 0, 0]], progresseffect=[['Stamina', 1 / 240, 0, 0]])
     Loopaction(parent=parent, name='Exercise4', isvisible=loopactionvisibility[1],
@@ -626,9 +626,9 @@ def createresources(parent):
 
 def createenergies(parent):
     Energy(parent=parent, name='Action', quantity=0, max=5, unlockflags={'Dubious home': 0}, color=red, regen=0)
-    Energy(parent=parent, name='Stamina', quantity=0, max=1, unlockflags={'Dubious home': 0}, color=green,
+    Energy(parent=parent, name='Stamina', quantity=0, max=1, unlockflags={'Dubious home': 0}, color=(255,255,0),
            regen=0)
-    Energy(parent=parent, name='Mana', quantity=0, max=1, unlockflags={'Dubious home': 0}, color=blue,
+    Energy(parent=parent, name='Mana', quantity=0, max=1, unlockflags={'Dubious home': 0}, color=(0,0,205),
            regen=1 / 240)
     Energy(parent=parent, name='Fire', quantity=0, max=1, unlockflags={'Dubious home': 0}, color=orange,
            regen=1 / 240)
