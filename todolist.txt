@@ -8,8 +8,9 @@ party tab functionality
 save function is incomplete
 party effects
 party templates
-energy tooltip interacts poorly with resizing due to invis buttons
-menu inside of a menu for actions
-implement browser
+
+implement browser(LATER)
+implement exe(DONE)
+
 figure out how to change progress bar color
 figure out which colors i want my buttons to be

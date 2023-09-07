@@ -126,9 +126,14 @@ class Graphics:
                 for i in visible:
                     numberofbuttons += 1
 
+        height=18 + cls.resizeheight(20 * numberoftoggles) + 5 * (
+                                               numberoftoggles + numberofbuttons - 1) + cls.resizeheight(
+                                       50 * numberofbuttons)
+        if height + 100 > list(pygame.display.get_window_size())[1]:
+            height = list(pygame.display.get_window_size())[1] - 100
+
         imgui.set_next_window_size(16 + cls.resizewidth(160),
-                                   18 + cls.resizeheight(20 * numberoftoggles) + 5 * (numberoftoggles + numberofbuttons - 1) + cls.resizeheight(
-                                       50 * numberofbuttons))
+                                   height)
         imgui.set_next_window_position(50 + cls.resizewidth(180), finishline
                                        )
         imgui.begin('Instantactions', False, cls.resourcesflags)
@@ -136,7 +141,7 @@ class Graphics:
             if key not in cls.toggles['instantactions']:
                 cls.toggles['instantactions'][key] = True
 
-            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
+            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.resizeheight(10))}']):
                 if cls.toggles['instantactions'][key]:
                     direction = imgui.DIRECTION_DOWN
                 else:
@@ -164,26 +169,29 @@ class Graphics:
         if 'loopactions' not in cls.toggles.keys():
             cls.toggles['loopactions'] = {}
         numberoftoggles = 0
-        height2 = 0
+        numberofbuttons = 0
         for key in cls.toggles['loopactions']:
             numberoftoggles += 1
             if cls.toggles['loopactions'][key]:
                 visible = cls.get_visible_elements(Gamelogic.loopactions[key])
                 for i in visible:
-                    height2 += 1
+                    numberofbuttons += 1
+        height = 16 + cls.resizeheight(19 * numberoftoggles) + 6 * (
+                    numberoftoggles + numberofbuttons - 1) + cls.resizeheight(
+            70 * numberofbuttons)
+        if height + 100 > list(pygame.display.get_window_size())[1]:
+            height = list(pygame.display.get_window_size())[1] - 100
         imgui.set_next_window_size(16 + cls.resizewidth(160),
-                                   25 + cls.resizeheight(20 * numberoftoggles) + 6 * (numberoftoggles + height2 - 1) + cls.resizeheight(
-                                       70 * height2))
+                                   height)
         imgui.set_next_window_position(75 + cls.resizewidth(340), finishline
                                        )
         imgui.begin('Loopactions', False, cls.resourcesflags)
-
 
         for key in Gamelogic.loopactions:
             if key not in cls.toggles['loopactions']:
                 cls.toggles['loopactions'][key] = True
 
-            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
+            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.resizeheight(10))}']):
                 if cls.toggles['loopactions'][key]:
                     direction = imgui.DIRECTION_DOWN
                 else:
@@ -221,9 +229,13 @@ class Graphics:
                 visible = cls.get_visible_elements(Gamelogic.upgradeactions[Gamelogic.subtab][key])
                 for i in visible:
                     numberofbuttons += 1
+        height = 40 + cls.resizeheight(10) * numberoftoggles + 6 * (
+                    numberoftoggles + numberofbuttons - 1) + cls.resizeheight(
+            51) * numberofbuttons
+        if height + 100 > list(pygame.display.get_window_size())[1]:
+            height = list(pygame.display.get_window_size())[1] - 100
         imgui.set_next_window_size(16 + cls.resizewidth(160),
-                                     cls.resizeheight(20 * numberoftoggles) + 5 * (numberoftoggles + numberofbuttons - 1) + cls.resizeheight(
-                                       50 * numberofbuttons))
+                                   height)
         imgui.set_next_window_position(100 + cls.resizewidth(500), finishline
                                        )
         imgui.begin('Upgradeactions', False, cls.resourcesflags)
@@ -235,7 +247,7 @@ class Graphics:
             if key not in cls.toggles['upgradeactions']:
                 cls.toggles['upgradeactions'][key] = True
 
-            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
+            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.resizeheight(10))}']):
                 if cls.toggles['upgradeactions'][key]:
                     direction = imgui.DIRECTION_DOWN
                 else:
@@ -514,20 +526,6 @@ class Graphics:
 
         imgui.end()
 
-    @classmethod
-    def combomenu(cls):
-        imgui.set_next_window_size(500, 500)
-        imgui.begin('Testingtoggles', False, cls.flags)
-        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 30)}']):
-            if cls.disabledecorator(imgui.arrow_button, False)(f'downbutton', imgui.DIRECTION_DOWN):
-                cls.show = not cls.show
-            imgui.same_line()
-            imgui.text('Toggle')
-            if cls.show:
-                imgui.button('Prova')
-        imgui.imag
-
-        imgui.end()
 
     @classmethod
     def creategui(cls):
@@ -549,5 +547,3 @@ class Graphics:
                 cls.draw_party_menu()
             elif Gamelogic.partysubtab == Gamelogic.partyelements[1].name:
                 cls.draw_levelup_menu()
-        if Gamelogic.tab == Gamelogic.mainelements[2].name:
-            cls.combomenu()

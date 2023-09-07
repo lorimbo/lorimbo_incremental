@@ -533,6 +533,15 @@ def createloopactions(parent):
     Loopaction(parent=parent, name='Exercise', isvisible=loopactionvisibility[1],
                elementlist=parent.loopactions['Common loopactions 2'], speed=1 / 600,
                progresscost=[['Action', -1 / 240, 0, 0]], progresseffect=[['Stamina', 1 / 240, 0, 0]])
+    '''Loopaction(parent=parent, name='Exercise2', isvisible=loopactionvisibility[1],
+               elementlist=parent.loopactions['Common loopactions 3'], speed=1 / 600,
+               progresscost=[['Action', -1 / 240, 0, 0]], progresseffect=[['Stamina', 1 / 240, 0, 0]])
+    Loopaction(parent=parent, name='Exercise3', isvisible=loopactionvisibility[1],
+               elementlist=parent.loopactions['Common loopactions 3'], speed=1 / 600,
+               progresscost=[['Action', -1 / 240, 0, 0]], progresseffect=[['Stamina', 1 / 240, 0, 0]])
+    Loopaction(parent=parent, name='Exercise4', isvisible=loopactionvisibility[1],
+               elementlist=parent.loopactions['Common loopactions 3'], speed=1 / 600,
+               progresscost=[['Action', -1 / 240, 0, 0]], progresseffect=[['Stamina', 1 / 240, 0, 0]])'''
 
 
 def createpokemon(parent):
@@ -554,12 +563,53 @@ def createupgradeactions(parent):
     Upgradeactions(parent=parent, name='Wood quest2', isvisible=True,
                    elementlist=parent.upgradeactions['Village']['old house'],
                    cost=[['Wood', -10, 0, 0]], complete=[['resource', 'Wood', 20, 0, 0]],
-                   unlockflags={'Dubious home': 1, }, closingflags={'Dubious home': 2}, changeflags={'Dubious home': 1})
+                   unlockflags={'Dubious home': 0, }, closingflags={'Dubious home': 2}, changeflags={'Dubious home': 1})
     Upgradeactions(parent=parent, name='Wood quest3', isvisible=True,
                    complete=[['stat', 'hp', 20, 0, 0], ['stat', 'patk', 1000, 0, 0], ['stat', 'pdef', 70, 0, 0],
                              ['stat', 'matk', 5, 0, 0], ['stat', 'mdef', 10, 0, 0]],
                    elementlist=parent.upgradeactions['Village']['old house 2'],
-                   unlockflags={'Dubious home': 2, }, closingflags={'Dubious home': 3}, changeflags={'Dubious home': 1})
+                   unlockflags={'Dubious home': 0, }, closingflags={'Dubious home': 3}, changeflags={'Dubious home': 1})
+    Upgradeactions(parent=parent, name='Wood quest4', isvisible=True,
+                   complete=[['stat', 'hp', 20, 0, 0], ['stat', 'patk', 1000, 0, 0], ['stat', 'pdef', 70, 0, 0],
+                             ['stat', 'matk', 5, 0, 0], ['stat', 'mdef', 10, 0, 0]],
+                   elementlist=parent.upgradeactions['Village']['old house 3'],
+                   unlockflags={'Dubious home': 0, }, closingflags={'Dubious home': 3}, changeflags={'Dubious home': 1})
+    Upgradeactions(parent=parent, name='Wood quest5', isvisible=True,
+                   complete=[['stat', 'hp', 20, 0, 0], ['stat', 'patk', 1000, 0, 0], ['stat', 'pdef', 70, 0, 0],
+                             ['stat', 'matk', 5, 0, 0], ['stat', 'mdef', 10, 0, 0]],
+                   elementlist=parent.upgradeactions['Village']['old house 3'],
+                   unlockflags={'Dubious home': 0, }, closingflags={'Dubious home': 3}, changeflags={'Dubious home': 1})
+    Upgradeactions(parent=parent, name='Wood quest6', isvisible=True,
+                   complete=[['stat', 'hp', 20, 0, 0], ['stat', 'patk', 1000, 0, 0], ['stat', 'pdef', 70, 0, 0],
+                             ['stat', 'matk', 5, 0, 0], ['stat', 'mdef', 10, 0, 0]],
+                   elementlist=parent.upgradeactions['Village']['old house 3'],
+                   unlockflags={'Dubious home': 0, }, closingflags={'Dubious home': 3}, changeflags={'Dubious home': 1})
+    '''Upgradeactions(parent=parent, name='Wood quest7', isvisible=True,
+                   complete=[['stat', 'hp', 20, 0, 0], ['stat', 'patk', 1000, 0, 0], ['stat', 'pdef', 70, 0, 0],
+                             ['stat', 'matk', 5, 0, 0], ['stat', 'mdef', 10, 0, 0]],
+                   elementlist=parent.upgradeactions['Village']['old house 3'],
+                   unlockflags={'Dubious home': 0, }, closingflags={'Dubious home': 3}, changeflags={'Dubious home': 1})
+    Upgradeactions(parent=parent, name='Wood quest8', isvisible=True,
+                   complete=[['stat', 'hp', 20, 0, 0], ['stat', 'patk', 1000, 0, 0], ['stat', 'pdef', 70, 0, 0],
+                             ['stat', 'matk', 5, 0, 0], ['stat', 'mdef', 10, 0, 0]],
+                   elementlist=parent.upgradeactions['Village']['old house 3'],
+                   unlockflags={'Dubious home': 0, }, closingflags={'Dubious home': 3}, changeflags={'Dubious home': 1})
+    Upgradeactions(parent=parent, name='Wood quest9', isvisible=True,
+                   complete=[['stat', 'hp', 20, 0, 0], ['stat', 'patk', 1000, 0, 0], ['stat', 'pdef', 70, 0, 0],
+                             ['stat', 'matk', 5, 0, 0], ['stat', 'mdef', 10, 0, 0]],
+                   elementlist=parent.upgradeactions['Village']['old house 3'],
+                   unlockflags={'Dubious home': 0, }, closingflags={'Dubious home': 3}, changeflags={'Dubious home': 1})
+    Upgradeactions(parent=parent, name='Wood quest10', isvisible=True,
+                   complete=[['stat', 'hp', 20, 0, 0], ['stat', 'patk', 1000, 0, 0], ['stat', 'pdef', 70, 0, 0],
+                             ['stat', 'matk', 5, 0, 0], ['stat', 'mdef', 10, 0, 0]],
+                   elementlist=parent.upgradeactions['Village']['old house 3'],
+                   unlockflags={'Dubious home': 0, }, closingflags={'Dubious home': 3}, changeflags={'Dubious home': 1})
+    Upgradeactions(parent=parent, name='Wood quest11', isvisible=True,
+                   complete=[['stat', 'hp', 20, 0, 0], ['stat', 'patk', 1000, 0, 0], ['stat', 'pdef', 70, 0, 0],
+                             ['stat', 'matk', 5, 0, 0], ['stat', 'mdef', 10, 0, 0]],
+                   elementlist=parent.upgradeactions['Village']['old house 3'],
+                   unlockflags={'Dubious home': 0, }, closingflags={'Dubious home': 3}, changeflags={'Dubious home': 1})'''
+
 
 
 def createresources(parent):

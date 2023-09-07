@@ -27,8 +27,8 @@ class Gamelogic:
     mainsubelements = []
     partyelements = []
     instantactions = {'Common actions': [], 'Common actions 2': []}
-    loopactions = {'Common loopactions': [], 'Common loopactions 2': []}
-    upgradeactions = {'Village': {'old house': [], 'old house 2': []}, 'Forest': {}, 'City': {'old house': []},
+    loopactions = {'Common loopactions': [], 'Common loopactions 2': [],'Common loopactions 3':[]}
+    upgradeactions = {'Village': {'old house': [], 'old house 2': [],'old house 3':[]}, 'Forest': {}, 'City': {'old house': []},
                       'Coast': {}, 'Jungle': {}, 'Astral plane': {}}
     nextactions = []
     pokemonlist = []
