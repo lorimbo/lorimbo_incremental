@@ -250,7 +250,7 @@ class Graphics:
 
         if 'instantactions' not in cls.toggles.keys():
             cls.toggles['instantactions'] = {}
-        height = list(pygame.display.get_window_size())[1] - cls.resizeheight(100)
+        height = list(pygame.display.get_window_size())[1] - cls.resizeheight(150)
 
         imgui.set_next_window_size(16 + cls.resizewidth(160),
                                    height)
@@ -294,7 +294,7 @@ class Graphics:
         finishline = cls.resizeheight(50)
         if 'loopactions' not in cls.toggles.keys():
             cls.toggles['loopactions'] = {}
-        height = list(pygame.display.get_window_size())[1] - cls.resizeheight(100)
+        height = list(pygame.display.get_window_size())[1] - cls.resizeheight(150)
         imgui.set_next_window_size(16 + cls.resizewidth(160),
                                    height)
         imgui.set_next_window_position(75 + cls.resizewidth(340), finishline
@@ -324,8 +324,8 @@ class Graphics:
                         if cls.disabledecorator(imgui.button, use)(button.name, cls.resizewidth(160),
                                                                    cls.resizeheight(50)) and not button.isdisabled:
                             button.activation()
-                        if tooltipdecorator(imgui.is_item_hovered,cls.theme)():
-                            with imgui.begin_tooltip():
+                        if imgui.is_item_hovered():
+                            with tooltipdecorator(imgui.begin_tooltip,cls.theme)():
                                 actiondecorator(imgui.text,cls.theme)(f"{button.name}")
                                 tooltip = tooltips.loopTooltip(button.name, button.cost, button.complete,
                                                                button.progresscost,
@@ -344,7 +344,7 @@ class Graphics:
 
         if 'upgradeactions' not in cls.toggles.keys():
             cls.toggles['upgradeactions'] = {}
-        height = list(pygame.display.get_window_size())[1] - cls.resizeheight(100)
+        height = list(pygame.display.get_window_size())[1] - cls.resizeheight(150)
         imgui.set_next_window_size(16 + cls.resizewidth(160),
                                    height)
         imgui.set_next_window_position(100 + cls.resizewidth(500), finishline
@@ -405,7 +405,7 @@ class Graphics:
     @classmethod
     def draw_energies(cls):
         visible = [e for e in Gamelogic.energies if e.isvisible]
-        imgui.set_next_window_size(cls.resizewidth(300), cls.resizeheight(37 * len(visible)))
+        imgui.set_next_window_size(cls.resizewidth(300), 5*len(visible)+cls.resizeheight(50)+cls.resizeheight(20 * len(visible)))
         imgui.set_next_window_position(cls.resizewidth(660 + 540), 0)
         backgroundecorator(imgui.begin,cls.theme)('Energies', False, cls.resourcesflags)
         draw_list = imgui.get_window_draw_list()
@@ -453,8 +453,8 @@ class Graphics:
         if windowheight > 40:
             windowheight = 40
         visible = [e for e in Gamelogic.energies if e.isvisible]
-        imgui.set_next_window_size(cls.resizewidth(300), 15 + cls.resizeheight(21 * windowheight))
-        imgui.set_next_window_position(cls.resizewidth(1200), cls.resizeheight(37 * len(visible)))
+        imgui.set_next_window_size(cls.resizewidth(300), list(pygame.display.get_window_size())[1] - cls.resizeheight(100)-(5*len(visible)+cls.resizeheight(50)+cls.resizeheight(20 * len(visible))))
+        imgui.set_next_window_position(cls.resizewidth(1200), 5*len(visible)+cls.resizeheight(50)+cls.resizeheight(20 * len(visible)))
         backgroundecorator(imgui.begin,cls.theme)('Resources', False, cls.resourcesflags)
         with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
             for key in Gamelogic.resources:
@@ -483,8 +483,8 @@ class Graphics:
     @classmethod
     def draw_party_tabs(cls):
         imgui.set_next_window_size(48 + cls.resizewidth(600), 16 + cls.resizeheight(30))
-        imgui.set_next_window_position(cls.resizewidth(330), 0)
-        imgui.begin('Partytabs', False, cls.flags)
+        imgui.set_next_window_position(cls.resizewidth(330), cls.resizeheight(50))
+        backgroundecorator(imgui.begin,cls.theme)('Partytabs', False, cls.flags)
         visible = cls.get_visible_elements(Gamelogic.partyelements)
         for element in visible:
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
@@ -497,40 +497,42 @@ class Graphics:
     @classmethod
     def draw_Adventurer(cls):
         imgui.set_next_window_size(cls.resizewidth(1050), cls.resizeheight(65))
-        imgui.set_next_window_position(cls.resizewidth(120), 16 + cls.resizeheight(30))
-        imgui.begin('Adventurer', False, cls.flags)
+        imgui.set_next_window_position(cls.resizewidth(120), 16 + cls.resizeheight(80))
+        backgroundecorator(imgui.begin,cls.theme)('Adventurer', False, cls.flags)
         Stats = Gamelogic.corestats.finalstats()
         with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 30)}']):
             imgui.same_line(position=cls.resizewidth(150))
-            imgui.text('[Core Stats]')
+            actiondecorator(imgui.text,cls.theme)('[Core Stats]')
             imgui.same_line()
             for key in Stats:
-                imgui.text(key + ':' + numcon(Stats[key]))
+                actiondecorator(imgui.text,cls.theme)(key + ':' + numcon(Stats[key]))
                 imgui.same_line()
         imgui.end()
 
     @classmethod
     def draw_party_menu(cls):
-        imgui.set_next_window_size(cls.resizewidth(1050), 16 + cls.resizeheight(450))
-        imgui.set_next_window_position(cls.resizewidth(120), 16 + cls.resizeheight(95))
-        imgui.begin('Partymenu', False, cls.flags)
-        imgui.begin_child("Child 1", height=cls.resizeheight(150), border=True, flags=cls.resourcesflags)
+        imgui.set_next_window_size(cls.resizewidth(1050), 16 + cls.resizeheight(335))
+        imgui.set_next_window_position(cls.resizewidth(120), 16 + cls.resizeheight(145))
+        backgroundecorator(imgui.begin,cls.theme)('Partymenu', False, cls.flags)
+        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 40)}']):
+            actiondecorator(imgui.text,cls.theme)('Party')
+        imgui.begin_child("Child 1", height=cls.resizeheight(110), border=True, flags=cls.resourcesflags)
 
         for num, pokemon in enumerate(Gamelogic.party):
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
-                imgui.text(pokemon.name)
+                actiondecorator(imgui.text,cls.theme)(pokemon.name)
                 imgui.same_line(position=cls.resizewidth(125))
-                imgui.text(numcon(pokemon.lvl) + '/' + numcon(pokemon.maxlvl))
+                actiondecorator(imgui.text,cls.theme)(numcon(pokemon.lvl) + '/' + numcon(pokemon.maxlvl))
                 imgui.same_line(position=cls.resizewidth(250))
-                imgui.text(numcon(pokemon.actualhp))
+                actiondecorator(imgui.text,cls.theme)(numcon(pokemon.actualhp))
                 imgui.same_line(position=cls.resizewidth(350))
-                imgui.text(numcon(pokemon.actualpatk))
+                actiondecorator(imgui.text,cls.theme)(numcon(pokemon.actualpatk))
                 imgui.same_line(position=cls.resizewidth(450))
-                imgui.text(numcon(pokemon.actualpdef))
+                actiondecorator(imgui.text,cls.theme)(numcon(pokemon.actualpdef))
                 imgui.same_line(position=cls.resizewidth(550))
-                imgui.text(numcon(pokemon.actualmatk))
+                actiondecorator(imgui.text,cls.theme)(numcon(pokemon.actualmatk))
                 imgui.same_line(position=cls.resizewidth(650))
-                imgui.text(numcon(pokemon.actualmdef))
+                actiondecorator(imgui.text,cls.theme)(numcon(pokemon.actualmdef))
                 imgui.same_line(position=cls.resizewidth(750))
                 use = num == 0
                 if cls.disabledecorator(imgui.arrow_button, use)(f'downbutton##{num}', imgui.DIRECTION_UP):
@@ -548,22 +550,24 @@ class Graphics:
                     Gamelogic.remove = num
 
         imgui.end_child()
-        imgui.begin_child("Child 2", height=cls.resizeheight(280), border=True)
+        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 40)}']):
+            actiondecorator(imgui.text,cls.theme)('Reserve')
+        imgui.begin_child("Child 2", height=cls.resizeheight(170), border=True)
         for num, pokemon in enumerate(Gamelogic.reserve):
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
-                imgui.text(pokemon.name)
+                actiondecorator(imgui.text,cls.theme)(pokemon.name)
                 imgui.same_line(position=cls.resizewidth(125))
-                imgui.text(numcon(pokemon.lvl) + '/' + numcon(pokemon.maxlvl))
+                actiondecorator(imgui.text,cls.theme)(numcon(pokemon.lvl) + '/' + numcon(pokemon.maxlvl))
                 imgui.same_line(position=cls.resizewidth(250))
-                imgui.text(numcon(pokemon.actualhp))
+                actiondecorator(imgui.text,cls.theme)(numcon(pokemon.actualhp))
                 imgui.same_line(position=cls.resizewidth(350))
-                imgui.text(numcon(pokemon.actualpatk))
+                actiondecorator(imgui.text,cls.theme)(numcon(pokemon.actualpatk))
                 imgui.same_line(position=cls.resizewidth(450))
-                imgui.text(numcon(pokemon.actualpdef))
+                actiondecorator(imgui.text,cls.theme)(numcon(pokemon.actualpdef))
                 imgui.same_line(position=cls.resizewidth(550))
-                imgui.text(numcon(pokemon.actualmatk))
+                actiondecorator(imgui.text,cls.theme)(numcon(pokemon.actualmatk))
                 imgui.same_line(position=cls.resizewidth(650))
-                imgui.text(numcon(pokemon.actualmdef))
+                actiondecorator(imgui.text,cls.theme)(numcon(pokemon.actualmdef))
                 use = not len(Gamelogic.party) < Gamelogic.partylenmax
                 imgui.same_line(position=cls.resizewidth(850))
                 if cls.disabledecorator(imgui.button, use)(f'Add##{num}', cls.resizewidth(90)) and not use:
@@ -574,17 +578,19 @@ class Graphics:
 
     @classmethod
     def draw_levelup_menu(cls):
-        imgui.set_next_window_size(cls.resizewidth(1050), cls.resizeheight(450))
-        imgui.set_next_window_position(cls.resizewidth(120), 16 + cls.resizeheight(95))
-        imgui.begin('Levelupmenu', False, cls.flags)
-        imgui.begin_child("Child 1", height=cls.resizeheight(150), border=True)
+        imgui.set_next_window_size(cls.resizewidth(1050), 16 + cls.resizeheight(335))
+        imgui.set_next_window_position(cls.resizewidth(120), 16 + cls.resizeheight(145))
+        backgroundecorator(imgui.begin,cls.theme)('Levelupmenu', False, cls.flags)
+        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 40)}']):
+            actiondecorator(imgui.text,cls.theme)('Party')
+        imgui.begin_child("Child 1", height=cls.resizeheight(110), border=True)
         for num, pokemon in enumerate(Gamelogic.party):
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
-                imgui.text(pokemon.name)
+                actiondecorator(imgui.text,cls.theme)(pokemon.name)
                 imgui.same_line(position=cls.resizewidth(150))
-                imgui.text(numcon(pokemon.lvl) + '/' + numcon(pokemon.maxlvl))
+                actiondecorator(imgui.text,cls.theme)(numcon(pokemon.lvl) + '/' + numcon(pokemon.maxlvl))
                 imgui.same_line(position=cls.resizewidth(280))
-                if imgui.button(f'Summon##{num}', 90):
+                if actiondecorator(imgui.button,cls.theme)(f'Summon##{num}', 90):
                     Gamelogic.levelup = ['Party', 'Level', num]
                 imgui.same_line(position=cls.resizewidth(530))
                 use = not Gamelogic.physseeds.quantity
@@ -600,22 +606,24 @@ class Graphics:
                     Gamelogic.levelup = ['Party', 'Special', num]
             imgui.text('')
             imgui.same_line(position=cls.resizewidth(560))
-            imgui.text(numcon(pokemon.phys) + '/' + numcon(pokemon.lvl))
+            actiondecorator(imgui.text,cls.theme)(numcon(pokemon.phys) + '/' + numcon(pokemon.lvl))
             imgui.same_line(position=cls.resizewidth(690))
-            imgui.text(numcon(pokemon.magic) + '/' + numcon(pokemon.lvl))
+            actiondecorator(imgui.text,cls.theme)(numcon(pokemon.magic) + '/' + numcon(pokemon.lvl))
             imgui.same_line(position=cls.resizewidth(820))
-            imgui.text(numcon(pokemon.special) + '/' + numcon(pokemon.lvl))
+            actiondecorator(imgui.text,cls.theme)(numcon(pokemon.special) + '/' + numcon(pokemon.lvl))
 
         imgui.end_child()
-        imgui.begin_child("Child 2", height=cls.resizeheight(280), border=True)
+        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 40)}']):
+            actiondecorator(imgui.text,cls.theme)('Reserve')
+        imgui.begin_child("Child 2", height=cls.resizeheight(170), border=True)
         for num, pokemon in enumerate(Gamelogic.reserve):
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
-                imgui.text(pokemon.name)
+                actiondecorator(imgui.text,cls.theme)(pokemon.name)
                 imgui.same_line(position=cls.resizewidth(150))
-                imgui.text(numcon(pokemon.lvl) + '/' + numcon(pokemon.maxlvl))
+                actiondecorator(imgui.text,cls.theme)(numcon(pokemon.lvl) + '/' + numcon(pokemon.maxlvl))
                 imgui.same_line(position=cls.resizewidth(280))
 
-                if imgui.button(f'Summon##{1000 + num}', 90):
+                if actiondecorator(imgui.button,cls.theme)(f'Summon##{1000 + num}', 90):
                     Gamelogic.levelup = ['Reserve', 'Level', num]
                 imgui.same_line(position=cls.resizewidth(530))
 
@@ -635,11 +643,11 @@ class Graphics:
 
             imgui.text('')
             imgui.same_line(position=cls.resizewidth(560))
-            imgui.text(numcon(pokemon.phys) + '/' + numcon(pokemon.lvl))
+            actiondecorator(imgui.text,cls.theme)(numcon(pokemon.phys) + '/' + numcon(pokemon.lvl))
             imgui.same_line(position=cls.resizewidth(690))
-            imgui.text(numcon(pokemon.magic) + '/' + numcon(pokemon.lvl))
+            actiondecorator(imgui.text,cls.theme)(numcon(pokemon.magic) + '/' + numcon(pokemon.lvl))
             imgui.same_line(position=cls.resizewidth(820))
-            imgui.text(numcon(pokemon.special) + '/' + numcon(pokemon.lvl))
+            actiondecorator(imgui.text,cls.theme)(numcon(pokemon.special) + '/' + numcon(pokemon.lvl))
 
         imgui.end_child()
 
@@ -663,12 +671,30 @@ class Graphics:
 
         imgui.end()
 
+
+    @classmethod
+    def draw_bottombar(cls):
+        imgui.set_next_window_size(list(pygame.display.get_window_size())[0], cls.resizeheight(100))
+        imgui.set_next_window_position(cls.resizewidth(0), list(pygame.display.get_window_size())[1] - cls.resizeheight(100))
+        backgroundecorator(imgui.begin, cls.theme)('Bottonbar', False, cls.flags)
+
+        imgui.end()
+    @classmethod
+    def draw_topbar(cls):
+        imgui.set_next_window_size(list(pygame.display.get_window_size())[0]-cls.resizewidth(300), cls.resizeheight(50))
+        imgui.set_next_window_position(0,0)
+        backgroundecorator(imgui.begin, cls.theme)('Topbar', False, cls.flags)
+
+        imgui.end()
+
     @classmethod
     def creategui(cls):
         # window size thingy
         cls.update_window_size()
 
         # Main menu
+        cls.draw_topbar()
+        cls.draw_bottombar()
         cls.draw_main_menu()
         cls.draw_energies()
         cls.draw_resources()

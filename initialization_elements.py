@@ -633,3 +633,8 @@ def createenergies(parent):
            regen=1 / 240)
     Energy(parent=parent, name='Fire', quantity=0, max=1, unlockflags={'Dubious home': 0}, color=orange,
            regen=1 / 240)
+    Energy(parent=parent, name='Wind', quantity=0, max=1, unlockflags={'Dubious home': 0}, color=teal,
+           regen=1 / 240)
+    Energy(parent=parent, name='Earth', quantity=0, max=1, unlockflags={'Dubious home': 0}, color=brown,
+           regen=1 / 240)
+

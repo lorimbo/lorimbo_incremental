@@ -87,6 +87,22 @@
                   "special": 0
             },
             {
+                  "name": "Slime",
+                  "hp": 80,
+                  "atk": 80,
+                  "dif": 80,
+                  "satk": 80,
+                  "sdif": 80,
+                  "maxlvl": 10,
+                  "unlocked": 0,
+                  "lvl": 0,
+                  "phys": 0,
+                  "magic": 0,
+                  "special": 0
+            }
+      ],
+      "reserve": [
+            {
                   "name": "You1",
                   "hp": 5,
                   "atk": 1,
@@ -122,22 +138,6 @@
                   "satk": 1,
                   "sdif": 1,
                   "maxlvl": 1000,
-                  "unlocked": 0,
-                  "lvl": 0,
-                  "phys": 0,
-                  "magic": 0,
-                  "special": 0
-            }
-      ],
-      "reserve": [
-            {
-                  "name": "Slime",
-                  "hp": 80,
-                  "atk": 80,
-                  "dif": 80,
-                  "satk": 80,
-                  "sdif": 80,
-                  "maxlvl": 10,
                   "unlocked": 0,
                   "lvl": 0,
                   "phys": 0,
