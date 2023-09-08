@@ -5,6 +5,7 @@ import imgui
 import pygame
 import sys
 from graphics import Graphics
+import graphics
 from Game_logic import Gamelogic
 
 # color library
@@ -71,7 +72,7 @@ def main():
 
 
 
-        gl.glClearColor(220/255, 126/255, 104/255, 1)
+        gl.glClearColor(*[e/255 for e in graphics.Themes[Graphics.theme]['mainbackground']], 1)
         gl.glClear(gl.GL_COLOR_BUFFER_BIT)
         imgui.render()
         impl.render(imgui.get_draw_data())

@@ -10,4 +10,8 @@ party effects
 party templates
 
 implement browser(LATER)
-implement exe(KINDA DONE)
+implement exe(DONE)
+
+add settings
+add color schemes to setting(asuka evangalion vs rey evangelion)(IMPORTANT!!)
+add bold helvetica and use it for energies

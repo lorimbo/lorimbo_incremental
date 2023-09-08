@@ -505,6 +505,7 @@ def createmenu(parent):
     menuelement(parent=parent, name='Routine', isvisible=True, elementlist=parent.mainelements)
     menuelement(parent=parent, name='Story', isvisible=True, elementlist=parent.mainelements)
     menuelement(parent=parent, name='Dungeon', isvisible=True, elementlist=parent.mainelements)
+    menuelement(parent=parent, name='Settings', isvisible=True, elementlist=parent.mainelements)
 
 
 def createmainsubmenu(parent):
