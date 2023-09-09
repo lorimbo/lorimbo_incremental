@@ -36,9 +36,9 @@ Themes = {
             'buttonhovercolor': (203, 214, 215),
             'buttontextcolor': (75,0,130), 'mainbackground':(245, 189, 218),'buttonactivecolor':(255, 255, 255),
             'darkerbuttoncolor': (128, 0, 128)},
-    'asuka': {'backgroundhovercolor': (188, 122, 249), 'menubackgroundcolor': (145, 108, 173), 'buttoncolor': (82, 56, 116),
-              'buttonhovercolor': (188, 122, 249),
-              'buttontextcolor': (173, 241, 130), 'mainbackground': (220, 125, 104),'buttonactivecolor':(255, 161, 245),
+    'asuka': {'backgroundhovercolor': (188, 122, 249), 'menubackgroundcolor': (156, 0, 0), 'buttoncolor': (56, 1, 7),
+              'buttonhovercolor': (100, 0, 0),
+              'buttontextcolor': (214, 92, 48), 'mainbackground': (166, 111, 140),'buttonactivecolor':(255, 161, 245),
               'darkerbuttoncolor': (128, 0, 128)}
     }
 def tooltipdecorator(function,theme):
@@ -453,7 +453,7 @@ class Graphics:
         if windowheight > 40:
             windowheight = 40
         visible = [e for e in Gamelogic.energies if e.isvisible]
-        imgui.set_next_window_size(cls.resizewidth(300), list(pygame.display.get_window_size())[1] - cls.resizeheight(100)-(5*len(visible)+cls.resizeheight(50)+cls.resizeheight(20 * len(visible))))
+        imgui.set_next_window_size(cls.resizewidth(300), list(pygame.display.get_window_size())[1] -(5*len(visible)+cls.resizeheight(50)+cls.resizeheight(20 * len(visible))))
         imgui.set_next_window_position(cls.resizewidth(1200), 5*len(visible)+cls.resizeheight(50)+cls.resizeheight(20 * len(visible)))
         backgroundecorator(imgui.begin,cls.theme)('Resources', False, cls.resourcesflags)
         with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
@@ -655,8 +655,8 @@ class Graphics:
 
     @classmethod
     def draw_settings(cls):
-        imgui.set_next_window_size(cls.resizewidth(1050), cls.resizeheight(500))
-        imgui.set_next_window_position(cls.resizewidth(120), cls.resizeheight(50))
+        imgui.set_next_window_size(cls.resizewidth(1050), cls.resizeheight(350))
+        imgui.set_next_window_position(cls.resizewidth(120), cls.resizeheight(100))
         backgroundecorator(imgui.begin,cls.theme)('Settingmenu', False, cls.flags)
         themes = ['EVA', 'rey', 'asuka']
         imgui.set_next_window_size(cls.resizewidth(20), cls.resizeheight(20))
@@ -674,7 +674,7 @@ class Graphics:
 
     @classmethod
     def draw_bottombar(cls):
-        imgui.set_next_window_size(list(pygame.display.get_window_size())[0], cls.resizeheight(100))
+        imgui.set_next_window_size(list(pygame.display.get_window_size())[0]-cls.resizewidth(300), cls.resizeheight(100))
         imgui.set_next_window_position(cls.resizewidth(0), list(pygame.display.get_window_size())[1] - cls.resizeheight(100))
         backgroundecorator(imgui.begin, cls.theme)('Bottonbar', False, cls.flags)
 

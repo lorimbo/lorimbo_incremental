@@ -8,10 +8,13 @@ party tab functionality
 save function is incomplete
 party effects
 party templates
+make color apply to party menus
+
 
 implement browser(LATER)
 implement exe(DONE)
 
 add settings
 add color schemes to setting(asuka evangalion vs rey evangelion)(IMPORTANT!!)
+fix it so the drop menu in settings has the right height
 add bold helvetica and use it for energies
