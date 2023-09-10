@@ -2,12 +2,16 @@ next action/flags for submenu
 habits
 area actions
 resources effects
-dungeons
 astral plane
 party tab functionality
 save function is incomplete
 party effects
 party templates
+stats update in pokemon doesn't work properly with lvl 0
+change fonts in dungeons
+implement combat
+implement skills
+
 
 implement browser(LATER)
 implement exe(DONE)

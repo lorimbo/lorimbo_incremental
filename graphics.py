@@ -417,11 +417,15 @@ class Graphics:
 
                 if cls.toggles['dungeons'][key]:
                     with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
-                        for button in visible:
-                            use = button.isdisabled
-                            if cls.disabledecorator(imgui.button, use)(button.name, cls.resizewidth(160),
-                                                                       cls.resizeheight(50)) and not button.isdisabled:
-                                Gamelogic.activedungeon = button.name
+                        for dungeon in visible:
+                            use = dungeon.isdisabled
+                            if cls.disabledecorator(imgui.button, use)(dungeon.name, cls.resizewidth(160),
+                                                                       cls.resizeheight(50)) and not dungeon.isdisabled:
+                                if Gamelogic.activedungeon is None or not Gamelogic.activedungeon.name ==dungeon.name:
+                                    dungeon.generate()
+                                Gamelogic.activedungeon = dungeon
+                                Gamelogic.tab='Dungeon'
+
 
         imgui.end()
 
@@ -727,6 +731,52 @@ class Graphics:
         backgroundecorator(imgui.begin, cls.theme)('Topbar', False, cls.flags)
 
         imgui.end()
+    @classmethod
+    def draw_dungeon(cls):
+        imgui.set_next_window_size(cls.resizewidth(1075), cls.resizeheight(440))
+        imgui.set_next_window_position(cls.resizewidth(120), cls.resizeheight(55))
+        backgroundecorator(imgui.begin, cls.theme)('Dungeon', False, cls.flags)
+        backgroundecorator(imgui.begin_child,cls.theme)("Child 4", height=cls.resizeheight(50), border=True)
+        if Gamelogic.activedungeon is not None:
+            progressbardecorator(imgui.progress_bar,cls.theme)(Gamelogic.activedungeon.floor+1/5,(cls.resizewidth(500),cls.resizeheight(40)),f'{Gamelogic.activedungeon.name}   ({Gamelogic.activedungeon.floor+1}/5)')
+        imgui.same_line(position=cls.resizewidth(530))
+        if actiondecorator(imgui.button,cls.theme)('Quit',cls.resizewidth(90),cls.resizeheight(30)):
+            Gamelogic.activedungeon= None
+            Gamelogic.tab='Main'
+        imgui.same_line(position=cls.resizewidth(630))
+        if actiondecorator(imgui.button,cls.theme)('Back',cls.resizewidth(90),cls.resizeheight(30)):
+            Gamelogic.tab='Main'
+
+
+        imgui.end_child()
+        imgui.text('')
+        imgui.same_line(spacing=cls.resizewidth(20))
+        backgroundecorator(imgui.begin_child,cls.theme)("Your party",width=cls.resizewidth(970/3), height=cls.resizeheight(370), border=True)
+        for pokemon in Gamelogic.party[0:min(5,len(Gamelogic.party))]:
+            actiondecorator(imgui.text,cls.theme)(pokemon.name)
+            progressbardecorator(imgui.progress_bar,cls.theme)(pokemon.currenthp/pokemon.actualhp,(cls.resizewidth(250),cls.resizeheight(20)),f'{numcon(pokemon.currenthp)}/{numcon(pokemon.actualhp)}')
+            progressbardecorator(imgui.progress_bar,cls.theme)(0.5, (cls.resizewidth(250), cls.resizeheight(20)))
+        imgui.end_child()
+
+        imgui.same_line(spacing=cls.resizewidth(40))
+        backgroundecorator(imgui.begin_child,cls.theme)("Child 2",width=cls.resizewidth(970/3), height=cls.resizeheight(370), border=True)
+        dungeon=Gamelogic.activedungeon
+        if dungeon is not None:
+            for pokemon in dungeon.currentlayout[dungeon.floor][0:min(5,len(dungeon.currentlayout[dungeon.floor]))]:
+                actiondecorator(imgui.text,cls.theme)(pokemon.name)
+                progressbardecorator(imgui.progress_bar,cls.theme)(pokemon.currenthp/pokemon.actualhp,(cls.resizewidth(250),cls.resizeheight(20)),f'{numcon(pokemon.currenthp)}/{numcon(pokemon.actualhp)}')
+                progressbardecorator(imgui.progress_bar,cls.theme)(0.5, (cls.resizewidth(250), cls.resizeheight(20)))
+        imgui.end_child()
+        imgui.same_line(spacing=cls.resizewidth(30))
+        backgroundecorator(imgui.begin_child,cls.theme)("Child 3", width=cls.resizewidth(970 / 3), height=cls.resizeheight(370), border=True)
+        if dungeon is not None:
+            for string in dungeon.log:
+                every=35
+                string='\n'.join(string[i:i+every] for i in range(0, len(string), every))
+                actiondecorator(imgui.text,cls.theme)(string)
+        imgui.end_child()
+
+        imgui.end()
 
     @classmethod
     def creategui(cls):
@@ -752,5 +802,7 @@ class Graphics:
                 cls.draw_levelup_menu()
         if Gamelogic.tab == Gamelogic.mainelements[2].name:
             pass
+        if Gamelogic.tab == Gamelogic.mainelements[5].name:
+            cls.draw_dungeon()
         if Gamelogic.tab == Gamelogic.mainelements[6].name:
             cls.draw_settings()

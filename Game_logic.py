@@ -46,7 +46,12 @@ class Gamelogic:
 
     @classmethod
     def checkflags(cls):
-        for actionlist in [cls.instantactions, cls.loopactions, cls.upgradeactions[cls.subtab],cls.dungeons[cls.subtab]]:
+        elements=[cls.instantactions, cls.loopactions]
+        if cls.subtab in cls.dungeons.keys():
+            elements.append(cls.dungeons[cls.subtab])
+        if cls.subtab in cls.upgradeactions.keys():
+            elements.append(cls.upgradeactions[cls.subtab])
+        for actionlist in elements:
             for key1 in actionlist:
                 for action in actionlist[key1]:
                     temp = 0

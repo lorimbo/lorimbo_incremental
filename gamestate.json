@@ -23,10 +23,10 @@
                   "sdif": 1,
                   "maxlvl": 1000,
                   "unlocked": 0,
-                  "lvl": 0,
-                  "phys": 0,
-                  "magic": 0,
-                  "special": 0
+                  "lvl": 1,
+                  "phys": 1,
+                  "magic": 1,
+                  "special": 1
             }
       ],
       "party": [
