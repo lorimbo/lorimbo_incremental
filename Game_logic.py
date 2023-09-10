@@ -27,9 +27,12 @@ class Gamelogic:
     mainsubelements = []
     partyelements = []
     instantactions = {'Common actions': [], 'Common actions 2': []}
-    loopactions = {'Common loopactions': [], 'Common loopactions 2': [],'Common loopactions 3':[]}
-    upgradeactions = {'Village': {'old house': [], 'old house 2': [],'old house 3':[]}, 'Forest': {}, 'City': {'old house': []},
+    loopactions = {'Common loopactions': [], 'Common loopactions 2': [], 'Common loopactions 3': []}
+    upgradeactions = {'Village': {'old house': [], 'old house 2': [], 'old house 3': []}, 'Forest': {},
+                      'City': {'old house': []},
                       'Coast': {}, 'Jungle': {}, 'Astral plane': {}}
+    dungeons = {}
+    activedungeon= None
     nextactions = []
     pokemonlist = []
     reserve = []
@@ -43,7 +46,7 @@ class Gamelogic:
 
     @classmethod
     def checkflags(cls):
-        for actionlist in [cls.instantactions, cls.loopactions, cls.upgradeactions[cls.subtab]]:
+        for actionlist in [cls.instantactions, cls.loopactions, cls.upgradeactions[cls.subtab],cls.dungeons[cls.subtab]]:
             for key1 in actionlist:
                 for action in actionlist[key1]:
                     temp = 0
@@ -78,6 +81,7 @@ class Gamelogic:
                         temp = 0
             if temp:
                 key.isvisible = True
+
 
     @classmethod
     def deactivateloopactions(cls):
@@ -126,7 +130,7 @@ class Gamelogic:
         initialization_elements.createupgradeactions(cls)
         initialization_elements.createresources(cls)
         initialization_elements.createenergies(cls)
-
+        initialization_elements.createdungeons(cls)
 
     @classmethod
     def savegame(cls):
@@ -206,26 +210,30 @@ class Gamelogic:
         for key in cls.instantactions:
             for i in cls.instantactions[key]:
                 i.update()
+        for key in cls.dungeons:
+            for location in cls.dungeons[key]:
+                for i in cls.dungeons[key][location]:
+                    i.update()
 
     @classmethod
     def levelupfunction(cls, information):
         num = information[2]
         if information[0] == 'Party':
-            pokemon=cls.party[num]
+            pokemon = cls.party[num]
         else:
-            pokemon=cls.reserve[num]
+            pokemon = cls.reserve[num]
         if information[1] == 'Level':
-            if pokemon.lvl<pokemon.maxlvl:
-                pokemon.lvl+=1
+            if pokemon.lvl < pokemon.maxlvl:
+                pokemon.lvl += 1
         elif information[1] == 'Physical':
             if pokemon.phys < pokemon.lvl and cls.physseeds.quantity:
                 pokemon.phys += 1
-                cls.physseeds.quantity-=1
+                cls.physseeds.quantity -= 1
 
-        elif information[1] == 'Magical'and cls.magicseeds.quantity:
+        elif information[1] == 'Magical' and cls.magicseeds.quantity:
             if pokemon.magic < pokemon.lvl:
                 pokemon.magic += 1
-                cls.magicseeds.quantity-=1
+                cls.magicseeds.quantity -= 1
 
         elif information[1] == 'Special' and cls.specialseeds.quantity:
             if pokemon.special < pokemon.lvl:

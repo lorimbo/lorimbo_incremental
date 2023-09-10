@@ -25,6 +25,23 @@ def numcon(n):
         return f'{round(n / 1000, 2)}K'
     return str(round(n, 1))
 
+class Dungeon:
+    def __init__(self,parent,name,location,unlockflags,closingflags,monsterlist,isvisible=True,isdisabled=False,boss=None):
+        self.parent=parent
+        self.name=name
+        self.unlockflags=unlockflags
+        self.closingflags=closingflags
+        self.monsterlist=monsterlist
+        self.isvisible=isvisible
+        self.isdisabled=isdisabled
+        self.boss=boss
+        if location[0] not in self.parent.dungeons.keys():
+            self.parent.dungeons[location[0]]={}
+        if location[1] not in self.parent.dungeons[location[0]].keys():
+            self.parent.dungeons[location[0]][location[1]] = []
+        self.parent.dungeons[location[0]][location[1]].append(self)
+    def update(self):
+        pass
 
 class Corestats:
     def __init__(self,parent):
@@ -81,6 +98,7 @@ class Resource:
                 resources[category].append(self)
             else:
                 resources[category] = [self]
+
 
 
 class menuelement:
@@ -637,4 +655,13 @@ def createenergies(parent):
            regen=1 / 240)
     Energy(parent=parent, name='Earth', quantity=0, max=1, unlockflags={'Dubious home': 0}, color=brown,
            regen=1 / 240)
+
+def createdungeons(parent):
+    Dungeon(parent=parent,name="Coco's lair",location=['Village','Surroundings'],unlockflags={'Dubious home': 0},closingflags={'Dubious home': 1},monsterlist=[])
+    Dungeon(parent=parent, name="Coco's lair 2", location=['Village', 'Surroundings'], unlockflags={'Dubious home': 0}, closingflags={'Dubious home': 1},
+            monsterlist=[])
+    Dungeon(parent=parent, name="Coco's lair 2", location=['Coast', 'Surroundings'], unlockflags={'Dubious home': 0}, closingflags={'Dubious home': 1},
+            monsterlist=[])
+    Dungeon(parent=parent, name="Coco's lair", location=['Village', 'Surroundings 2'], unlockflags={'Dubious home': 0}, closingflags={'Dubious home': 1},
+            monsterlist=[])
 

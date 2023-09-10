@@ -386,10 +386,51 @@ class Graphics:
         imgui.end()
 
     @classmethod
+    def draw_dungeons(cls):
+        finishline = cls.resizeheight(50)
+        if 'dungeons' not in cls.toggles.keys():
+            cls.toggles['dungeons'] = {}
+        height = list(pygame.display.get_window_size())[1] - cls.resizeheight(150)
+        imgui.set_next_window_size(16 + cls.resizewidth(160),
+                                   height)
+        imgui.set_next_window_position(150 + cls.resizewidth(820), finishline
+                                       )
+        backgroundecorator(imgui.begin, cls.theme)('Dungeons', False, cls.resourcesflags)
+        if Gamelogic.subtab in Gamelogic.dungeons.keys():
+            for key in Gamelogic.dungeons[Gamelogic.subtab]:
+                visible = cls.get_visible_elements(Gamelogic.dungeons[Gamelogic.subtab][key])
+                if not len(visible):
+                    continue
+                if key not in cls.toggles['dungeons']:
+                    cls.toggles['dungeons'][key] = True
+
+                with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.resizeheight(10))}']):
+                    if cls.toggles['dungeons'][key]:
+                        direction = imgui.DIRECTION_DOWN
+                    else:
+                        direction = imgui.DIRECTION_RIGHT
+                    if actiondecorator(imgui.arrow_button, cls.theme)(f'Toggle##{key}', direction):
+                        cls.toggles['dungeons'][key] = not cls.toggles['dungeons'][key]
+                    imgui.same_line()
+                with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
+                    actiondecorator(imgui.text, cls.theme)(f'{key}')
+
+                if cls.toggles['dungeons'][key]:
+                    with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
+                        for button in visible:
+                            use = button.isdisabled
+                            if cls.disabledecorator(imgui.button, use)(button.name, cls.resizewidth(160),
+                                                                       cls.resizeheight(50)) and not button.isdisabled:
+                                Gamelogic.activedungeon = button.name
+
+        imgui.end()
+
+    @classmethod
     def draw_area(cls):
         cls.draw_instantactions()
         cls.draw_loopactions()
         cls.draw_upgradeactions()
+        cls.draw_dungeons()
 
     @classmethod
     def draw_main(cls):
