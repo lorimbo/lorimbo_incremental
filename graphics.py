@@ -765,7 +765,7 @@ class Graphics:
                 for pokemon in dungeon.currentlayout[dungeon.floor][0:min(5,len(dungeon.currentlayout[dungeon.floor]))]:
                     actiondecorator(imgui.text,cls.theme)(pokemon.name)
                     progressbardecorator(imgui.progress_bar,cls.theme)(pokemon.currenthp/pokemon.actualhp,(cls.resizewidth(250),cls.resizeheight(20)),f'{numcon(pokemon.currenthp)}/{numcon(pokemon.actualhp)}')
-                    progressbardecorator(imgui.progress_bar,cls.theme)(1-(pokemon.cd/pokemon.skill.interval*240), (cls.resizewidth(250), cls.resizeheight(20)),str(pokemon.skill.name))
+                    progressbardecorator(imgui.progress_bar,cls.theme)(1-(pokemon.cd/(pokemon.skill.interval*240)), (cls.resizewidth(250), cls.resizeheight(20)),str(pokemon.skill.name))
             imgui.end_child()
             imgui.same_line(spacing=cls.resizewidth(30))
             backgroundecorator(imgui.begin_child,cls.theme)("Child 3", width=cls.resizewidth(970 / 3), height=cls.resizeheight(370), border=True)

@@ -65,10 +65,10 @@
                   "sdif": 187.2,
                   "maxlvl": 24,
                   "unlocked": 0,
-                  "lvl": 5,
-                  "phys": 5,
-                  "magic": 5,
-                  "special": 5
+                  "lvl": 24,
+                  "phys": 24,
+                  "magic": 24,
+                  "special": 24
             }
       ],
       "party": [
