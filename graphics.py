@@ -171,9 +171,8 @@ class Graphics:
 
     @classmethod
     def notinusedecorator(cls, function, use):
-        theme=theme=cls.theme
         def inner1(*args, **kwargs):
-            imgui.push_style_var(imgui.STYLE_ALPHA, 0.7)
+            imgui.push_style_var(imgui.STYLE_ALPHA, 0.5)
             func = actiondecorator(function,cls.theme)(*args, **kwargs)
             imgui.pop_style_var(1)
             return func
@@ -193,7 +192,7 @@ class Graphics:
     def disabledecorator(cls, function, use):
 
         def inner1(*args, **kwargs):
-            imgui.push_style_var(imgui.STYLE_ALPHA, 0.5)
+            imgui.push_style_var(imgui.STYLE_ALPHA, 0.3)
             func = actiondecorator(function,cls.theme)(*args, **kwargs)
             imgui.pop_style_var(1)
 
@@ -350,38 +349,38 @@ class Graphics:
         imgui.set_next_window_position(100 + cls.resizewidth(500), finishline
                                        )
         backgroundecorator(imgui.begin,cls.theme)('Upgradeactions', False, cls.resourcesflags)
+        if Gamelogic.subtab in Gamelogic.upgradeactions:
+            for key in Gamelogic.upgradeactions[Gamelogic.subtab]:
+                visible = cls.get_visible_elements(Gamelogic.upgradeactions[Gamelogic.subtab][key])
+                if not len(visible):
+                    continue
+                if key not in cls.toggles['upgradeactions']:
+                    cls.toggles['upgradeactions'][key] = True
 
-        for key in Gamelogic.upgradeactions[Gamelogic.subtab]:
-            visible = cls.get_visible_elements(Gamelogic.upgradeactions[Gamelogic.subtab][key])
-            if not len(visible):
-                continue
-            if key not in cls.toggles['upgradeactions']:
-                cls.toggles['upgradeactions'][key] = True
-
-            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.resizeheight(10))}']):
-                if cls.toggles['upgradeactions'][key]:
-                    direction = imgui.DIRECTION_DOWN
-                else:
-                    direction = imgui.DIRECTION_RIGHT
-                if actiondecorator(imgui.arrow_button,cls.theme)(f'Toggle##{key}', direction):
-                    cls.toggles['upgradeactions'][key] = not cls.toggles['upgradeactions'][key]
-                imgui.same_line()
-            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
-                actiondecorator(imgui.text,cls.theme)(f'{key}')
-            if cls.toggles['upgradeactions'][key]:
+                with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.resizeheight(10))}']):
+                    if cls.toggles['upgradeactions'][key]:
+                        direction = imgui.DIRECTION_DOWN
+                    else:
+                        direction = imgui.DIRECTION_RIGHT
+                    if actiondecorator(imgui.arrow_button,cls.theme)(f'Toggle##{key}', direction):
+                        cls.toggles['upgradeactions'][key] = not cls.toggles['upgradeactions'][key]
+                    imgui.same_line()
                 with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
-                    for button in visible:
-                        use = button.isdisabled
-                        if cls.disabledecorator(imgui.button, use)(button.name, cls.resizewidth(160),
-                                                                   cls.resizeheight(50)) and not button.isdisabled:
-                            Gamelogic.upgradeaction = button.name
-                        if imgui.is_item_hovered():
-                            with tooltipdecorator(imgui.begin_tooltip,cls.theme)():
-                                actiondecorator(imgui.text,cls.theme)(f"{button.name}")
-                                tooltip = tooltips.upgradeTooltip(button.name, button.cost, button.complete,
-                                                                  button.requirements)
-                                for i in tooltip:
-                                    actiondecorator(imgui.text,cls.theme)(f"{i}")
+                    actiondecorator(imgui.text,cls.theme)(f'{key}')
+                if cls.toggles['upgradeactions'][key]:
+                    with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
+                        for button in visible:
+                            use = button.isdisabled
+                            if cls.disabledecorator(imgui.button, use)(button.name, cls.resizewidth(160),
+                                                                       cls.resizeheight(50)) and not button.isdisabled:
+                                Gamelogic.upgradeaction = button.name
+                            if imgui.is_item_hovered():
+                                with tooltipdecorator(imgui.begin_tooltip,cls.theme)():
+                                    actiondecorator(imgui.text,cls.theme)(f"{button.name}")
+                                    tooltip = tooltips.upgradeTooltip(button.name, button.cost, button.complete,
+                                                                      button.requirements)
+                                    for i in tooltip:
+                                        actiondecorator(imgui.text,cls.theme)(f"{i}")
 
         imgui.end()
 
@@ -738,7 +737,7 @@ class Graphics:
         backgroundecorator(imgui.begin, cls.theme)('Dungeon', False, cls.flags)
         backgroundecorator(imgui.begin_child,cls.theme)("Child 4", height=cls.resizeheight(50), border=True)
         if Gamelogic.activedungeon is not None:
-            progressbardecorator(imgui.progress_bar,cls.theme)(Gamelogic.activedungeon.floor+1/5,(cls.resizewidth(500),cls.resizeheight(40)),f'{Gamelogic.activedungeon.name}   ({Gamelogic.activedungeon.floor+1}/5)')
+            progressbardecorator(imgui.progress_bar,cls.theme)((Gamelogic.activedungeon.floor+1)/5,(cls.resizewidth(500),cls.resizeheight(40)),f'{Gamelogic.activedungeon.name}   ({Gamelogic.activedungeon.floor+1}/5)')
         imgui.same_line(position=cls.resizewidth(530))
         if actiondecorator(imgui.button,cls.theme)('Quit',cls.resizewidth(90),cls.resizeheight(30)):
             Gamelogic.activedungeon= None
@@ -751,30 +750,34 @@ class Graphics:
         imgui.end_child()
         imgui.text('')
         imgui.same_line(spacing=cls.resizewidth(20))
-        backgroundecorator(imgui.begin_child,cls.theme)("Your party",width=cls.resizewidth(970/3), height=cls.resizeheight(370), border=True)
-        for pokemon in Gamelogic.party[0:min(5,len(Gamelogic.party))]:
-            actiondecorator(imgui.text,cls.theme)(pokemon.name)
-            progressbardecorator(imgui.progress_bar,cls.theme)(pokemon.currenthp/pokemon.actualhp,(cls.resizewidth(250),cls.resizeheight(20)),f'{numcon(pokemon.currenthp)}/{numcon(pokemon.actualhp)}')
-            progressbardecorator(imgui.progress_bar,cls.theme)(0.5, (cls.resizewidth(250), cls.resizeheight(20)))
-        imgui.end_child()
-
-        imgui.same_line(spacing=cls.resizewidth(40))
-        backgroundecorator(imgui.begin_child,cls.theme)("Child 2",width=cls.resizewidth(970/3), height=cls.resizeheight(370), border=True)
-        dungeon=Gamelogic.activedungeon
-        if dungeon is not None:
-            for pokemon in dungeon.currentlayout[dungeon.floor][0:min(5,len(dungeon.currentlayout[dungeon.floor]))]:
+        if Gamelogic.activedungeon is not None:
+            backgroundecorator(imgui.begin_child,cls.theme)("Your party",width=cls.resizewidth(970/3), height=cls.resizeheight(370), border=True)
+            for pokemon in Gamelogic.activedungeon.party:
                 actiondecorator(imgui.text,cls.theme)(pokemon.name)
                 progressbardecorator(imgui.progress_bar,cls.theme)(pokemon.currenthp/pokemon.actualhp,(cls.resizewidth(250),cls.resizeheight(20)),f'{numcon(pokemon.currenthp)}/{numcon(pokemon.actualhp)}')
-                progressbardecorator(imgui.progress_bar,cls.theme)(0.5, (cls.resizewidth(250), cls.resizeheight(20)))
-        imgui.end_child()
-        imgui.same_line(spacing=cls.resizewidth(30))
-        backgroundecorator(imgui.begin_child,cls.theme)("Child 3", width=cls.resizewidth(970 / 3), height=cls.resizeheight(370), border=True)
-        if dungeon is not None:
-            for string in dungeon.log:
-                every=35
-                string='\n'.join(string[i:i+every] for i in range(0, len(string), every))
-                actiondecorator(imgui.text,cls.theme)(string)
-        imgui.end_child()
+                progressbardecorator(imgui.progress_bar,cls.theme)((1-(pokemon.cd/(pokemon.skill.interval*240))), (cls.resizewidth(250), cls.resizeheight(20)),str(pokemon.skill.name))
+            imgui.end_child()
+
+            imgui.same_line(spacing=cls.resizewidth(40))
+            backgroundecorator(imgui.begin_child,cls.theme)("Child 2",width=cls.resizewidth(970/3), height=cls.resizeheight(370), border=True)
+            dungeon=Gamelogic.activedungeon
+            if dungeon is not None:
+                for pokemon in dungeon.currentlayout[dungeon.floor][0:min(5,len(dungeon.currentlayout[dungeon.floor]))]:
+                    actiondecorator(imgui.text,cls.theme)(pokemon.name)
+                    progressbardecorator(imgui.progress_bar,cls.theme)(pokemon.currenthp/pokemon.actualhp,(cls.resizewidth(250),cls.resizeheight(20)),f'{numcon(pokemon.currenthp)}/{numcon(pokemon.actualhp)}')
+                    progressbardecorator(imgui.progress_bar,cls.theme)(1-(pokemon.cd/pokemon.skill.interval*240), (cls.resizewidth(250), cls.resizeheight(20)),str(pokemon.skill.name))
+            imgui.end_child()
+            imgui.same_line(spacing=cls.resizewidth(30))
+            backgroundecorator(imgui.begin_child,cls.theme)("Child 3", width=cls.resizewidth(970 / 3), height=cls.resizeheight(370), border=True)
+            if dungeon is not None:
+                for string in dungeon.log:
+                    every=35
+                    string='\n'.join(string[i:i+every] for i in range(0, len(string), every))
+                    actiondecorator(imgui.text,cls.theme)(string)
+                if len(dungeon.log)>100:
+                    for i in range(len(dungeon.log)-100):
+                        dungeon.log.pop(0)
+            imgui.end_child()
 
         imgui.end()
 
