@@ -49,7 +49,7 @@ class Gamelogic:
     activedungeon = None
     activepartypokemon = 0
     activeenemypokemon = 0
-    researches = {}
+    souls = {}
     nextactions = []
     pokemonlist = []
     reserve = []
@@ -250,8 +250,8 @@ class Gamelogic:
                     if cls.fate.quantity:
                         cls.fate.quantity-=1
                         pokemon.lvl += 1
-                elif cls.researches[pokemon.name]:
-                    cls.researches[pokemon.name]-=1
+                elif cls.souls[pokemon.name]:
+                    cls.souls[pokemon.name]-=1
                     pokemon.lvl += 1
         elif information[1] == 'Physical':
             if pokemon.phys < pokemon.lvl and cls.physgems.quantity:
@@ -300,19 +300,19 @@ class Gamelogic:
                                     resource2.quantity = resource2.max
                                 droplog += f', {quantity} {name}'
                     n = random.randint(0, 100)
-                    researchdrop=1
+                    souldrop=1
                     if n <= 10:
-                        if alive2[0].name not in cls.researches:
+                        if alive2[0].name not in cls.souls:
                             pokemontounlock=alive2[0].copy()
-                            cls.researches[pokemontounlock.name] = 0
+                            cls.souls[pokemontounlock.name] = 0
                             pokemontounlock.phys = 1
                             pokemontounlock.magic = 1
                             pokemontounlock.special = 1
                             pokemontounlock.lvl = 5
                             cls.unlockablepokemons.append(pokemontounlock)
-                        cls.researches[alive2[0].name] += researchdrop
+                        cls.souls[alive2[0].name] += souldrop
 
-                        droplog +=f',{researchdrop} {alive2[0].name} research'
+                        droplog +=f',{souldrop} {alive2[0].name} soul'
 
                 cls.activedungeon.log.append(droplog)
                 alive2 = [pokemon for pokemon in cls.activedungeon.currentlayout[cls.activedungeon.floor] if

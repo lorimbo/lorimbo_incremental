@@ -542,43 +542,48 @@ class Pokemon(menuelement):
     def updatestats(self):
         if self.name == 'You':
             if self.lvl <= 10:
-                scaling1 = 1 / 10 + self.phys * 9 / 100
-                scaling2 = 1 / 10 + self.magic * 9 / 100
+                self.scaling1 = 1 / 10 + self.phys * 9 / 100
+                self.scaling2 = 1 / 10 + self.magic * 9 / 100
             else:
-                scaling1 = 1 + self.phys * 8 / 100
-                scaling2 = 1 + self.magic * 8 / 100
+                self.scaling1 = 1 + self.phys * 8 / 100
+                self.scaling2 = 1 + self.magic * 8 / 100
 
-            self.actualhp = scaling1 * self.parent.corestats.finalstats()['hp']
-            self.actualpatk = scaling1 * self.parent.corestats.finalstats()['patk']
-            self.actualpdef = scaling1 * self.parent.corestats.finalstats()['pdef']
-            self.actualmatk = scaling2 * self.parent.corestats.finalstats()['matk']
-            self.actualmdef = scaling2 * self.parent.corestats.finalstats()['mdef']
+            self.actualhp = self.scaling1 * self.parent.corestats.finalstats()['hp']
+            self.actualpatk = self.scaling1 * self.parent.corestats.finalstats()['patk']
+            self.actualpdef = self.scaling1 * self.parent.corestats.finalstats()['pdef']
+            self.actualmatk = self.scaling2 * self.parent.corestats.finalstats()['matk']
+            self.actualmdef = self.scaling2 * self.parent.corestats.finalstats()['mdef']
             self.currenthp = self.actualhp
 
+
         elif not self.wild:
+            self.scaling1=((self.phys) / self.maxlvl) * (self.hp / 100)
+            self.scaling2=((self.magic) / self.maxlvl) * (self.matk / 100)
             self.actualhp = round(
-                self.parent.corestats.finalstats()['hp'] * ((self.phys) / self.maxlvl) * (self.hp / 100), 1)
+                self.parent.corestats.finalstats()['hp'] * self.scaling1, 1)
             self.actualpatk = round(
-                self.parent.corestats.finalstats()['patk'] * ((self.phys) / self.maxlvl) * (self.patk / 100), 1)
+                self.parent.corestats.finalstats()['patk'] *self.scaling1, 1)
             self.actualpdef = round(
-                self.parent.corestats.finalstats()['pdef'] * ((self.phys) / self.maxlvl) * (self.pdef / 100), 1)
+                self.parent.corestats.finalstats()['pdef'] * self.scaling1, 1),
             self.actualmatk = round(
-                self.parent.corestats.finalstats()['matk'] * ((self.magic) / self.maxlvl) * (self.matk / 100), 1)
+                self.parent.corestats.finalstats()['matk'] *self.scaling2, 1)
             self.actualmdef = round(
-                self.parent.corestats.finalstats()['mdef'] * ((self.magic) / self.maxlvl) * (self.mdef / 100), 1)
+                self.parent.corestats.finalstats()['mdef'] * self.scaling2, 1)
 
             self.currenthp = self.actualhp
         else:
+            self.scaling1 = ((self.phys) / self.maxlvl) * (self.hp / 100)
+            self.scaling2 = ((self.magic) / self.maxlvl) * (self.matk / 100)
             self.actualhp = round(
-                10 * ((self.phys) / self.maxlvl) * (self.hp / 100), 1)
+                10 * self.scaling1, 1)
             self.actualpatk = round(
-                10 * ((self.phys) / self.maxlvl) * (self.patk / 100), 1)
+                10 *self.scaling1, 1)
             self.actualpdef = round(
-                10 * ((self.phys) / self.maxlvl) * (self.pdef / 100), 1)
+                10 * self.scaling1, 1)
             self.actualmatk = round(
-                10 * ((self.magic) / self.maxlvl) * (self.matk / 100), 1)
+                10 * self.scaling2, 1)
             self.actualmdef = round(
-                10 * ((self.magic) / self.maxlvl) * (self.mdef / 100), 1)
+                10 * self.scaling2, 1)
 
             self.currenthp = self.actualhp
 

@@ -1,4 +1,5 @@
 description = {'Get motivated': ['test1', 'test2', 'test3'],'Wood': ['Suitable wood for','making firewood.']}
+pokemondescription={'You':['test1','test2','test3']}
 
 def numcon(n):
     if n >= 10000000:
@@ -12,6 +13,23 @@ def numcon(n):
     elif n >= 1000:
         return f'{round(n / 1000, 2)}K'
     return str(round(n, 1))
+def pokemontooltip(pokemon,status,soul=None,cost=None):
+    finaltooltip = []
+    if pokemon.name in description.keys():
+        for i in description[pokemon.name]:
+            finaltooltip.append(i)
+    finaltooltip.append(f'Condition:{status}')
+    finaltooltip.append(f'Hp :{numcon(pokemon.actualhp)}({numcon(pokemon.scaling1*100)}%)')
+    finaltooltip.append(f'Patk :{numcon(pokemon.actualpatk)}({numcon(pokemon.scaling1*100)}%)')
+    finaltooltip.append(f'Pdef :{numcon(pokemon.actualpdef)}({numcon(pokemon.scaling1*100)}%)')
+    finaltooltip.append(f'Matk :{numcon(pokemon.actualmatk)}({numcon(pokemon.scaling2*100)}%)')
+    finaltooltip.append(f'Mdef :{numcon(pokemon.actualmdef)}({numcon(pokemon.scaling2*100)}%)')
+    if soul is not None:
+        finaltooltip.append(f'<<summon cost>>')
+        finaltooltip.append(soul)
+    return finaltooltip
+
+
 
 
 def resourceTooltip(name,quantity,max,effect=None):
