@@ -637,15 +637,15 @@ class Graphics:
                 if actiondecorator(imgui.button,cls.theme)(f'Summon##{num}', 90):
                     Gamelogic.levelup = ['Party', 'Level', num]
                 imgui.same_line(position=cls.resizewidth(530))
-                use = not Gamelogic.physseeds.quantity
+                use = not Gamelogic.physgems.quantity
                 if cls.disabledecorator(imgui.button, use)(f'Physical##{num}', 90):
                     Gamelogic.levelup = ['Party', 'Physical', num]
                 imgui.same_line(spacing=cls.resizewidth(40))
-                use = not Gamelogic.magicseeds.quantity
+                use = not Gamelogic.magicgems.quantity
                 if cls.disabledecorator(imgui.button, use)(f'Magical##{num}', 90):
                     Gamelogic.levelup = ['Party', 'Magical', num]
                 imgui.same_line(spacing=cls.resizewidth(40))
-                use = not Gamelogic.specialseeds.quantity
+                use = not Gamelogic.specialgems.quantity
                 if cls.disabledecorator(imgui.button, use)(f'Special##{num}', 90):
                     Gamelogic.levelup = ['Party', 'Special', num]
             imgui.text('')
@@ -671,17 +671,17 @@ class Graphics:
                     Gamelogic.levelup = ['Reserve', 'Level', num]
                 imgui.same_line(position=cls.resizewidth(530))
 
-                use = not Gamelogic.physseeds.quantity
+                use = not Gamelogic.physgems.quantity
                 if cls.disabledecorator(imgui.button, use)(f'Physical##{1000 + num}', 90):
                     Gamelogic.levelup = ['Reserve', 'Physical', num]
 
                 imgui.same_line(spacing=cls.resizewidth(40))
-                use = not Gamelogic.magicseeds.quantity
+                use = not Gamelogic.magicgems.quantity
                 if cls.disabledecorator(imgui.button, use)(f'Magical##{1000 + num}', 90):
                     Gamelogic.levelup = ['Reserve', 'Magical', num]
 
                 imgui.same_line(spacing=cls.resizewidth(40))
-                use = not Gamelogic.specialseeds.quantity
+                use = not Gamelogic.specialgems.quantity
                 if cls.disabledecorator(imgui.button, use)(f'Special##{1000 + num}', 90):
                     Gamelogic.levelup = ['Reserve', 'Special', num]
 

@@ -588,10 +588,10 @@ def getgamestate():
 def createinstantactions(parent):
     Instantactions(parent=parent, name='Get motivated', isvisible=True,
                    elementlist=parent.instantactions['Common actions'], cost=[['Action', -1, 0, 0]],
-                   complete=[['Destiny', +1, 0, 0]])
+                   complete=[['Fate', +1, 0, 0]])
     Instantactions(parent=parent, name='Test1', isvisible=True, elementlist=parent.instantactions['Common actions'],
                    unlockflags={'Dubious home': 1}, cost=[['Action', -1, 0, 0], ['Wood', -1, 0, 0]],
-                   complete=[['Destiny', +1, 0, 0], ['Wood', 10, 0, 0]])
+                   complete=[['Fate', +1, 0, 0], ['Wood', 10, 0, 0]])
     Instantactions(parent=parent, name='Test2', isvisible=True, elementlist=parent.instantactions['Common actions'])
     Instantactions(parent=parent, name='Test3', isvisible=True, elementlist=parent.instantactions['Common actions 2'])
     Instantactions(parent=parent, name='Test4', isvisible=True, elementlist=parent.instantactions['Common actions 2'])
@@ -659,7 +659,7 @@ def createupgradeactions(parent):
                    location=['Village','old house'],
                    unlockflags={'Dubious home': 0, }, closingflags={'Dubious home': 1}, changeflags={'Dubious home': 1},
                    cost=[['Wood', -10, 0, 0]], complete=[['max', 'Wood', 20, 0, 0]],
-                   requirements=[['Destiny', 5, 0, 0]])
+                   requirements=[['Fate', 5, 0, 0]])
     Upgradeactions(parent=parent, name='Wood quest2', isvisible=True,
                    location=['Village','old house'],
                    cost=[['Wood', -10, 0, 0]], complete=[['resource', 'Wood', 20, 0, 0]],
@@ -713,15 +713,15 @@ def createupgradeactions(parent):
 
 
 def createresources(parent):
-    parent.destiny=Resource(parent, 'Destiny', 0, 100, {'Dubious home': 0}, 'Destiny', 0, resources=parent.resources)
+    parent.fate=Resource(parent, 'Fate', 0, 100, {'Dubious home': 0}, 'Fate', 0, resources=parent.resources)
     Resource(parent, 'Wood', 50, 10000000, {'Dubious home': 1}, 'Wood', 0, resources=parent.resources)
     Resource(parent, 'Wooden statue', 0, 100, {'Dubious home': 2}, 'Accessories', 0, resources=parent.resources)
     Resource(parent, 'Stone', 0, 100, {'Dubious home': 0}, 'Minerals', 0, resources=parent.resources)
     Resource(parent, 'Firewood', 0, 100, {'Dubious home': 0}, 'Wood', 0, resources=parent.resources)
     Resource(parent, 'Pelt', 0, 100, {'Dubious home': 0}, 'Materials', 0, resources=parent.resources)
-    parent.physseeds=Resource(parent, 'Physical seeds', 10, 10000, {'Dubious home': 0}, 'Seeds', 0, resources=parent.resources)
-    parent.magicseeds=Resource(parent, 'Magical seeds', 100, 10000, {'Dubious home': 0}, 'Seeds', 0, resources=parent.resources)
-    parent.specialseeds=Resource(parent, 'Special seeds', 100, 10000, {'Dubious home': 0}, 'Seeds', 0, resources=parent.resources)
+    parent.physgems=Resource(parent, 'Physical gems', 10, 10000, {'Dubious home': 0}, 'Gems', 0, resources=parent.resources)
+    parent.magicgems=Resource(parent, 'Magical gems', 100, 10000, {'Dubious home': 0}, 'Gems', 0, resources=parent.resources)
+    parent.specialgems=Resource(parent, 'Special gems', 100, 10000, {'Dubious home': 0}, 'Gems', 0, resources=parent.resources)
 
 
 def createenergies(parent):
@@ -738,7 +738,7 @@ def createenergies(parent):
            regen=1 / 240)
 
 def createdungeons(parent):
-    Dungeon(parent=parent,name="Coco's lair",location=['Village','Surroundings'],changeflags={},unlockflags={'Dubious home': 0},closingflags={},monsterlist=[e.copy() for e in parent.pokemonlist])
+    Dungeon(parent=parent,name="Coco's lair",location=['Village','Surroundings'],changeflags={},unlockflags={'Dubious home': 0},closingflags={},monsterlist=[parent.pokemonlist[i].copy() for i in range(2)])
     Dungeon(parent=parent, name="Coco's lair 2", location=['Village', 'Surroundings'],changeflags={}, unlockflags={'Dubious home': 0}, closingflags={},
             monsterlist=[])
     Dungeon(parent=parent, name="Coco's lair 2", location=['Coast', 'Surroundings'],changeflags={}, unlockflags={'Dubious home': 0}, closingflags={'Dubious home': 1},

@@ -9,8 +9,11 @@ party effects
 party templates
 stats update in pokemon doesn't work properly with lvl 0
 change fonts in dungeons
-implement combat
-implement skills
+implement skills effects
+leveling up should cost destiny and research
+IMPORTANT=implement drop chance% and obtaining monsters
+create a working prototype
+
 
 
 implement browser(LATER)

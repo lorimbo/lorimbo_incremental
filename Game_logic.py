@@ -245,19 +245,19 @@ class Gamelogic:
             if pokemon.lvl < pokemon.maxlvl:
                 pokemon.lvl += 1
         elif information[1] == 'Physical':
-            if pokemon.phys < pokemon.lvl and cls.physseeds.quantity:
+            if pokemon.phys < pokemon.lvl and cls.physgems.quantity:
                 pokemon.phys += 1
-                cls.physseeds.quantity -= 1
+                cls.physgems.quantity -= 1
 
-        elif information[1] == 'Magical' and cls.magicseeds.quantity:
+        elif information[1] == 'Magical' and cls.magicgems.quantity:
             if pokemon.magic < pokemon.lvl:
                 pokemon.magic += 1
-                cls.magicseeds.quantity -= 1
+                cls.magicgems.quantity -= 1
 
-        elif information[1] == 'Special' and cls.specialseeds.quantity:
+        elif information[1] == 'Special' and cls.specialgems.quantity:
             if pokemon.special < pokemon.lvl:
                 pokemon.special += 1
-                cls.specialseeds.quantity -= 1
+                cls.specialgems.quantity -= 1
         pokemon.updatestats()
         cls.levelup = None
     @classmethod
@@ -271,6 +271,7 @@ class Gamelogic:
             alive[cls.activepartypokemon].cd=alive[cls.activepartypokemon].skill.interval*240
             cls.activedungeon.log.append(f'{alive[cls.activepartypokemon].name} dealt {numcon(damagedealt)} dmg to {alive2[0].name}')
             if alive2[0].currenthp==0:
+                alive2[0].cd = alive2[0].skill.interval * 240
                 cls.activedungeon.log.append(
                     f'Enemy {alive2[0].name} fainted!')
                 cls.exp+=alive2[0].drop['exp']
@@ -285,9 +286,6 @@ class Gamelogic:
                                 resource2.quantity = resource2.max
                     droplog+=f', {quantity} {name}'
                 cls.activedungeon.log.append(droplog)
-
-
-                alive2[cls.activeenemypokemon].cd = alive2[cls.activeenemypokemon].skill.interval * 240
                 alive2 = [pokemon for pokemon in cls.activedungeon.currentlayout[cls.activedungeon.floor] if
                           pokemon.currenthp]
                 cls.activeenemypokemon=max(0,cls.activeenemypokemon-1)
@@ -303,7 +301,7 @@ class Gamelogic:
                             for key in cls.activedungeon.changeflags:
                                 cls.flags[key] += cls.activedungeon.changeflags[key]
                         cls.activedungeon.changeflags=None
-                    return
+                        return
 
             cls.activepartypokemon += 1
             if cls.activepartypokemon>len(alive)-1:
@@ -319,7 +317,7 @@ class Gamelogic:
             if alive[0].currenthp==0:
                 cls.activedungeon.log.append(
                     f'{alive[0].name} fainted!')
-                alive[cls.activepartypokemon].cd = alive[cls.activepartypokemon].skill.interval * 240
+                alive[0].cd = alive[0].skill.interval * 240
                 alive = [pokemon for pokemon in cls.activedungeon.party if pokemon.currenthp]
                 cls.activepartypokemon = max(0, cls.activepartypokemon - 1)
                 if not len(alive):
@@ -327,6 +325,7 @@ class Gamelogic:
                     cls.activeenemypokemon = 0
                     cls.activedungeon.generate()
                     cls.regenpokemonhealt(cls.party[0:5])
+                return
             cls.activeenemypokemon += 1
             if cls.activeenemypokemon > len(alive2)-1:
                 cls.activeenemypokemon = 0
