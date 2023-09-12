@@ -14,34 +14,35 @@ grey = (105, 105, 105)
 teal = (84, 186, 227)
 brown = (139, 69, 19)
 
-class Skill:
-    def __init__(self,name,power,interval,category,cost,type,effect,unlockflags):
-        self.name=name
-        self.power=power
-        self.interval=interval
-        self.category=category
-        self.cost=cost
-        self.type=type
-        self.effect=effect
-        self.unlockflags=unlockflags
-    def useskill(self,user,target):
-        multiplier=1+self.power/10
-        if self.category == 'Phys':
-            attack=multiplier*user.actualpatk
-            basedamage=attack/2-target.actualpdef/4
-        else:
-            attack=multiplier*user.actualmatk
-            basedamage = attack / 2 - target.actualmdef / 4
-        if basedamage<0:
-            basedamage=0
-        randomdamage=random.uniform(-((basedamage)**0.5)/2,((basedamage)**0.5/2))
-        damage=max(basedamage+randomdamage,attack/10)
-        target.currenthp-=damage
-        if  target.currenthp<0:
-            target.currenthp=0
-            target.cd=target.skill.interval*240
-        return damage
 
+class Skill:
+    def __init__(self, name, power, interval, category, cost, type, effect, unlockflags):
+        self.name = name
+        self.power = power
+        self.interval = interval
+        self.category = category
+        self.cost = cost
+        self.type = type
+        self.effect = effect
+        self.unlockflags = unlockflags
+
+    def useskill(self, user, target):
+        multiplier = 1 + self.power / 10
+        if self.category == 'Phys':
+            attack = multiplier * user.actualpatk
+            basedamage = attack / 2 - target.actualpdef / 4
+        else:
+            attack = multiplier * user.actualmatk
+            basedamage = attack / 2 - target.actualmdef / 4
+        if basedamage < 0:
+            basedamage = 0
+        randomdamage = random.uniform(-((basedamage) ** 0.5) / 2, ((basedamage) ** 0.5 / 2))
+        damage = max(basedamage + randomdamage, attack / 10)
+        target.currenthp -= damage
+        if target.currenthp < 0:
+            target.currenthp = 0
+            target.cd = target.skill.interval * 240
+        return damage
 
 
 def numcon(n):
@@ -57,59 +58,61 @@ def numcon(n):
         return f'{round(n / 1000, 2)}K'
     return str(round(n, 1))
 
+
 class Dungeon:
-    def __init__(self,parent,name,location,unlockflags,closingflags,changeflags,monsterlist,isvisible=True,isdisabled=False,boss=None):
-        self.parent=parent
-        self.name=name
-        self.unlockflags=unlockflags
-        self.closingflags=closingflags
-        self.changeflags=changeflags
-        self.monsterlist=monsterlist
-        self.isvisible=isvisible
-        self.isdisabled=isdisabled
-        self.boss=boss
-        self.location=location
-        self.currentlayout=[]
-        self.floor=0
-        self.log=[]
-        self.party=[]
-        for pokemon in self.parent.party[0:min(5,len(self.parent.party))]:
+    def __init__(self, parent, name, location, unlockflags, closingflags, changeflags, monsterlist, isvisible=True,
+                 isdisabled=False, boss=None):
+        self.parent = parent
+        self.name = name
+        self.unlockflags = unlockflags
+        self.closingflags = closingflags
+        self.changeflags = changeflags
+        self.monsterlist = monsterlist
+        self.isvisible = isvisible
+        self.isdisabled = isdisabled
+        self.boss = boss
+        self.location = location
+        self.currentlayout = []
+        self.floor = 0
+        self.log = []
+        self.party = []
+        for pokemon in self.parent.party[0:min(5, len(self.parent.party))]:
             self.party.append(pokemon.copy())
         if location[0] not in self.parent.dungeons.keys():
-            self.parent.dungeons[location[0]]={}
+            self.parent.dungeons[location[0]] = {}
         if location[1] not in self.parent.dungeons[location[0]].keys():
             self.parent.dungeons[location[0]][location[1]] = []
         self.parent.dungeons[location[0]][location[1]].append(self)
+
     def generate(self):
-        self.floor=0
-        self.log=[]
-        self.currentlayout=[]
+        self.floor = 0
+        self.log = []
+        self.currentlayout = []
         self.party = []
         for pokemon in self.parent.party[0:min(5, len(self.parent.party))]:
             self.party.append(pokemon.copy())
         for i in range(5):
-            n=randint(3,5)
+            n = randint(3, 5)
             self.currentlayout.append([])
             for j in range(n):
-                k=randint(0,len(self.monsterlist)-1)
+                k = randint(0, len(self.monsterlist) - 1)
                 self.currentlayout[i].append(self.monsterlist[k].copy())
-
-
 
     def update(self):
         pass
 
+
 class Corestats:
-    def __init__(self,parent):
-        self.parent=parent
+    def __init__(self, parent):
+        self.parent = parent
         self.basestats = {'hp': 10, 'patk': 10, 'pdef': 10, 'matk': 10, 'mdef': 10}
         self.modifiers = {'Upgradeactions': {'type': 'add', 'hp': 1, 'patk': 0, 'pdef': 0, 'matk': 0, 'mdef': 0}}
+
     def updatepokemons(self):
         for pokemon in self.parent.party:
             pokemon.updatestats()
         for pokemon in self.parent.reserve:
             pokemon.updatestats()
-
 
     def finalstats(self):
         final = {}
@@ -156,7 +159,6 @@ class Resource:
                 resources[category] = [self]
 
 
-
 class menuelement:
     def __init__(self, parent, name, isvisible=False, isdisabled=False, elementlist=None, unlockflags=None,
                  closingflags=None,
@@ -174,18 +176,18 @@ class menuelement:
 
 class Upgradeactions(menuelement):
     def __init__(self, cost=[['Wood', 0, 0, 0]],
-                 complete=[['resource', 'Wood', 0, 0, 0]],location=None, requirements=[['Wood', 0, 0, 0]], *args, **kwargs):
-        menuelement.__init__(self,elementlist=None,*args, **kwargs)
+                 complete=[['resource', 'Wood', 0, 0, 0]], location=None, requirements=[['Wood', 0, 0, 0]], *args,
+                 **kwargs):
+        menuelement.__init__(self, elementlist=None, *args, **kwargs)
         if location is not None:
             if location[0] not in self.parent.upgradeactions.keys():
-                self.parent.upgradeactions[location[0]]= {}
+                self.parent.upgradeactions[location[0]] = {}
             if location[1] not in self.parent.upgradeactions[location[0]].keys():
-                self.parent.upgradeactions[location[0]][location[1]]=[]
+                self.parent.upgradeactions[location[0]][location[1]] = []
             self.parent.upgradeactions[location[0]][location[1]].append(self)
         self.cost = cost
         self.complete = complete
         self.requirements = requirements
-
 
     def docost(self):
         temp = 0
@@ -512,7 +514,9 @@ class Loopaction(menuelement):
 class Pokemon(menuelement):
     def __init__(self, hp, atk, dif, satk, sdif, maxlvl=1000, unlocked=0, lvl=0, phys=0, magic=0,
                  special=0,
-                 skill=Skill('Tackle',7,2.8,'Phys',None,None,None,None),wild=True,drop={'exp':1,'resources':[['Pelt',1]]}, *args, **kwargs):
+                 skill=Skill('Tackle', 7, 2.8, 'Phys', None, None, None, None), wild=True,
+                 drop={'exp': 1, 'resources': [['Physical gems',1,10],['Magical gems',1,10],['Special gems',1,10]]}, *args, **kwargs):
+
         menuelement.__init__(self, *args, **kwargs)
         self.patk = atk
         self.pdef = dif
@@ -526,21 +530,22 @@ class Pokemon(menuelement):
         self.magic = magic
         self.special = special
         self.wild = wild
-        self.skill=skill
-        self.drop=drop
+        self.skill = skill
+        self.drop = drop
         self.updatestats()
         if skill is not None:
-            self.cd=skill.interval*240
+            self.cd = skill.interval * 240
+
     def copy(self):
         return copy.deepcopy(self)
 
     def updatestats(self):
         if self.name == 'You':
-            if self.lvl<=10:
-                scaling1=1/10+self.phys*9/100
-                scaling2=1/10+self.magic*9/100
+            if self.lvl <= 10:
+                scaling1 = 1 / 10 + self.phys * 9 / 100
+                scaling2 = 1 / 10 + self.magic * 9 / 100
             else:
-                scaling1=1+self.phys*8/100
+                scaling1 = 1 + self.phys * 8 / 100
                 scaling2 = 1 + self.magic * 8 / 100
 
             self.actualhp = scaling1 * self.parent.corestats.finalstats()['hp']
@@ -552,31 +557,30 @@ class Pokemon(menuelement):
 
         elif not self.wild:
             self.actualhp = round(
-                self.parent.corestats.finalstats()['hp'] * ((self.phys ) / self.maxlvl) * (self.hp / 100), 1)
+                self.parent.corestats.finalstats()['hp'] * ((self.phys) / self.maxlvl) * (self.hp / 100), 1)
             self.actualpatk = round(
-                self.parent.corestats.finalstats()['patk'] * ((self.phys ) / self.maxlvl) * (self.patk / 100), 1)
+                self.parent.corestats.finalstats()['patk'] * ((self.phys) / self.maxlvl) * (self.patk / 100), 1)
             self.actualpdef = round(
-                self.parent.corestats.finalstats()['pdef'] * ((self.phys ) / self.maxlvl) * (self.pdef / 100), 1)
+                self.parent.corestats.finalstats()['pdef'] * ((self.phys) / self.maxlvl) * (self.pdef / 100), 1)
             self.actualmatk = round(
-                self.parent.corestats.finalstats()['matk'] * ((self.magic ) / self.maxlvl) * (self.matk / 100), 1)
+                self.parent.corestats.finalstats()['matk'] * ((self.magic) / self.maxlvl) * (self.matk / 100), 1)
             self.actualmdef = round(
-                self.parent.corestats.finalstats()['mdef'] * ((self.magic ) / self.maxlvl) * (self.mdef / 100), 1)
+                self.parent.corestats.finalstats()['mdef'] * ((self.magic) / self.maxlvl) * (self.mdef / 100), 1)
 
             self.currenthp = self.actualhp
         else:
             self.actualhp = round(
-                10 * ((self.phys ) / self.maxlvl) * (self.hp / 100), 1)
+                10 * ((self.phys) / self.maxlvl) * (self.hp / 100), 1)
             self.actualpatk = round(
-                10 * ((self.phys ) / self.maxlvl) * (self.patk / 100), 1)
+                10 * ((self.phys) / self.maxlvl) * (self.patk / 100), 1)
             self.actualpdef = round(
-                10 * ((self.phys ) / self.maxlvl) * (self.pdef / 100), 1)
+                10 * ((self.phys) / self.maxlvl) * (self.pdef / 100), 1)
             self.actualmatk = round(
-                10 * ((self.magic ) / self.maxlvl) * (self.matk / 100), 1)
+                10 * ((self.magic) / self.maxlvl) * (self.matk / 100), 1)
             self.actualmdef = round(
-                10 * ((self.magic ) / self.maxlvl) * (self.mdef / 100), 1)
+                10 * ((self.magic) / self.maxlvl) * (self.mdef / 100), 1)
 
             self.currenthp = self.actualhp
-
 
 
 def getgamestate():
@@ -634,7 +638,7 @@ def createloopactions(parent):
                elementlist=parent.loopactions['Common loopactions 2'], speed=1 / 600,
                progresscost=[['Action', -1 / 240, 0, 0]], progresseffect=[['Stamina', 1 / 240, 0, 0]])
     Loopaction(parent=parent, name='Exercise2', isvisible=False,
-               elementlist=parent.loopactions['Common loopactions 3'], speed=1 / 600,unlockflags={'Dubious home':1},
+               elementlist=parent.loopactions['Common loopactions 3'], speed=1 / 600, unlockflags={'Dubious home': 1},
                progresscost=[['Action', -1 / 240, 0, 0]], progresseffect=[['Stamina', 1 / 240, 0, 0]])
     '''Loopaction(parent=parent, name='Exercise3', isvisible=loopactionvisibility[1],
                elementlist=parent.loopactions['Common loopactions 3'], speed=1 / 600,
@@ -649,40 +653,40 @@ def createpokemon(parent):
     for pokemonkey in Information['basepokemons']:
         Pokemon(parent=parent, elementlist=parent.pokemonlist, **pokemonkey)
     for pokemonkey in Information['party']:
-        Pokemon(parent=parent, wild=False,elementlist=parent.party, **pokemonkey)
+        Pokemon(parent=parent, wild=False, elementlist=parent.party, **pokemonkey)
     for pokemonkey in Information['reserve']:
-        Pokemon(parent=parent, wild=False,elementlist=parent.reserve, **pokemonkey)
+        Pokemon(parent=parent, wild=False, elementlist=parent.reserve, **pokemonkey)
 
 
 def createupgradeactions(parent):
     Upgradeactions(parent=parent, name='Wood quest', isvisible=True,
-                   location=['Village','old house'],
+                   location=['Village', 'old house'],
                    unlockflags={'Dubious home': 0, }, closingflags={'Dubious home': 1}, changeflags={'Dubious home': 1},
                    cost=[['Wood', -10, 0, 0]], complete=[['max', 'Wood', 20, 0, 0]],
                    requirements=[['Fate', 5, 0, 0]])
     Upgradeactions(parent=parent, name='Wood quest2', isvisible=True,
-                   location=['Village','old house'],
+                   location=['Village', 'old house'],
                    cost=[['Wood', -10, 0, 0]], complete=[['resource', 'Wood', 20, 0, 0]],
                    unlockflags={'Dubious home': 0, }, closingflags={'Dubious home': 2}, changeflags={'Dubious home': 1})
     Upgradeactions(parent=parent, name='Wood quest3', isvisible=True,
                    complete=[['stat', 'hp', 20, 0, 0], ['stat', 'patk', 1000, 0, 0], ['stat', 'pdef', 70, 0, 0],
                              ['stat', 'matk', 5, 0, 0], ['stat', 'mdef', 10, 0, 0]],
-                   location=['Village','old house 2'],
+                   location=['Village', 'old house 2'],
                    unlockflags={'Dubious home': 0, }, closingflags={'Dubious home': 3}, changeflags={'Dubious home': 1})
     Upgradeactions(parent=parent, name='Wood quest4', isvisible=True,
                    complete=[['stat', 'hp', 20, 0, 0], ['stat', 'patk', 1000, 0, 0], ['stat', 'pdef', 70, 0, 0],
                              ['stat', 'matk', 5, 0, 0], ['stat', 'mdef', 10, 0, 0]],
-                   location=['Village','old house 3'],
+                   location=['Village', 'old house 3'],
                    unlockflags={'Dubious home': 0, }, closingflags={'Dubious home': 3}, changeflags={'Dubious home': 1})
     Upgradeactions(parent=parent, name='Wood quest5', isvisible=True,
                    complete=[['stat', 'hp', 20, 0, 0], ['stat', 'patk', 1000, 0, 0], ['stat', 'pdef', 70, 0, 0],
                              ['stat', 'matk', 5, 0, 0], ['stat', 'mdef', 10, 0, 0]],
-                   location=['Village','old house 3'],
+                   location=['Village', 'old house 3'],
                    unlockflags={'Dubious home': 0, }, closingflags={'Dubious home': 3}, changeflags={'Dubious home': 1})
     Upgradeactions(parent=parent, name='Wood quest6', isvisible=True,
                    complete=[['stat', 'hp', 20, 0, 0], ['stat', 'patk', 1000, 0, 0], ['stat', 'pdef', 70, 0, 0],
                              ['stat', 'matk', 5, 0, 0], ['stat', 'mdef', 10, 0, 0]],
-                   location=['Village','old house 3'],
+                   location=['Village', 'old house 3'],
                    unlockflags={'Dubious home': 0, }, closingflags={'Dubious home': 3}, changeflags={'Dubious home': 1})
     '''Upgradeactions(parent=parent, name='Wood quest7', isvisible=True,
                    complete=[['stat', 'hp', 20, 0, 0], ['stat', 'patk', 1000, 0, 0], ['stat', 'pdef', 70, 0, 0],
@@ -711,24 +715,26 @@ def createupgradeactions(parent):
                    unlockflags={'Dubious home': 0, }, closingflags={'Dubious home': 3}, changeflags={'Dubious home': 1})'''
 
 
-
 def createresources(parent):
-    parent.fate=Resource(parent, 'Fate', 0, 100, {'Dubious home': 0}, 'Fate', 0, resources=parent.resources)
+    parent.fate = Resource(parent, 'Fate', 0, 100, {'Dubious home': 0}, 'Fate', 0, resources=parent.resources)
     Resource(parent, 'Wood', 50, 10000000, {'Dubious home': 1}, 'Wood', 0, resources=parent.resources)
     Resource(parent, 'Wooden statue', 0, 100, {'Dubious home': 2}, 'Accessories', 0, resources=parent.resources)
     Resource(parent, 'Stone', 0, 100, {'Dubious home': 0}, 'Minerals', 0, resources=parent.resources)
     Resource(parent, 'Firewood', 0, 100, {'Dubious home': 0}, 'Wood', 0, resources=parent.resources)
     Resource(parent, 'Pelt', 0, 100, {'Dubious home': 0}, 'Materials', 0, resources=parent.resources)
-    parent.physgems=Resource(parent, 'Physical gems', 10, 10000, {'Dubious home': 0}, 'Gems', 0, resources=parent.resources)
-    parent.magicgems=Resource(parent, 'Magical gems', 100, 10000, {'Dubious home': 0}, 'Gems', 0, resources=parent.resources)
-    parent.specialgems=Resource(parent, 'Special gems', 100, 10000, {'Dubious home': 0}, 'Gems', 0, resources=parent.resources)
+    parent.physgems = Resource(parent, 'Physical gems', 10, 10000, {'Dubious home': 0}, 'Gems', 0,
+                               resources=parent.resources)
+    parent.magicgems = Resource(parent, 'Magical gems', 100, 10000, {'Dubious home': 0}, 'Gems', 0,
+                                resources=parent.resources)
+    parent.specialgems = Resource(parent, 'Special gems', 100, 10000, {'Dubious home': 0}, 'Gems', 0,
+                                  resources=parent.resources)
 
 
 def createenergies(parent):
     Energy(parent=parent, name='Action', quantity=0, max=5, unlockflags={'Dubious home': 0}, color=red, regen=0)
-    Energy(parent=parent, name='Stamina', quantity=0, max=1, unlockflags={'Dubious home': 0}, color=(255,255,0),
+    Energy(parent=parent, name='Stamina', quantity=0, max=1, unlockflags={'Dubious home': 0}, color=(255, 255, 0),
            regen=0)
-    Energy(parent=parent, name='Mana', quantity=0, max=1, unlockflags={'Dubious home': 0}, color=(0,0,205),
+    Energy(parent=parent, name='Mana', quantity=0, max=1, unlockflags={'Dubious home': 0}, color=(0, 0, 205),
            regen=1 / 240)
     Energy(parent=parent, name='Fire', quantity=0, max=1, unlockflags={'Dubious home': 0}, color=orange,
            regen=1 / 240)
@@ -737,12 +743,17 @@ def createenergies(parent):
     Energy(parent=parent, name='Earth', quantity=0, max=1, unlockflags={'Dubious home': 0}, color=brown,
            regen=1 / 240)
 
-def createdungeons(parent):
-    Dungeon(parent=parent,name="Coco's lair",location=['Village','Surroundings'],changeflags={},unlockflags={'Dubious home': 0},closingflags={},monsterlist=[parent.pokemonlist[i].copy() for i in range(2)])
-    Dungeon(parent=parent, name="Coco's lair 2", location=['Village', 'Surroundings'],changeflags={}, unlockflags={'Dubious home': 0}, closingflags={},
-            monsterlist=[])
-    Dungeon(parent=parent, name="Coco's lair 2", location=['Coast', 'Surroundings'],changeflags={}, unlockflags={'Dubious home': 0}, closingflags={'Dubious home': 1},
-            monsterlist=[])
-    Dungeon(parent=parent, name="Coco's lair", location=['Village', 'Surroundings 2'],changeflags={}, unlockflags={'Dubious home': 0}, closingflags={'Dubious home': 1},
-            monsterlist=[])
 
+def createdungeons(parent):
+    Dungeon(parent=parent, name="Coco's lair", location=['Village', 'Surroundings'], changeflags={},
+            unlockflags={'Dubious home': 0}, closingflags={},
+            monsterlist=[parent.pokemonlist[i].copy() for i in range(2)])
+    Dungeon(parent=parent, name="Coco's lair 2", location=['Village', 'Surroundings'], changeflags={},
+            unlockflags={'Dubious home': 0}, closingflags={},
+            monsterlist=[])
+    Dungeon(parent=parent, name="Coco's lair 2", location=['Coast', 'Surroundings'], changeflags={},
+            unlockflags={'Dubious home': 0}, closingflags={'Dubious home': 1},
+            monsterlist=[])
+    Dungeon(parent=parent, name="Coco's lair", location=['Village', 'Surroundings 2'], changeflags={},
+            unlockflags={'Dubious home': 0}, closingflags={'Dubious home': 1},
+            monsterlist=[])

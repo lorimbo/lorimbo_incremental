@@ -634,18 +634,24 @@ class Graphics:
                 imgui.same_line(position=cls.resizewidth(150))
                 actiondecorator(imgui.text,cls.theme)(numcon(pokemon.lvl) + '/' + numcon(pokemon.maxlvl))
                 imgui.same_line(position=cls.resizewidth(280))
-                if actiondecorator(imgui.button,cls.theme)(f'Summon##{num}', 90):
+                if pokemon.name=='You':
+                    use= not Gamelogic.fate.quantity or pokemon.lvl>=pokemon.maxlvl
+                elif pokemon.name in Gamelogic.researches:
+                    use=not Gamelogic.researches[pokemon.name]or pokemon.lvl>=pokemon.maxlvl
+                else:
+                    use=True
+                if cls.disabledecorator(imgui.button,use)(f'Summon##{num}', 90):
                     Gamelogic.levelup = ['Party', 'Level', num]
                 imgui.same_line(position=cls.resizewidth(530))
-                use = not Gamelogic.physgems.quantity
+                use = not Gamelogic.physgems.quantity or pokemon.phys>=pokemon.lvl
                 if cls.disabledecorator(imgui.button, use)(f'Physical##{num}', 90):
                     Gamelogic.levelup = ['Party', 'Physical', num]
                 imgui.same_line(spacing=cls.resizewidth(40))
-                use = not Gamelogic.magicgems.quantity
+                use = not Gamelogic.magicgems.quantity or pokemon.magic>=pokemon.lvl
                 if cls.disabledecorator(imgui.button, use)(f'Magical##{num}', 90):
                     Gamelogic.levelup = ['Party', 'Magical', num]
                 imgui.same_line(spacing=cls.resizewidth(40))
-                use = not Gamelogic.specialgems.quantity
+                use = not Gamelogic.specialgems.quantity or pokemon.special>=pokemon.lvl
                 if cls.disabledecorator(imgui.button, use)(f'Special##{num}', 90):
                     Gamelogic.levelup = ['Party', 'Special', num]
             imgui.text('')
@@ -666,22 +672,25 @@ class Graphics:
                 imgui.same_line(position=cls.resizewidth(150))
                 actiondecorator(imgui.text,cls.theme)(numcon(pokemon.lvl) + '/' + numcon(pokemon.maxlvl))
                 imgui.same_line(position=cls.resizewidth(280))
-
-                if actiondecorator(imgui.button,cls.theme)(f'Summon##{1000 + num}', 90):
+                if pokemon.name in Gamelogic.researches:
+                    use=not Gamelogic.researches[pokemon.name] or pokemon.lvl>=pokemon.maxlvl
+                else:
+                    use=True
+                if cls.disabledecorator(imgui.button,use)(f'Summon##{1000 + num}', 90):
                     Gamelogic.levelup = ['Reserve', 'Level', num]
                 imgui.same_line(position=cls.resizewidth(530))
 
-                use = not Gamelogic.physgems.quantity
+                use = not Gamelogic.physgems.quantity or pokemon.phys>=pokemon.lvl
                 if cls.disabledecorator(imgui.button, use)(f'Physical##{1000 + num}', 90):
                     Gamelogic.levelup = ['Reserve', 'Physical', num]
 
                 imgui.same_line(spacing=cls.resizewidth(40))
-                use = not Gamelogic.magicgems.quantity
+                use = not Gamelogic.magicgems.quantity or pokemon.magic>=pokemon.lvl
                 if cls.disabledecorator(imgui.button, use)(f'Magical##{1000 + num}', 90):
                     Gamelogic.levelup = ['Reserve', 'Magical', num]
 
                 imgui.same_line(spacing=cls.resizewidth(40))
-                use = not Gamelogic.specialgems.quantity
+                use = not Gamelogic.specialgems.quantity or pokemon.special>=pokemon.lvl
                 if cls.disabledecorator(imgui.button, use)(f'Special##{1000 + num}', 90):
                     Gamelogic.levelup = ['Reserve', 'Special', num]
 
@@ -692,6 +701,23 @@ class Graphics:
             actiondecorator(imgui.text,cls.theme)(numcon(pokemon.magic) + '/' + numcon(pokemon.lvl))
             imgui.same_line(position=cls.resizewidth(820))
             actiondecorator(imgui.text,cls.theme)(numcon(pokemon.special) + '/' + numcon(pokemon.lvl))
+        pop=None
+        for num,pokemon in enumerate(Gamelogic.unlockablepokemons):
+            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
+                actiondecorator(imgui.text,cls.theme)(pokemon.name)
+                imgui.same_line(position=cls.resizewidth(280))
+                if pokemon.name in Gamelogic.researches:
+                    use = not Gamelogic.researches[pokemon.name]
+                else:
+                    use = True
+                if cls.disabledecorator(imgui.button, use)(f'Unlock##{1000 + num}', 90):
+                    Gamelogic.reserve.append(pokemon)
+                    pop=num
+                    Gamelogic.levelup = ['Reserve', 'Level', len(Gamelogic.reserve)-1]
+        if pop is not None:
+            Gamelogic.unlockablepokemons.pop(pop)
+            pop=None
+
 
         imgui.end_child()
 

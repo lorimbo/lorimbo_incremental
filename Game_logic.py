@@ -1,5 +1,6 @@
 import json
 import initialization_elements
+import random
 
 red = (255, 0, 0)
 green = (0, 255, 0)
@@ -11,6 +12,8 @@ orange = (255, 100, 0)
 grey = (105, 105, 105)
 teal = (84, 186, 227)
 brown = (139, 69, 19)
+
+
 def numcon(n):
     if n >= 10000000:
         return f'{round(n / 1000000, 1)}M'
@@ -23,7 +26,6 @@ def numcon(n):
     elif n >= 1000:
         return f'{round(n / 1000, 2)}K'
     return str(round(n, 1))
-
 
 
 class Gamelogic:
@@ -42,25 +44,27 @@ class Gamelogic:
     instantactions = {'Common actions': [], 'Common actions 2': []}
     loopactions = {'Common loopactions': [], 'Common loopactions 2': [], 'Common loopactions 3': []}
     upgradeactions = {}
-    exp=0
+    exp = 0
     dungeons = {}
-    activedungeon= None
+    activedungeon = None
     activepartypokemon = 0
     activeenemypokemon = 0
+    researches = {}
     nextactions = []
     pokemonlist = []
     reserve = []
     party = []
+    unlockablepokemons=[]
     switch = None
     remove = None
     add = None
     levelup = None
-    partylenmax = 7
+    partylenmax = 5
     fps = 240
 
     @classmethod
     def checkflags(cls):
-        elements=[cls.instantactions, cls.loopactions]
+        elements = [cls.instantactions, cls.loopactions]
         if cls.subtab in cls.dungeons.keys():
             elements.append(cls.dungeons[cls.subtab])
         if cls.subtab in cls.upgradeactions.keys():
@@ -100,7 +104,6 @@ class Gamelogic:
                         temp = 0
             if temp:
                 key.isvisible = True
-
 
     @classmethod
     def deactivateloopactions(cls):
@@ -243,7 +246,13 @@ class Gamelogic:
             pokemon = cls.reserve[num]
         if information[1] == 'Level':
             if pokemon.lvl < pokemon.maxlvl:
-                pokemon.lvl += 1
+                if pokemon.name=='You':
+                    if cls.fate.quantity:
+                        cls.fate.quantity-=1
+                        pokemon.lvl += 1
+                elif cls.researches[pokemon.name]:
+                    cls.researches[pokemon.name]-=1
+                    pokemon.lvl += 1
         elif information[1] == 'Physical':
             if pokemon.phys < pokemon.lvl and cls.physgems.quantity:
                 pokemon.phys += 1
@@ -260,61 +269,80 @@ class Gamelogic:
                 cls.specialgems.quantity -= 1
         pokemon.updatestats()
         cls.levelup = None
+
     @classmethod
     def dungeonprogress(cls):
         alive = [pokemon for pokemon in cls.activedungeon.party if pokemon.currenthp]
         alive2 = [pokemon for pokemon in cls.activedungeon.currentlayout[cls.activedungeon.floor] if pokemon.currenthp]
 
-        alive[cls.activepartypokemon].cd-=1
+        alive[cls.activepartypokemon].cd -= 1
         if alive[cls.activepartypokemon].cd == 0:
-            damagedealt=alive[cls.activepartypokemon].skill.useskill(alive[cls.activepartypokemon],alive2[0])
-            alive[cls.activepartypokemon].cd=alive[cls.activepartypokemon].skill.interval*240
-            cls.activedungeon.log.append(f'{alive[cls.activepartypokemon].name} dealt {numcon(damagedealt)} dmg to {alive2[0].name}')
-            if alive2[0].currenthp==0:
+            damagedealt = alive[cls.activepartypokemon].skill.useskill(alive[cls.activepartypokemon], alive2[0])
+            alive[cls.activepartypokemon].cd = alive[cls.activepartypokemon].skill.interval * 240
+            cls.activedungeon.log.append(
+                f'{alive[cls.activepartypokemon].name} dealt {numcon(damagedealt)} dmg to {alive2[0].name}')
+            if alive2[0].currenthp == 0:
                 alive2[0].cd = alive2[0].skill.interval * 240
                 cls.activedungeon.log.append(
                     f'Enemy {alive2[0].name} fainted!')
-                cls.exp+=alive2[0].drop['exp']
-                droplog=f'Enemy {alive2[0].name} dropped {alive2[0].drop["exp"]} exp'
+                cls.exp += alive2[0].drop['exp']
+                droplog = f'Enemy {alive2[0].name} dropped {alive2[0].drop["exp"]} exp'
                 for resource in alive2[0].drop['resources']:
-                    name=resource[0]
-                    quantity=resource[1]
+                    name = resource[0]
+                    quantity = resource[1]
+                    lootchance = resource[2]
                     for x in cls.resources.keys():
                         for resource2 in [e for e in cls.resources[x] if e.name == name]:
-                            resource2.quantity += quantity
-                            if resource2.quantity > resource2.max:
-                                resource2.quantity = resource2.max
-                    droplog+=f', {quantity} {name}'
+                            n = random.randint(0, 100)
+                            if n <= lootchance:
+                                resource2.quantity += quantity
+                                if resource2.quantity > resource2.max:
+                                    resource2.quantity = resource2.max
+                                droplog += f', {quantity} {name}'
+                    n = random.randint(0, 100)
+                    researchdrop=1
+                    if n <= 10:
+                        if alive2[0].name not in cls.researches:
+                            pokemontounlock=alive2[0].copy()
+                            cls.researches[pokemontounlock.name] = 0
+                            pokemontounlock.phys = 1
+                            pokemontounlock.magic = 1
+                            pokemontounlock.special = 1
+                            pokemontounlock.lvl = 5
+                            cls.unlockablepokemons.append(pokemontounlock)
+                        cls.researches[alive2[0].name] += researchdrop
+
+                        droplog +=f',{researchdrop} {alive2[0].name} research'
+
                 cls.activedungeon.log.append(droplog)
                 alive2 = [pokemon for pokemon in cls.activedungeon.currentlayout[cls.activedungeon.floor] if
                           pokemon.currenthp]
-                cls.activeenemypokemon=max(0,cls.activeenemypokemon-1)
+                cls.activeenemypokemon = max(0, cls.activeenemypokemon - 1)
                 if not len(alive2):
                     cls.activepartypokemon = 0
                     cls.activeenemypokemon = 0
-                    cls.activedungeon.floor+=1
+                    cls.activedungeon.floor += 1
 
-                    if cls.activedungeon.floor>=5:
+                    if cls.activedungeon.floor >= 5:
                         cls.activedungeon.generate()
                         cls.regenpokemonhealt(cls.party[0:5])
                         if cls.activedungeon.changeflags is not None:
                             for key in cls.activedungeon.changeflags:
                                 cls.flags[key] += cls.activedungeon.changeflags[key]
-                        cls.activedungeon.changeflags=None
-                        return
+                        cls.activedungeon.changeflags = None
+                    return
 
             cls.activepartypokemon += 1
-            if cls.activepartypokemon>len(alive)-1:
-                cls.activepartypokemon=0
+            if cls.activepartypokemon > len(alive) - 1:
+                cls.activepartypokemon = 0
 
-
-        alive2[cls.activeenemypokemon].cd-=1
+        alive2[cls.activeenemypokemon].cd -= 1
         if alive2[cls.activeenemypokemon].cd == 0:
-            damagedealt=alive2[cls.activeenemypokemon].skill.useskill(alive2[cls.activeenemypokemon], alive[0])
+            damagedealt = alive2[cls.activeenemypokemon].skill.useskill(alive2[cls.activeenemypokemon], alive[0])
             alive2[cls.activeenemypokemon].cd = alive2[cls.activeenemypokemon].skill.interval * 240
             cls.activedungeon.log.append(
                 f'Enemy {alive2[cls.activeenemypokemon].name} dealt {numcon(damagedealt)} dmg to {alive[0].name}')
-            if alive[0].currenthp==0:
+            if alive[0].currenthp == 0:
                 cls.activedungeon.log.append(
                     f'{alive[0].name} fainted!')
                 alive[0].cd = alive[0].skill.interval * 240
@@ -327,15 +355,13 @@ class Gamelogic:
                     cls.regenpokemonhealt(cls.party[0:5])
                 return
             cls.activeenemypokemon += 1
-            if cls.activeenemypokemon > len(alive2)-1:
+            if cls.activeenemypokemon > len(alive2) - 1:
                 cls.activeenemypokemon = 0
 
     @classmethod
-    def regenpokemonhealt(cls,list):
+    def regenpokemonhealt(cls, list):
         for pokemon in list:
-            pokemon.currenthp=pokemon.actualhp
-
-
+            pokemon.currenthp = pokemon.actualhp
 
     @classmethod
     def frameaction(cls):
