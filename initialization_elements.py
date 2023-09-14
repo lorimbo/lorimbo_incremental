@@ -829,17 +829,17 @@ def createupgradeactions(parent):
     Upgradeactions(parent=parent, name='Talk to Mother 2/10', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Mother': 2}, closingflags={'Mother': 3}, changeflags={'Mother': 1},
-                   cost=[['Fate', -50, 0, 0]], complete=[['max', 'Fate', 5, 0, 0]],
+                   cost=[['Fate', -20, 0, 0]], complete=[['max', 'Fate', 5, 0, 0]],
                    )
     Upgradeactions(parent=parent, name='Talk to Mother 3/10', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Mother': 3}, closingflags={'Mother': 4}, changeflags={'Mother': 1},
-                   cost=[['Fate', -55, 0, 0]], complete=[['max', 'Fate', 5, 0, 0]],
+                   cost=[['Fate', -25, 0, 0]], complete=[['max', 'Fate', 5, 0, 0]],
                    )
     Upgradeactions(parent=parent, name='Talk to Mother 4/10', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Mother': 4}, closingflags={'Mother': 5}, changeflags={'Mother': 1},
-                   cost=[['Fate', -60, 0, 0]], complete=[['max', 'Fate', 5, 0, 0]],
+                   cost=[['Fate', -30, 0, 0]], complete=[['max', 'Fate', 5, 0, 0]],
                    )
     Upgradeactions(parent=parent, name='Talk to Mother 5/10', isvisible=True,
                    location=['Village', 'Home'],
@@ -889,7 +889,7 @@ def createupgradeactions(parent):
                    )
     Upgradeactions(parent=parent, name='Talk with Billy the kid 1/3', isvisible=True,
                    location=['Village', 'Village'],
-                   unlockflags={'Mother': 4}, closingflags={'Billy': 1}, changeflags={'Billy': 1},
+                   unlockflags={'Mother': 1}, closingflags={'Billy': 1}, changeflags={'Billy': 1},
                    cost=[['Butterfly wings', -5, 0, 0]], complete=[['max', 'Butterfly wings', 5, 0, 0]],
                    )
     Upgradeactions(parent=parent, name='Talk with Billy the kid 2/3', isvisible=True,
@@ -905,7 +905,7 @@ def createupgradeactions(parent):
                    )
     Upgradeactions(parent=parent, name='Talk to the zen master 1/5', isvisible=True,
                    location=['Village', 'Village'],
-                   unlockflags={'Mother': 4}, closingflags={'Zen': 1}, changeflags={'Zen': 1},
+                   unlockflags={'Mother': 5}, closingflags={'Zen': 1}, changeflags={'Zen': 1},
                    cost=[['Gold', -20, 0, 0]], complete=[['max', 'Fate', 10, 0, 0]],
                    )
     Upgradeactions(parent=parent, name='Talk to the zen master 2/5', isvisible=True,
