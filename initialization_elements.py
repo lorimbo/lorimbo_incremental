@@ -983,8 +983,8 @@ def createupgradeactions(parent):
 
 
 def createresources(parent):
-    parent.fate = Resource(parent, 'Fate', 1000, 10, {'Father': 0}, 'Fate', 0, resources=parent.resources)
-    Resource(parent, 'Wood', 40, 1, {'Father': 2}, 'Wood', 0, resources=parent.resources)
+    parent.fate = Resource(parent, 'Fate', 0, 10, {'Father': 0}, 'Fate', 0, resources=parent.resources)
+    Resource(parent, 'Wood', 0, 1, {'Father': 2}, 'Wood', 0, resources=parent.resources)
     Resource(parent, 'Weeds', 0, 10, {'Mother': 5}, 'Herbes', 0, resources=parent.resources)
     Resource(parent, 'Herbs', 0, 1, {'Mother': 5}, 'Herbes', 0, resources=parent.resources)
     Resource(parent, 'Gold', 0, 60, {'Mother': 5}, 'Gold', 0, resources=parent.resources)
@@ -992,11 +992,11 @@ def createresources(parent):
     Resource(parent, 'Cow hide', 0, 10, {'Mother': 11}, 'Hides', 0, resources=parent.resources)
     Resource(parent,'Butterfly wings',0,10,{'Father': 7},'Materials',0,resources=parent.resources)
     Resource(parent, 'Frog legs', 0, 10, {'Father': 7}, 'Materials', 0, resources=parent.resources)
-    parent.physgems = Resource(parent, 'Physical gems', 20, 1, {'Father': 7}, 'Gems', 0,
+    parent.physgems = Resource(parent, 'Physical gems', 0, 1, {'Father': 7}, 'Gems', 0,
                                resources=parent.resources)
-    parent.magicgems = Resource(parent, 'Magical gems', 20, 1, {'Father': 7}, 'Gems', 0,
+    parent.magicgems = Resource(parent, 'Magical gems', 0, 1, {'Father': 7}, 'Gems', 0,
                                 resources=parent.resources)
-    parent.specialgems = Resource(parent, 'Special gems', 20, 1, {'Father': 7}, 'Gems', 0,
+    parent.specialgems = Resource(parent, 'Special gems', 0, 1, {'Father': 7}, 'Gems', 0,
                                   resources=parent.resources)
 
 
