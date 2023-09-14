@@ -32,7 +32,7 @@ class Gamelogic:
     energies = []
     unlockedenergies = []
     resources = {}
-    flags = {'Main': 0, 'Dubious home': 0}
+    flags = {'Main': 0, 'Dubious home': 0,'Father':0,'Mother':0,'Billy':0,'Zen':0,'Butcher':0,'Brother':0}
     action = None
     upgradeaction = None
     tab = 'Main'
@@ -41,8 +41,8 @@ class Gamelogic:
     mainelements = []
     mainsubelements = []
     partyelements = []
-    instantactions = {'Common actions': [], 'Common actions 2': []}
-    loopactions = {'Common loopactions': [], 'Common loopactions 2': [], 'Common loopactions 3': []}
+    instantactions = {}
+    loopactions = {}
     upgradeactions = {}
     exp = 0
     dungeons = {}
@@ -139,6 +139,7 @@ class Gamelogic:
                     if e.progress > 1:
                         e.progress = 0
                         e.dofinishaction()
+                        e.docost()
 
     @classmethod
     def initializegame(cls):
@@ -301,7 +302,7 @@ class Gamelogic:
                                 droplog += f', {quantity} {name}'
                     n = random.randint(0, 100)
                     souldrop=1
-                    if n <= 10:
+                    if n <= 10 and alive2[0].name not in ['Training dummy']:
                         if alive2[0].name not in cls.souls:
                             pokemontounlock=alive2[0].copy()
                             cls.souls[pokemontounlock.name] = 0
@@ -309,6 +310,7 @@ class Gamelogic:
                             pokemontounlock.magic = 1
                             pokemontounlock.special = 1
                             pokemontounlock.lvl = 5
+                            pokemontounlock.wild=False
                             cls.unlockablepokemons.append(pokemontounlock)
                         cls.souls[alive2[0].name] += souldrop
 
@@ -323,9 +325,10 @@ class Gamelogic:
                     cls.activeenemypokemon = 0
                     cls.activedungeon.floor += 1
 
-                    if cls.activedungeon.floor >= 5:
+                    if cls.activedungeon.floor >= len(cls.activedungeon.currentlayout):
                         cls.activedungeon.generate()
                         cls.regenpokemonhealt(cls.party[0:5])
+                        cls.activedungeon.docomplete()
                         if cls.activedungeon.changeflags is not None:
                             for key in cls.activedungeon.changeflags:
                                 cls.flags[key] += cls.activedungeon.changeflags[key]

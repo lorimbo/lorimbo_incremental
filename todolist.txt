@@ -1,23 +1,16 @@
 next action/flags for submenu
 habits
 area actions
-resources effects
+resources effects with tooltips
 astral plane
-party tab functionality
 save function is incomplete
-party effects
+party effects with tooltips
 party templates
-stats update in pokemon doesn't work properly with lvl 0
 change fonts in dungeons
 implement skills effects
-leveling up should cost destiny and research
-IMPORTANT=implement drop chance% and obtaining monsters
-create a working prototype
-
-
+loop actions are bugged(cost is not applied if you are not clicking)
 
 implement browser(LATER)
 implement exe(DONE)
 
-fix it so the drop menu in settings has the right height
 add bold helvetica and use it for energies

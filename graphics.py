@@ -224,7 +224,8 @@ class Graphics:
                 if cls.notinusedecorator(imgui.button, use)(button.name, cls.resizewidth(90), cls.resizeheight(30)):
                     Gamelogic.tab = button.name
             if actiondecorator(imgui.button,cls.theme)('Save', cls.resizewidth(90), cls.resizeheight(30)):
-                Gamelogic.savegame()
+                #Gamelogic.savegame()
+                pass
 
         imgui.end()
 
@@ -377,6 +378,7 @@ class Graphics:
                             if imgui.is_item_hovered():
                                 with tooltipdecorator(imgui.begin_tooltip,cls.theme)():
                                     actiondecorator(imgui.text,cls.theme)(f"{button.name}")
+                                    button.update()
                                     tooltip = tooltips.upgradeTooltip(button.name, button.cost, button.complete,
                                                                       button.requirements)
                                     for i in tooltip:
@@ -423,6 +425,8 @@ class Graphics:
                                 if Gamelogic.activedungeon is None or not Gamelogic.activedungeon.name ==dungeon.name:
                                     dungeon.generate()
                                 Gamelogic.activedungeon = dungeon
+                                Gamelogic.activepartypokemon = 0
+                                Gamelogic.activeenemypokemon = 0
                                 Gamelogic.tab='Dungeon'
 
 
@@ -439,7 +443,7 @@ class Graphics:
     def draw_main(cls):
         visible = [e for e in Gamelogic.mainsubelements if e.isvisible]
         imgui.set_next_window_size(16 + cls.resizewidth(90),
-                                   14 + cls.resizeheight(30 * len(visible)) + 5 * (len(visible) - 1))
+                                   16 + cls.resizeheight(30 * len(visible)) + 5 * (len(visible) - 1))
         imgui.set_next_window_position(30 + cls.resizewidth(90), cls.resizeheight(50))
         backgroundecorator(imgui.begin,cls.theme)('Submenu', False, cls.flags)
         imgui.end()
@@ -741,7 +745,7 @@ class Graphics:
                 if pokemon.name=='You':
                     text10=f'1 fate:({numcon(Gamelogic.fate.quantity)})'
                 else:
-                    text10=f'1 {pokemon.name} soul'
+                    text10=f'1 {pokemon.name} soul ({numcon(Gamelogic.souls[pokemon.name])})'
                 actiondecorator(imgui.text,cls.theme)(pokemon.name)
                 if imgui.is_item_hovered():
                     with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
@@ -841,7 +845,7 @@ class Graphics:
                 if imgui.is_item_hovered():
                     with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
                         actiondecorator(imgui.text, cls.theme)(f"{pokemon.name}             lvl{numcon(pokemon.lvl)}")
-                        tooltip = tooltips.pokemontooltip(pokemon, 'Free', f'1 {pokemon.name} research:({numcon(Gamelogic.souls[pokemon.name])})')
+                        tooltip = tooltips.pokemontooltip(pokemon, 'Free', f'1 {pokemon.name} souls:({numcon(Gamelogic.souls[pokemon.name])})')
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
                 imgui.same_line(position=cls.resizewidth(150))
@@ -849,7 +853,7 @@ class Graphics:
                 if imgui.is_item_hovered():
                     with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
                         actiondecorator(imgui.text, cls.theme)(f"{pokemon.name}             lvl{numcon(pokemon.lvl)}")
-                        tooltip = tooltips.pokemontooltip(pokemon, 'Free', f'1 {pokemon.name} research:({numcon(Gamelogic.souls[pokemon.name])})')
+                        tooltip = tooltips.pokemontooltip(pokemon, 'Free', f'1 {pokemon.name} souls:({numcon(Gamelogic.souls[pokemon.name])})')
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
                 imgui.same_line(position=cls.resizewidth(280))
@@ -989,7 +993,7 @@ class Graphics:
         backgroundecorator(imgui.begin, cls.theme)('Dungeon', False, cls.flags)
         backgroundecorator(imgui.begin_child,cls.theme)("Child 4", height=cls.resizeheight(50), border=True)
         if Gamelogic.activedungeon is not None:
-            progressbardecorator(imgui.progress_bar,cls.theme)((Gamelogic.activedungeon.floor+1)/5,(cls.resizewidth(500),cls.resizeheight(40)),f'{Gamelogic.activedungeon.name}   ({Gamelogic.activedungeon.floor+1}/5)')
+            progressbardecorator(imgui.progress_bar,cls.theme)((Gamelogic.activedungeon.floor+1)/len(Gamelogic.activedungeon.currentlayout),(cls.resizewidth(500),cls.resizeheight(40)),f'{Gamelogic.activedungeon.name}   ({Gamelogic.activedungeon.floor+1}/{len(Gamelogic.activedungeon.currentlayout)})')
         imgui.same_line(position=cls.resizewidth(530))
         if actiondecorator(imgui.button,cls.theme)('Quit',cls.resizewidth(90),cls.resizeheight(30)):
             Gamelogic.activedungeon= None

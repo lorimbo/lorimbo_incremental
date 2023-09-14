@@ -1,6 +1,22 @@
 {
       "basepokemons": [
             {
+                  "name": "Training dummy",
+                  "hp": 10,
+                  "atk": 0,
+                  "dif": 0,
+                  "satk": 0,
+                  "sdif": 0,
+                  "maxlvl": 10,
+                  "unlocked": 0,
+                  "lvl": 10,
+                  "phys": 10,
+                  "magic": 10,
+                  "special": 10,
+                  "drop":{"exp": 1, "resources": [["Physical gems",1,10],["Magical gems",1,10],["Special gems",1,10]]},
+                  "skill": ["Silently judge", 0, 2, "Phys"]
+            },
+            {
                   "name": "Butterfly",
                   "hp": 80,
                   "atk": 80,
@@ -12,7 +28,10 @@
                   "lvl": 10,
                   "phys": 10,
                   "magic": 10,
-                  "special": 10
+                  "special": 10,
+                  "drop":{"exp": 2, "resources": [["Butterfly wings",1,30],["Physical gems",1,10],["Magical gems",1,10],["Special gems",1,10]]}
+
+
             },
             {
                   "name": "Frog",
@@ -26,7 +45,9 @@
                   "lvl": 12,
                   "phys": 12,
                   "magic": 12,
-                  "special": 12
+                  "special": 12,
+                  "drop":{"exp": 2, "resources": [["Frog legs",1,10],["Physical gems",1,10],["Magical gems",1,10],["Special gems",1,10]]},
+                  "skill": ["Jump attack", 6, 2.3, "Phys"]
             },
             {
                   "name": "Worm",
@@ -40,7 +61,9 @@
                   "lvl": 15,
                   "phys": 15,
                   "magic": 15,
-                  "special": 15
+                  "special": 15,
+                  "drop":{"exp": 3, "resources": [["Physical gems",1,10],["Magical gems",1,10],["Special gems",1,10]]},
+                  "skill": ["Roll over", 8, 2.4, "Phys"]
             },
             {
                   "name": "Cow",
@@ -54,7 +77,9 @@
                   "lvl": 19,
                   "phys": 19,
                   "magic": 19,
-                  "special": 19
+                  "special": 19,
+                  "drop":{"exp": 3, "resources": [["Cow hide",1,10],["Beef",1,10],["Physical gems",1,10],["Magical gems",1,10],["Special gems",1,10]]},
+                  "skill": ["Rear kick", 5, 2, "Phys"]
             },
             {
                   "name": "Snake",
@@ -68,7 +93,25 @@
                   "lvl": 24,
                   "phys": 24,
                   "magic": 24,
-                  "special": 24
+                  "special": 24,
+                  "drop":{"exp": 4, "resources": [["Snake skin",1,10],["Physical gems",1,10],["Magical gems",1,10],["Special gems",1,10]]},
+                  "skill": ["Squeeze", 9, 2.8, "Phys"]
+            },
+            {
+                  "name": "Brother Francesco",
+                  "hp": 1200,
+                  "atk": 300,
+                  "dif": 300,
+                  "satk":300,
+                  "sdif": 300,
+                  "maxlvl": 30,
+                  "unlocked": 0,
+                  "lvl": 30,
+                  "phys": 30,
+                  "magic": 30,
+                  "special": 30,
+                  "drop":{"exp": 5, "resources": [["Physical gems",1,10],["Magical gems",1,10],["Special gems",1,10]]},
+                  "skill": ["Azura blow", 13, 3.5, "Phys"]
             }
       ],
       "party": [
@@ -79,9 +122,9 @@
                   "dif": 1,
                   "satk": 1,
                   "sdif": 1,
-                  "maxlvl": 1011,
+                  "maxlvl": 10,
                   "unlocked": 0,
-                  "lvl": 10,
+                  "lvl": 1,
                   "phys": 0,
                   "magic": 0,
                   "special": 0
