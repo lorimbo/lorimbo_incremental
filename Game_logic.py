@@ -310,7 +310,7 @@ class Gamelogic:
                             pokemontounlock.magic = 1
                             pokemontounlock.special = 1
                             pokemontounlock.lvl = 5
-                            pokemontounlock.wild=False
+
                             cls.unlockablepokemons.append(pokemontounlock)
                         cls.souls[alive2[0].name] += souldrop
 

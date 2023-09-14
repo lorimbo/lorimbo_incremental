@@ -72,6 +72,7 @@ def pokemontooltip(pokemon,status,soul=None,cost=None):
     finaltooltip.append(f'Condition:{status}')
     finaltooltip.append(f'Hp :{numcon(pokemon.actualhp)}({numcon(pokemon.scaling1*100)}%)')
     finaltooltip.append(f'Patk :{numcon(pokemon.actualpatk)}({numcon(pokemon.scaling1*100)}%)')
+    print(pokemon.actualpdef,pokemon)
     finaltooltip.append(f'Pdef :{numcon(pokemon.actualpdef)}({numcon(pokemon.scaling1*100)}%)')
     finaltooltip.append(f'Matk :{numcon(pokemon.actualmatk)}({numcon(pokemon.scaling2*100)}%)')
     finaltooltip.append(f'Mdef :{numcon(pokemon.actualmdef)}({numcon(pokemon.scaling2*100)}%)')
