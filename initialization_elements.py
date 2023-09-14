@@ -550,7 +550,7 @@ class Loopaction(menuelement):
             for x in self.parent.resources.keys():
                 for resource in [e for e in self.parent.resources[x] if e.name == costname]:
                     if resource.quantity > -i[1] and resource.quantity + i[1] < resource.max:
-                        self.parent.resources[x][costname]['quantity'] += i[1]
+                        self.parent.resources[x][costname].quantity += i[1]
 
     def dopassiveaction(self):
         for i in self.progresscost:
