@@ -987,7 +987,7 @@ def createresources(parent):
     Resource(parent, 'Wood', 0, 1, {'Father': 2}, 'Wood', 0, resources=parent.resources)
     Resource(parent, 'Weeds', 0, 10, {'Mother': 5}, 'Herbes', 0, resources=parent.resources)
     Resource(parent, 'Herbs', 0, 1, {'Mother': 5}, 'Herbes', 0, resources=parent.resources)
-    Resource(parent, 'Gold', 0, 60, {'Mother': 5}, 'Gold', 0, resources=parent.resources)
+    Resource(parent, 'Gold', 0, 70, {'Mother': 5}, 'Gold', 0, resources=parent.resources)
     Resource(parent, 'Beef', 0, 10, {'Mother': 11}, 'Meats', 0, resources=parent.resources)
     Resource(parent, 'Cow hide', 0, 10, {'Mother': 11}, 'Hides', 0, resources=parent.resources)
     Resource(parent,'Butterfly wings',0,10,{'Father': 7},'Materials',0,resources=parent.resources)
