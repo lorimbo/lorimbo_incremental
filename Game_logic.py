@@ -139,7 +139,6 @@ class Gamelogic:
                     if e.progress > 1:
                         e.progress = 0
                         e.dofinishaction()
-                        e.docost()
 
     @classmethod
     def initializegame(cls):

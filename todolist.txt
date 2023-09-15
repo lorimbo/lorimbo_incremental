@@ -9,6 +9,7 @@ party templates
 change fonts in dungeons
 implement skills effects
 loop actions are bugged(cost is not applied if you are not clicking)
+change new pokemons not to be wild without breaking the game(test it!)
 
 implement browser(LATER)
 implement exe(DONE)

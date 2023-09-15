@@ -951,19 +951,19 @@ def createupgradeactions(parent):
                    )
     Upgradeactions(parent=parent, name='Butcher shop 4/6', isvisible=True,
                    location=['Village', 'Home'],
-                   unlockflags={'Butcher': 4}, closingflags={'Butcher': 5}, changeflags={'Butcher':1},
+                   unlockflags={'Butcher': 3,'Brother':1}, closingflags={'Butcher': 4}, changeflags={'Butcher':1},
                    cost=[['Cow hide', -5, 0, 0]],
                    complete=[['max', 'Cow hide', 5, 0, 0]]
                    )
     Upgradeactions(parent=parent, name='Butcher shop 5/6', isvisible=True,
                    location=['Village', 'Home'],
-                   unlockflags={'Butcher': 5}, closingflags={'Butcher': 6}, changeflags={'Butcher':1},
+                   unlockflags={'Butcher': 4}, closingflags={'Butcher': 5}, changeflags={'Butcher':1},
                    cost=[['Cow hide', -10, 0, 0]],
                    complete=[['max', 'Cow hide', 5, 0, 0]]
                    )
     Upgradeactions(parent=parent, name='Butcher shop 6/6', isvisible=True,
                    location=['Village', 'Home'],
-                   unlockflags={'Butcher': 6}, closingflags={'Butcher': 7}, changeflags={'Butcher':1},
+                   unlockflags={'Butcher': 5}, closingflags={'Butcher': 6}, changeflags={'Butcher':1},
                    cost=[['Cow hide', -10, 0, 0]],
                    complete=[['stat', 'hp', 0.5, 0, 0], ['stat', 'patk', 0.5, 0, 0], ['stat', 'pdef', 0.5, 0, 0],
                              ['stat', 'matk', 0.5, 0, 0], ['stat', 'mdef', 0.5, 0, 0]]
@@ -1015,7 +1015,7 @@ def createenergies(parent):
 
 
 def createdungeons(parent):
-    Dungeon(parent=parent, name="Field", location=['Village', 'Surroundings'], changeflags={'Butcher':1,'Brother':1},
+    Dungeon(parent=parent, name="Field", location=['Village', 'Surroundings'], changeflags={'Brother':1},
             unlockflags={'Mother': 11}, closingflags={},usualreward=[['resource', 'Special gems', 1, 0, 0]],firsttime=[['maxlvl',7]],
             monsterlist=[parent.pokemonlist[i].copy() for i in range(3, 6)])
     Dungeon(parent=parent, name="Garden", location=['Village', 'Home'], changeflags={'Mother':1},
