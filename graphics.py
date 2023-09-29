@@ -69,7 +69,7 @@ def dropdowndecorator(function, theme):
         imgui.push_style_color(imgui.COLOR_WINDOW_BACKGROUND, *[e / 255 for e in Themes[theme]['menubackgroundcolor']])
         imgui.push_style_color(imgui.COLOR_POPUP_BACKGROUND, *[e / 255 for e in Themes[theme]['menubackgroundcolor']])
         imgui.push_style_color(imgui.COLOR_FRAME_BACKGROUND_HOVERED,
-                               *[e / 255 for e in Themes[theme]['backgroundhovercolor']])
+                               *[e / 255 for e in Themes[theme]['buttonhovercolor']])
         imgui.push_style_color(imgui.COLOR_FRAME_BACKGROUND, *[e / 255 for e in Themes[theme]['buttoncolor']])
         imgui.push_style_color(imgui.COLOR_BUTTON, *[e / 255 for e in Themes[theme]['darkerbuttoncolor']])
         imgui.push_style_color(imgui.COLOR_BUTTON_HOVERED, *[e / 255 for e in Themes[theme]['buttoncolor']])
@@ -87,7 +87,34 @@ def dropdowndecorator(function, theme):
     return inner1
 
 
-1
+def sliderdecorator(function, theme):
+    def inner1(*args, **kwargs):
+        imgui.push_item_width(100)
+        imgui.push_style_color(imgui.COLOR_WINDOW_BACKGROUND, *[e / 255 for e in Themes[theme]['menubackgroundcolor']])
+        imgui.push_style_color(imgui.COLOR_POPUP_BACKGROUND, *[e / 255 for e in Themes[theme]['menubackgroundcolor']])
+        imgui.push_style_color(imgui.COLOR_FRAME_BACKGROUND_HOVERED,
+                               *[e / 255 for e in Themes[theme]['buttonhovercolor']])
+        imgui.push_style_color(imgui.COLOR_FRAME_BACKGROUND, *[e / 255 for e in Themes[theme]['buttoncolor']])
+        imgui.push_style_color(imgui.COLOR_BUTTON, *[e / 255 for e in Themes[theme]['darkerbuttoncolor']])
+        imgui.push_style_color(imgui.COLOR_BUTTON_HOVERED, *[e / 255 for e in Themes[theme]['buttoncolor']])
+        imgui.push_style_color(imgui.COLOR_TEXT, *[e / 255 for e in Themes[theme]['buttontextcolor']])
+        imgui.push_style_color(imgui.COLOR_SLIDER_GRAB,*[e / 255 for e in Themes[theme]['buttontextcolor']])
+        imgui.push_style_color(imgui.COLOR_SLIDER_GRAB_ACTIVE, *[e / 255 for e in Themes[theme]['darkerbuttoncolor']])
+        imgui.push_style_color(imgui.COLOR_FRAME_BACKGROUND_ACTIVE, *[e / 255 for e in Themes[theme]['buttonactivecolor']])
+        func = function(*args, **kwargs)
+        imgui.pop_style_color(1)
+        imgui.pop_style_color(1)
+        imgui.pop_style_color(1)
+        imgui.pop_style_color(1)
+        imgui.pop_style_color(1)
+        imgui.pop_style_color(1)
+        imgui.pop_style_color(1)
+        imgui.pop_style_color(1)
+        imgui.pop_style_color(1)
+        imgui.pop_style_color(1)
+        return func
+
+    return inner1
 
 
 def backgroundecorator(function, theme):
@@ -959,8 +986,7 @@ class Graphics:
         imgui.set_next_window_position(cls.resizewidth(120), cls.resizeheight(100))
         backgroundecorator(imgui.begin,cls.theme)('Settingmenu', False, cls.flags)
         themes = ['rey','EVA', 'asuka']
-        imgui.set_next_window_size(cls.resizewidth(20), cls.resizeheight(20))
-        imgui.set_next_window_size_constraints((cls.resizewidth(20),cls.resizeheight(40)),(cls.resizewidth(80),cls.resizeheight(200)))
+        imgui.set_next_window_size_constraints((cls.resizewidth(20),cls.resizeheight(30)),(cls.resizewidth(80),cls.resizeheight(200)))
         with dropdowndecorator(imgui.begin_combo,cls.theme)('', cls.theme,imgui.COMBO_HEIGHT_LARGE) as combo:
             if combo.opened:
                 for i, item in enumerate(themes):
@@ -969,6 +995,12 @@ class Graphics:
                         cls.theme = item
         imgui.same_line()
         actiondecorator(imgui.text,cls.theme)('themes')
+        changed,value=sliderdecorator(imgui.slider_int,cls.theme)('Sounds volume',Gamelogic.volume*100,0,100)
+        if changed:
+            Gamelogic.volume=value/100
+        changed, value = sliderdecorator(imgui.slider_int, cls.theme)('Music volume', Gamelogic.musicvolume*100, 0, 100)
+        if changed:
+            Gamelogic.musicvolume = value/100
 
         imgui.end()
 

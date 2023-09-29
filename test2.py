@@ -42,8 +42,9 @@ def main():
     for i in range(1,100):
         Graphics.Fonts['Helvetica'][str(i)]=io.fonts.add_font_from_file_ttf("Helvetica.ttf", i)
     impl.refresh_font_texture()
-    pygame.mixer.music.load('background.mp3')
+    pygame.mixer.music.load('Sounds/background.mp3')
     pygame.mixer.music.play(-1, 5.0)
+
 
 
 
@@ -72,6 +73,8 @@ def main():
             fpslist=fpslist[-100:]
         imgui.text(f'FPS:{round(sum(fpslist) / len(fpslist))}')
         imgui.end()
+
+        pygame.mixer.music.set_volume(Gamelogic.musicvolume)
 
 
 

@@ -1,6 +1,7 @@
 import json
 import initialization_elements
 import random
+import pygame
 
 red = (255, 0, 0)
 green = (0, 255, 0)
@@ -61,7 +62,8 @@ class Gamelogic:
     levelup = None
     partylenmax = 5
     fps = 240
-
+    volume=0.2
+    musicvolume=0.3
     @classmethod
     def checkflags(cls):
         elements = [cls.instantactions, cls.loopactions]
@@ -283,6 +285,10 @@ class Gamelogic:
         alive[cls.activepartypokemon].cd -= 1
         if alive[cls.activepartypokemon].cd == 0:
             damagedealt = alive[cls.activepartypokemon].skill.useskill(alive[cls.activepartypokemon], alive2[0])
+            if cls.tab==cls.mainelements[5].name:
+                hit=pygame.mixer.Sound('Sounds/hitting.wav')
+                hit.set_volume(cls.volume)
+                pygame.mixer.Sound.play(hit)
             alive[cls.activepartypokemon].cd = alive[cls.activepartypokemon].skill.interval * 240
             cls.activedungeon.log.append(
                 f'{alive[cls.activepartypokemon].name} dealt {numcon(damagedealt)} dmg to {alive2[0].name}')
@@ -346,6 +352,10 @@ class Gamelogic:
         alive2[cls.activeenemypokemon].cd -= 1
         if alive2[cls.activeenemypokemon].cd == 0:
             damagedealt = alive2[cls.activeenemypokemon].skill.useskill(alive2[cls.activeenemypokemon], alive[0])
+            if cls.tab==cls.mainelements[5].name:
+                hit=pygame.mixer.Sound('Sounds/ouch.wav')
+                hit.set_volume(cls.volume)
+                pygame.mixer.Sound.play(hit)
             alive2[cls.activeenemypokemon].cd = alive2[cls.activeenemypokemon].skill.interval * 240
             cls.activedungeon.log.append(
                 f'Enemy {alive2[cls.activeenemypokemon].name} dealt {numcon(damagedealt)} dmg to {alive[0].name}')

@@ -2,6 +2,7 @@ import json
 import random
 from random import randint
 import copy
+import pygame
 
 red = (255, 0, 0)
 green = (0, 255, 0)
@@ -26,6 +27,7 @@ class Skill:
         self.effect = effect
         self.unlockflags = unlockflags
 
+
     def useskill(self, user, target):
         multiplier = 1 + self.power / 10
         if self.category == 'Phys':
@@ -39,6 +41,8 @@ class Skill:
         randomdamage = random.uniform(-((basedamage) ** 0.5) / 2, ((basedamage) ** 0.5 / 2))
         damage = max(basedamage + randomdamage, attack / 10)
         target.currenthp -= damage
+
+
         if target.currenthp < 0:
             target.currenthp = 0
             target.cd = target.skill.interval * 240
@@ -1028,7 +1032,7 @@ def createdungeons(parent):
             unlockflags={'Father': 12}, closingflags={},usualreward=[['resource', 'Magical gems', 1, 0, 0]],firsttime=[['maxlvl',6]],
             monsterlist=[parent.pokemonlist[i].copy() for i in range(1, 4)])
     Dungeon(parent=parent, name="Training hall", location=['Village', 'Home'], changeflags={},
-            unlockflags={'Father': 7}, closingflags={},usualreward=[['resource', 'Physical gems', 1, 0, 0]],firsttime=[['maxlvl',5]],
+            unlockflags={}, closingflags={},usualreward=[['resource', 'Physical gems', 1, 0, 0]],firsttime=[['maxlvl',5]],
             monsterlist=[],boss=parent.pokemonlist[0].copy())
     Dungeon(parent=parent, name="Brother fight", location=['Village', 'Surroundings'], changeflags={},
             unlockflags={'Brother':4}, closingflags={},firsttime=[['maxlvl',10]],

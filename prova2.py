@@ -128,6 +128,7 @@ class Pokemon:
         self.timer=0
     def useskill(self,enemy):
         self.skill.useskill(self,enemy)
+        if self.
         self.timer=0
     def checkcooldown(self):
         self.timer+=1
