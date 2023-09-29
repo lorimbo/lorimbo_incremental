@@ -14,7 +14,7 @@ def autospacer(text):
 
 description = {
     'Ponder the future': 'Reflect upon your actions and make a wish for a successful life',
-    'Rest':'Take a breather from the weight of life',
+    'Rest':'Take a breather from the weight of the world',
     'Exercise':'Time to get moving!',
     'Cutting wood':'Embrace your masculine self',
     'Get weeds':'What do we even need them for?',

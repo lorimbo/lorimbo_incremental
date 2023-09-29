@@ -519,18 +519,24 @@ class Loopaction(menuelement):
         self.isactive = True
 
     def docost(self):
+        costpaid = True
         for i in self.cost:
             costname = i[0]
             for energy in [e for e in self.parent.energies if e.name == costname]:
                 if energy.quantity >= -i[1]:
                     energy.quantity += i[1]
+                else:
+                    costpaid=False
                 if not energy.quantity:
                     energy.quantity=0
                 continue
             for x in self.parent.resources.keys():
                 for resource in [e for e in self.parent.resources[x] if e.name == costname]:
-                    if resource.quantity > -i[1]:
+                    if resource.quantity >= -i[1]:
                         resource.quantity += i[1]
+                    else:
+                        costpaid = False
+        return costpaid
 
     def dopassiveeffect(self):
         for i in self.progresseffect:
@@ -744,6 +750,9 @@ def createinstantactions(parent):
 def createloopactions(parent):
     Loopaction(parent=parent, name='Rest', isvisible=True,
                location='Common loopactions', speed=1 / 1200,
+               progresseffect=[['Action', 1 / 240, 0, 0]])
+    Loopaction(parent=parent, name='Test', isvisible=True,
+               location='Common loopactions', speed=1 / 1200,cost=[['Fate', -5, 0, 0]],
                progresseffect=[['Action', 1 / 240, 0, 0]])
     Loopaction(parent=parent, name='Exercise', isvisible=True,
                location='Common loopactions', speed=1 / 600,
@@ -983,7 +992,7 @@ def createupgradeactions(parent):
 
 
 def createresources(parent):
-    parent.fate = Resource(parent, 'Fate', 0, 10, {'Father': 0}, 'Fate', 0, resources=parent.resources)
+    parent.fate = Resource(parent, 'Fate', 10, 10, {'Father': 0}, 'Fate', 0, resources=parent.resources)
     Resource(parent, 'Wood', 0, 1, {'Father': 2}, 'Wood', 0, resources=parent.resources)
     Resource(parent, 'Weeds', 0, 10, {'Mother': 5}, 'Herbes', 0, resources=parent.resources)
     Resource(parent, 'Herbs', 0, 1, {'Mother': 5}, 'Herbes', 0, resources=parent.resources)

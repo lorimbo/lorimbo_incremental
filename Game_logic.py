@@ -133,8 +133,13 @@ class Gamelogic:
             for e in cls.loopactions[key]:
                 if e.isactive:
                     e.dopassiveaction()
-                    if e.progress == 0:
-                        e.docost()
+                    if e.progress <= 0:
+                        cls.loopactions['Common loopactions'][0].activation()
+                        if e.docost():
+                            e.activation()
+                        else:
+                            e.progress=0
+                            return
                     e.progress += e.speed
                     if e.progress > 1:
                         e.progress = 0
