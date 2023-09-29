@@ -355,12 +355,18 @@ class Upgradeactions(menuelement):
 class Instantactions(menuelement):
     def __init__(self,
                  cost=[['Wood', 0, 0, 0]],
-                 complete=[['Wood', 0, 0, 0]], location=None, *args, **kwargs):
+                 complete=[['Wood', 0, 0, 0]], location=None,area=False, *args, **kwargs):
         menuelement.__init__(self, elementlist=None, *args, **kwargs)
         if location is not None:
-            if location not in self.parent.instantactions.keys():
-                self.parent.instantactions[location] = []
-            self.parent.instantactions[location].append(self)
+            if not area:
+                if location not in self.parent.instantactions.keys():
+                    self.parent.instantactions[location] = []
+                self.parent.instantactions[location].append(self)
+            else:
+                if location not in self.parent.areainstants.keys():
+                    self.parent.areainstants[location] =[]
+                self.parent.areainstants[location].append(self)
+
         self.cost = cost
         self.complete = complete
         self.resourcetype = []
@@ -445,12 +451,17 @@ class Instantactions(menuelement):
 class Loopaction(menuelement):
     def __init__(self, progress=0, speed=1 / 1200, isactive=False, location=None,
                  cost=[['Wood', 0, 0, 0]], progresscost=[['Wood', 0, 0, 0]],
-                 progresseffect=[['Wood', 0, 0, 0]], complete=[['Wood', 0, 0, 0]], *args, **kwargs):
+                 progresseffect=[['Wood', 0, 0, 0]], complete=[['Wood', 0, 0, 0]],area=False, *args, **kwargs):
         menuelement.__init__(self, elementlist=None, *args, **kwargs)
         if location is not None:
-            if location not in self.parent.loopactions.keys():
-                self.parent.loopactions[location] = []
-            self.parent.loopactions[location].append(self)
+            if not area:
+                if location not in self.parent.loopactions.keys():
+                    self.parent.loopactions[location] = []
+                self.parent.loopactions[location].append(self)
+            else:
+                if location not in self.parent.arealoops.keys():
+                    self.parent.arealoops[location] = []
+                self.parent.arealoops[location].append(self)
         self.progress = progress
         self.isactive = isactive
         self.speed = speed
@@ -744,21 +755,18 @@ def createinstantactions(parent):
     Instantactions(parent=parent, name='Cut wood', isvisible=True, location='Woodcutting',
                    unlockflags={'Father': 2}, cost=[['Stamina', -1, 0, 0]],
                    complete=[['Wood', 1, 0, 0]])
-    Instantactions(parent=parent, name='Look for weeds', isvisible=True, location='Garden activities',
-                   unlockflags={'Mother': 5}, cost=[['Action', -0.4, 0, 0]],
-                   complete=[['Weeds', 1, 0, 0], ['Gold', 2, 0, 0]])
     Instantactions(parent=parent, name='"Eat" herbs', isvisible=True, location='Garden activities',
                    unlockflags={'Mother': 7}, cost=[['Herbs', -1, 0, 0]],
                    complete=[['Fate', 5, 0, 0]])
+def createareainstant(parent):
+    Instantactions(parent=parent, name='Look for weeds', isvisible=True, location='Village',
+                   unlockflags={'Mother': 5}, cost=[['Action', -0.4, 0, 0]],area=True,
+                   complete=[['Weeds', 1, 0, 0], ['Gold', 2, 0, 0]])
 
 def createloopactions(parent):
     Loopaction(parent=parent, name='Rest', isvisible=True,
                location='Common loopactions', speed=1 / 1200,
                progresseffect=[['Action', 1 / 240, 0, 0]])
-    Loopaction(parent=parent, name='Exercise', isvisible=True,
-               location='Common loopactions', speed=1 / 600,
-               progresscost=[['Action', -1 / 240, 0, 0]], progresseffect=[['Stamina', 1 / 240, 0, 0]],
-               unlockflags={'Father': 2})
     Loopaction(parent=parent, name='Parse through weeds', isvisible=True,
                location='Garden', speed=1 / 240,cost=[['Weeds', -5, 0, 0]],
                progresscost=[['Action', -1 / 240, 0, 0]],complete=[['Herbs',1,0,0]],
@@ -767,6 +775,11 @@ def createloopactions(parent):
                location='Your room', speed=1 / 240,
                progresscost=[['Action', -1 / 240, 0, 0]], complete=[['Fate', 1, 0, 0]],
                unlockflags={'Zen': 1})
+def createarealoops(parent):
+    Loopaction(parent=parent, name='Exercise', isvisible=True,
+               location='Village', speed=1 / 600,area=True,
+               progresscost=[['Action', -1 / 240, 0, 0]], progresseffect=[['Stamina', 1 / 240, 0, 0]],
+               unlockflags={'Father': 2})
 
 
 def createupgradeactions(parent):
@@ -994,7 +1007,7 @@ def createupgradeactions(parent):
 
 def createresources(parent):
     parent.fate = Resource(parent, 'Fate', 1000, 10, {'Father': 0}, 'Fate', 0, resources=parent.resources)
-    Resource(parent, 'Wood', 300, 1, {'Father': 2}, 'Wood', 0, resources=parent.resources)
+    Resource(parent, 'Wood', 0, 1, {'Father': 2}, 'Wood', 0, resources=parent.resources)
     Resource(parent, 'Weeds', 0, 10, {'Mother': 5}, 'Herbes', 0, resources=parent.resources)
     Resource(parent, 'Herbs', 0, 1, {'Mother': 5}, 'Herbes', 0, resources=parent.resources)
     Resource(parent, 'Gold', 0, 60, {'Mother': 5}, 'Gold', 0, resources=parent.resources)
@@ -1032,7 +1045,7 @@ def createdungeons(parent):
             unlockflags={'Father': 12}, closingflags={},usualreward=[['resource', 'Magical gems', 1, 0, 0]],firsttime=[['maxlvl',6]],
             monsterlist=[parent.pokemonlist[i].copy() for i in range(1, 4)])
     Dungeon(parent=parent, name="Training hall", location=['Village', 'Home'], changeflags={},
-            unlockflags={}, closingflags={},usualreward=[['resource', 'Physical gems', 1, 0, 0]],firsttime=[['maxlvl',5]],
+            unlockflags={'Father':7}, closingflags={},usualreward=[['resource', 'Physical gems', 1, 0, 0]],firsttime=[['maxlvl',5]],
             monsterlist=[],boss=parent.pokemonlist[0].copy())
     Dungeon(parent=parent, name="Brother fight", location=['Village', 'Surroundings'], changeflags={},
             unlockflags={'Brother':4}, closingflags={},firsttime=[['maxlvl',10]],

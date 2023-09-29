@@ -283,6 +283,8 @@ class Graphics:
 
         if 'instantactions' not in cls.toggles.keys():
             cls.toggles['instantactions'] = {}
+        if 'areainstants' not in cls.toggles.keys():
+            cls.toggles['areainstants']={}
         height = list(pygame.display.get_window_size())[1] - cls.resizeheight(150)
 
         imgui.set_next_window_size(16 + cls.resizewidth(160),
@@ -320,6 +322,36 @@ class Graphics:
                                 tooltip = tooltips.actionTooltip(button.name, button.cost, button.complete)
                                 for i in tooltip:
                                     actiondecorator(imgui.text, cls.theme)(f"{i}")
+
+        if Gamelogic.subtab in Gamelogic.areainstants.keys():
+            visible = cls.get_visible_elements(Gamelogic.areainstants[Gamelogic.subtab])
+            if len(visible):
+                if 'Area actions' not in cls.toggles['areainstants']:
+                    cls.toggles['areainstants']['Area actions'] = True
+
+                with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.resizeheight(10))}']):
+                    if cls.toggles['areainstants']['Area actions']:
+                        direction = imgui.DIRECTION_DOWN
+                    else:
+                        direction = imgui.DIRECTION_RIGHT
+                    if actiondecorator(imgui.arrow_button, cls.theme)(f'Toggle', direction):
+                        cls.toggles['areainstants']['Area actions'] = not cls.toggles['areainstants']['Area actions']
+                    imgui.same_line()
+                with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
+                    actiondecorator(imgui.text, cls.theme)(f'Area actions')
+                if cls.toggles['areainstants']['Area actions']:
+                    with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
+                        for button in visible:
+                            use = button.isdisabled
+                            if cls.disabledecorator(imgui.button, use)(button.name, cls.resizewidth(160),
+                                                                       cls.resizeheight(50)) and not button.isdisabled:
+                                Gamelogic.action = button.name
+                            if imgui.is_item_hovered():
+                                with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
+                                    actiondecorator(imgui.text, cls.theme)(f"{button.name}")
+                                    tooltip = tooltips.actionTooltip(button.name, button.cost, button.complete)
+                                    for i in tooltip:
+                                        actiondecorator(imgui.text, cls.theme)(f"{i}")
         imgui.end()
 
     @classmethod
@@ -327,6 +359,8 @@ class Graphics:
         finishline = cls.resizeheight(50)
         if 'loopactions' not in cls.toggles.keys():
             cls.toggles['loopactions'] = {}
+        if 'arealoops' not in cls.toggles.keys():
+            cls.toggles['arealoops']={}
         height = list(pygame.display.get_window_size())[1] - cls.resizeheight(150)
         imgui.set_next_window_size(16 + cls.resizewidth(160),
                                    height)
@@ -370,6 +404,41 @@ class Graphics:
                                                                             (
                                                                                 cls.resizewidth(160),
                                                                                 cls.resizeheight(20)))
+        if Gamelogic.subtab in Gamelogic.arealoops.keys():
+            visible = cls.get_visible_elements(Gamelogic.arealoops[Gamelogic.subtab])
+            if len(visible):
+                if 'Area actions' not in cls.toggles['arealoops']:
+                    cls.toggles['arealoops']['Area actions'] = True
+                with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.resizeheight(10))}']):
+                    if cls.toggles['arealoops']['Area actions']:
+                        direction = imgui.DIRECTION_DOWN
+                    else:
+                        direction = imgui.DIRECTION_RIGHT
+                    if actiondecorator(imgui.arrow_button, cls.theme)(f'Toggle', direction):
+                        cls.toggles['arealoops']['Area actions'] = not cls.toggles['arealoops']['Area actions']
+                    imgui.same_line()
+                with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
+                    actiondecorator(imgui.text, cls.theme)(f'Area actions')
+                if cls.toggles['arealoops']['Area actions']:
+                    with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
+                        for button in visible:
+                            use = button.isdisabled
+                            if cls.disabledecorator(imgui.button, use)(button.name, cls.resizewidth(160),
+                                                                       cls.resizeheight(50)) and not button.isdisabled:
+                                button.activation()
+                            if imgui.is_item_hovered():
+                                with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
+                                    actiondecorator(imgui.text, cls.theme)(f"{button.name}")
+                                    tooltip = tooltips.loopTooltip(button.name, button.cost, button.complete,
+                                                                   button.progresscost,
+                                                                   button.progresseffect)
+                                    for i in tooltip:
+                                        actiondecorator(imgui.text, cls.theme)(f"{i}")
+
+                            progressbardecorator(imgui.progress_bar, cls.theme)(button.progress,
+                                                                                (
+                                                                                    cls.resizewidth(160),
+                                                                                    cls.resizeheight(20)))
         imgui.end()
 
     @classmethod
@@ -412,7 +481,6 @@ class Graphics:
                             if imgui.is_item_hovered():
                                 with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
                                     actiondecorator(imgui.text, cls.theme)(f"{button.name}")
-                                    button.update()
                                     tooltip = tooltips.upgradeTooltip(button.name, button.cost, button.complete,
                                                                       button.requirements)
                                     for i in tooltip:
@@ -1111,7 +1179,7 @@ class Graphics:
                                                                  height=cls.resizeheight(370), border=True)
                 if dungeon is not None:
                     for string in dungeon.log:
-                        every = 35
+                        every = 46
                         string = '\n'.join(string[i:i + every] for i in range(0, len(string), every))
                         actiondecorator(imgui.text, cls.theme)(string)
                     if len(dungeon.log) > 100:

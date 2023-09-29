@@ -33,7 +33,7 @@ class Gamelogic:
     energies = []
     unlockedenergies = []
     resources = {}
-    flags = {'Main': 0, 'Dubious home': 0,'Father':0,'Mother':0,'Billy':0,'Zen':0,'Butcher':0,'Brother':0}
+    flags = {'Main': 0, 'Dubious home': 0, 'Father': 0, 'Mother': 0, 'Billy': 0, 'Zen': 0, 'Butcher': 0, 'Brother': 0}
     action = None
     upgradeaction = None
     tab = 'Main'
@@ -45,6 +45,8 @@ class Gamelogic:
     instantactions = {}
     loopactions = {}
     upgradeactions = {}
+    areainstants={}
+    arealoops = {}
     exp = 0
     dungeons = {}
     activedungeon = None
@@ -55,15 +57,16 @@ class Gamelogic:
     pokemonlist = []
     reserve = []
     party = []
-    unlockablepokemons=[]
+    unlockablepokemons = []
     switch = None
     remove = None
     add = None
     levelup = None
     partylenmax = 5
     fps = 240
-    volume=0.2
-    musicvolume=0.3
+    volume = 0.2
+    musicvolume = 0.3
+
     @classmethod
     def checkflags(cls):
         elements = [cls.instantactions, cls.loopactions]
@@ -71,6 +74,27 @@ class Gamelogic:
             elements.append(cls.dungeons[cls.subtab])
         if cls.subtab in cls.upgradeactions.keys():
             elements.append(cls.upgradeactions[cls.subtab])
+        areaactions=[]
+        if cls.subtab in cls.areainstants.keys():
+            for key in cls.areainstants[cls.subtab]:
+                areaactions.append(key)
+        if cls.subtab in cls.arealoops.keys():
+            for key in cls.arealoops[cls.subtab]:
+                areaactions.append(key)
+        for action in areaactions:
+            temp = 0
+            if action.closingflags is not None:
+                for key in action.closingflags.keys():
+                    if action.closingflags[key] <= cls.flags[key]:
+                        temp = 1
+            if action.unlockflags is not None:
+                for key in action.unlockflags.keys():
+                    if action.unlockflags[key] > cls.flags[key]:
+                        temp = 1
+            if temp:
+                action.isvisible = False
+            else:
+                action.isvisible = True
         for actionlist in elements:
             for key1 in actionlist:
                 for action in actionlist[key1]:
@@ -112,6 +136,9 @@ class Gamelogic:
         for key in cls.loopactions:
             for e in cls.loopactions[key]:
                 e.isactive = False
+        for location in cls.arealoops:
+            for e in cls.arealoops[location]:
+                e.isactive=False
 
     @classmethod
     def switchparty(cls, pos):
@@ -146,6 +173,21 @@ class Gamelogic:
                     if e.progress > 1:
                         e.progress = 0
                         e.dofinishaction()
+        for location in cls.arealoops:
+            for e in cls.arealoops[location]:
+                if e.isactive:
+                    e.dopassiveaction()
+                    if e.progress <= 0:
+                        cls.loopactions['Common loopactions'][0].activation()
+                        if e.docost():
+                            e.activation()
+                        else:
+                            e.progress = 0
+                            return
+                    e.progress += e.speed
+                    if e.progress > 1:
+                        e.progress = 0
+                        e.dofinishaction()
 
     @classmethod
     def initializegame(cls):
@@ -153,7 +195,9 @@ class Gamelogic:
         initialization_elements.createmenu(cls)
         initialization_elements.createmainsubmenu(cls)
         initialization_elements.createinstantactions(cls)
+        initialization_elements.createareainstant(cls)
         initialization_elements.createloopactions(cls)
+        initialization_elements.createarealoops(cls)
         initialization_elements.createpokemon(cls)
         initialization_elements.createpartytabs(cls)
         initialization_elements.createupgradeactions(cls)
@@ -243,6 +287,12 @@ class Gamelogic:
             for location in cls.dungeons[key]:
                 for i in cls.dungeons[key][location]:
                     i.update()
+        for key in cls.areainstants:
+            for i in cls.areainstants[key]:
+                i.update()
+        for key in cls.arealoops:
+            for i in cls.arealoops[key]:
+                i.update()
 
     @classmethod
     def levelupfunction(cls, information):
@@ -253,12 +303,12 @@ class Gamelogic:
             pokemon = cls.reserve[num]
         if information[1] == 'Level':
             if pokemon.lvl < pokemon.maxlvl:
-                if pokemon.name=='You':
+                if pokemon.name == 'You':
                     if cls.fate.quantity:
-                        cls.fate.quantity-=1
+                        cls.fate.quantity -= 1
                         pokemon.lvl += 1
                 elif cls.souls[pokemon.name]:
-                    cls.souls[pokemon.name]-=1
+                    cls.souls[pokemon.name] -= 1
                     pokemon.lvl += 1
         elif information[1] == 'Physical':
             if pokemon.phys < pokemon.lvl and cls.physgems.quantity:
@@ -285,8 +335,8 @@ class Gamelogic:
         alive[cls.activepartypokemon].cd -= 1
         if alive[cls.activepartypokemon].cd == 0:
             damagedealt = alive[cls.activepartypokemon].skill.useskill(alive[cls.activepartypokemon], alive2[0])
-            if cls.tab==cls.mainelements[5].name:
-                hit=pygame.mixer.Sound('Sounds/hitting.wav')
+            if cls.tab == cls.mainelements[5].name:
+                hit = pygame.mixer.Sound('Sounds/hitting.wav')
                 hit.set_volume(cls.volume)
                 pygame.mixer.Sound.play(hit)
             alive[cls.activepartypokemon].cd = alive[cls.activepartypokemon].skill.interval * 240
@@ -311,21 +361,21 @@ class Gamelogic:
                                     resource2.quantity = resource2.max
                                 droplog += f', {quantity} {name}'
                     n = random.randint(0, 100)
-                    souldrop=1
+                    souldrop = 1
                     if n <= 10 and alive2[0].name not in ['Training dummy']:
                         if alive2[0].name not in cls.souls:
-                            pokemontounlock=alive2[0].copy()
+                            pokemontounlock = alive2[0].copy()
                             cls.souls[pokemontounlock.name] = 0
                             pokemontounlock.phys = 1
                             pokemontounlock.magic = 1
                             pokemontounlock.special = 1
                             pokemontounlock.lvl = 5
-                            pokemontounlock.wild=False
+                            pokemontounlock.wild = False
 
                             cls.unlockablepokemons.append(pokemontounlock)
                         cls.souls[alive2[0].name] += souldrop
 
-                        droplog +=f',{souldrop} {alive2[0].name} soul'
+                        droplog += f',{souldrop} {alive2[0].name} soul'
 
                 cls.activedungeon.log.append(droplog)
                 alive2 = [pokemon for pokemon in cls.activedungeon.currentlayout[cls.activedungeon.floor] if
@@ -353,8 +403,8 @@ class Gamelogic:
         alive2[cls.activeenemypokemon].cd -= 1
         if alive2[cls.activeenemypokemon].cd == 0:
             damagedealt = alive2[cls.activeenemypokemon].skill.useskill(alive2[cls.activeenemypokemon], alive[0])
-            if cls.tab==cls.mainelements[5].name:
-                hit=pygame.mixer.Sound('Sounds/ouch.wav')
+            if cls.tab == cls.mainelements[5].name:
+                hit = pygame.mixer.Sound('Sounds/ouch.wav')
                 hit.set_volume(cls.volume)
                 pygame.mixer.Sound.play(hit)
             alive2[cls.activeenemypokemon].cd = alive2[cls.activeenemypokemon].skill.interval * 240
@@ -402,6 +452,9 @@ class Gamelogic:
                 for i in cls.instantactions[key]:
                     if i.name == cls.action:
                         i.docost()
+            for i in cls.areainstants[cls.subtab]:
+                if i.name == cls.action:
+                    i.docost()
         if cls.upgradeaction is not None:
             for key in cls.upgradeactions[cls.subtab]:
                 for i in cls.upgradeactions[cls.subtab][key]:
