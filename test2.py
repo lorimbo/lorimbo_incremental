@@ -42,6 +42,10 @@ def main():
     for i in range(1,100):
         Graphics.Fonts['Helvetica'][str(i)]=io.fonts.add_font_from_file_ttf("Helvetica.ttf", i)
     impl.refresh_font_texture()
+    pygame.mixer.music.load('background.mp3')
+    pygame.mixer.music.play(-1, 5.0)
+
+
 
     # initialize variables here
     fpslist=[]

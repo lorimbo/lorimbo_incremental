@@ -751,9 +751,6 @@ def createloopactions(parent):
     Loopaction(parent=parent, name='Rest', isvisible=True,
                location='Common loopactions', speed=1 / 1200,
                progresseffect=[['Action', 1 / 240, 0, 0]])
-    Loopaction(parent=parent, name='Test', isvisible=True,
-               location='Common loopactions', speed=1 / 1200,cost=[['Fate', -5, 0, 0]],
-               progresseffect=[['Action', 1 / 240, 0, 0]])
     Loopaction(parent=parent, name='Exercise', isvisible=True,
                location='Common loopactions', speed=1 / 600,
                progresscost=[['Action', -1 / 240, 0, 0]], progresseffect=[['Stamina', 1 / 240, 0, 0]],

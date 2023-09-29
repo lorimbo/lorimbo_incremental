@@ -138,7 +138,7 @@ class Gamelogic:
                         if e.docost():
                             e.activation()
                         else:
-                            e.progress=0
+                            e.progress = 0
                             return
                     e.progress += e.speed
                     if e.progress > 1:

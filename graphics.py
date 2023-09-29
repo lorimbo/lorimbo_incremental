@@ -958,9 +958,10 @@ class Graphics:
         imgui.set_next_window_size(cls.resizewidth(1050), cls.resizeheight(350))
         imgui.set_next_window_position(cls.resizewidth(120), cls.resizeheight(100))
         backgroundecorator(imgui.begin,cls.theme)('Settingmenu', False, cls.flags)
-        themes = ['EVA', 'rey', 'asuka']
+        themes = ['rey','EVA', 'asuka']
         imgui.set_next_window_size(cls.resizewidth(20), cls.resizeheight(20))
-        with dropdowndecorator(imgui.begin_combo,cls.theme)('', cls.theme) as combo:
+        imgui.set_next_window_size_constraints((cls.resizewidth(20),cls.resizeheight(40)),(cls.resizewidth(80),cls.resizeheight(200)))
+        with dropdowndecorator(imgui.begin_combo,cls.theme)('', cls.theme,imgui.COMBO_HEIGHT_LARGE) as combo:
             if combo.opened:
                 for i, item in enumerate(themes):
                     is_selected = (i == cls.theme)
