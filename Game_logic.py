@@ -34,7 +34,7 @@ class Gamelogic:
     energies = []
     unlockedenergies = []
     resources = {}
-    flags = {'Main': 0,'Popup':1, 'Dubious home': 0, 'Father': 0, 'Mother': 0, 'Billy': 0, 'Zen': 0, 'Butcher': 0, 'Brother': 0}
+    flags = {}
     action = None
     upgradeaction = None
     tab = 'Main'
@@ -223,6 +223,7 @@ class Gamelogic:
     @classmethod
     def initializegame(cls):
         cls.corestats = initialization_elements.Corestats(cls)
+        initialization_elements.loadflags(cls)
         initialization_elements.createmenu(cls)
         initialization_elements.createmainsubmenu(cls)
         initialization_elements.createinstantactions(cls)
@@ -240,9 +241,15 @@ class Gamelogic:
     def savegame(cls):
         f = open("gamestate.json")
         Information = json.load(f)
-        Information['basepokemons'] = []
         Information['party'] = []
         Information['reserve'] = []
+        Information['resources']={}
+        Information['flags']={}
+        for flag in cls.flags:
+            Information['flags'][flag]=cls.flags[flag]
+        for category in cls.resources:
+            for resource in cls.resources[category]:
+                Information['resources'][resource.name]=(resource.quantity,resource.max,resource.unlockflags,resource.category,resource.regen)
         for x in cls.party:
             pokemondict = {}
             pokemondict["name"] = x.name
@@ -257,6 +264,7 @@ class Gamelogic:
             pokemondict["phys"] = x.phys
             pokemondict["magic"] = x.magic
             pokemondict["special"] = x.special
+            pokemondict["drop"]=x.drop
             Information["party"].append(pokemondict)
         for x in cls.reserve:
             pokemondict = {}
@@ -272,6 +280,7 @@ class Gamelogic:
             pokemondict["phys"] = x.phys
             pokemondict["magic"] = x.magic
             pokemondict["special"] = x.special
+            pokemondict["drop"] = x.drop
             Information["reserve"].append(pokemondict)
 
         out_file = open("gamestate.json", "w")

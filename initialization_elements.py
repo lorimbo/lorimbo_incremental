@@ -3,6 +3,7 @@ import random
 from random import randint
 import copy
 import pygame
+import pokemonlist
 
 red = (255, 0, 0)
 green = (0, 255, 0)
@@ -741,8 +742,7 @@ def createpartytabs(parent):
 
 def createpokemon(parent):
     Information = getgamestate()
-    for pokemonkey in Information['basepokemons']:
-        Pokemon(parent=parent, elementlist=parent.pokemonlist, **pokemonkey)
+    pokemonlist.createpokemonlist(parent)
     for pokemonkey in Information['party']:
         Pokemon(parent=parent, wild=False, elementlist=parent.party, **pokemonkey)
     for pokemonkey in Information['reserve']:
@@ -1004,22 +1004,22 @@ def createupgradeactions(parent):
                    location=['Village', 'old house 2'],
                    unlockflags={'Dubious home': 0, }, closingflags={'Dubious home': 3}, changeflags={'Dubious home': 1})'''
 
+def loadflags(parent):
+    Information = getgamestate()
+    for flag in Information['flags']:
+        parent.flags[flag]=Information['flags'][flag]
 
 def createresources(parent):
-    parent.fate = Resource(parent, 'Fate', 1000, 10, {'Father': 0}, 'Fate', 0, resources=parent.resources)
-    Resource(parent, 'Wood', 4000, 1, {'Father': 2}, 'Wood', 0, resources=parent.resources)
-    Resource(parent, 'Weeds', 0, 10, {'Mother': 5}, 'Herbes', 0, resources=parent.resources)
-    Resource(parent, 'Herbs', 0, 1, {'Mother': 5}, 'Herbes', 0, resources=parent.resources)
-    Resource(parent, 'Gold', 0, 60, {'Mother': 5}, 'Gold', 0, resources=parent.resources)
-    Resource(parent, 'Beef', 0, 10, {'Mother': 11}, 'Meats', 0, resources=parent.resources)
-    Resource(parent, 'Cow hide', 0, 10, {'Mother': 11}, 'Hides', 0, resources=parent.resources)
-    Resource(parent,'Butterfly wings',0,10,{'Father': 7},'Materials',0,resources=parent.resources)
-    Resource(parent, 'Frog legs', 0, 10, {'Father': 7}, 'Materials', 0, resources=parent.resources)
-    parent.physgems = Resource(parent, 'Physical gems', 300, 1, {'Father': 7}, 'Gems', 0,
+    Information = getgamestate()
+    for resourcename in Information['resources']:
+        if resourcename not in ['Fate','Physical gems','Magical gems','Special gems']:
+            Resource(parent,resourcename,*Information['resources'][resourcename],resources=parent.resources)
+    parent.fate = Resource(parent, 'Fate', *Information['resources']['Fate'], 0, resources=parent.resources)
+    parent.physgems = Resource(parent, 'Physical gems',*Information['resources']['Physical gems'],
                                resources=parent.resources)
-    parent.magicgems = Resource(parent, 'Magical gems', 330, 1, {'Father': 7}, 'Gems', 0,
+    parent.magicgems = Resource(parent, 'Magical gems',*Information['resources']['Magical gems'],
                                 resources=parent.resources)
-    parent.specialgems = Resource(parent, 'Special gems', 330, 1, {'Father': 7}, 'Gems', 0,
+    parent.specialgems = Resource(parent, 'Special gems', *Information['resources']['Special gems'],
                                   resources=parent.resources)
 
 

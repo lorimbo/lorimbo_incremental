@@ -292,7 +292,7 @@ class Graphics:
                 if cls.notinusedecorator(imgui.button, use)(button.name, cls.resizewidth(90), cls.resizeheight(30)):
                     Gamelogic.tab = button.name
             if actiondecorator(imgui.button, cls.theme)('Save', cls.resizewidth(90), cls.resizeheight(30)):
-                # Gamelogic.savegame()
+                Gamelogic.savegame()
                 pass
 
         imgui.end()

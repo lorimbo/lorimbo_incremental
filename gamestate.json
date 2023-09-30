@@ -1,119 +1,4 @@
 {
-      "basepokemons": [
-            {
-                  "name": "Training dummy",
-                  "hp": 10,
-                  "atk": 0,
-                  "dif": 0,
-                  "satk": 0,
-                  "sdif": 0,
-                  "maxlvl": 10,
-                  "unlocked": 0,
-                  "lvl": 10,
-                  "phys": 10,
-                  "magic": 10,
-                  "special": 10,
-                  "drop":{"exp": 1, "resources": [["Physical gems",1,10],["Magical gems",1,10],["Special gems",1,10]]},
-                  "skill": ["Silently judge", 0, 2, "Phys"]
-            },
-            {
-                  "name": "Butterfly",
-                  "hp": 80,
-                  "atk": 80,
-                  "dif": 80,
-                  "satk": 80,
-                  "sdif": 80,
-                  "maxlvl": 10,
-                  "unlocked": 0,
-                  "lvl": 10,
-                  "phys": 10,
-                  "magic": 10,
-                  "special": 10,
-                  "drop":{"exp": 2, "resources": [["Butterfly wings",1,30],["Physical gems",1,10],["Magical gems",1,10],["Special gems",1,10]]}
-
-
-            },
-            {
-                  "name": "Frog",
-                  "hp": 91.2,
-                  "atk": 100.8,
-                  "dif": 91.2,
-                  "satk": 96,
-                  "sdif": 100.8,
-                  "maxlvl": 12,
-                  "unlocked": 0,
-                  "lvl": 12,
-                  "phys": 12,
-                  "magic": 12,
-                  "special": 12,
-                  "drop":{"exp": 2, "resources": [["Frog legs",1,10],["Physical gems",1,10],["Magical gems",1,10],["Special gems",1,10]]},
-                  "skill": ["Jump attack", 6, 2.3, "Phys"]
-            },
-            {
-                  "name": "Worm",
-                  "hp": 150,
-                  "atk": 105,
-                  "dif": 126,
-                  "satk": 105,
-                  "sdif": 114,
-                  "maxlvl": 15,
-                  "unlocked": 0,
-                  "lvl": 15,
-                  "phys": 15,
-                  "magic": 15,
-                  "special": 15,
-                  "drop":{"exp": 3, "resources": [["Physical gems",1,10],["Magical gems",1,10],["Special gems",1,10]]},
-                  "skill": ["Roll over", 8, 2.4, "Phys"]
-            },
-            {
-                  "name": "Cow",
-                  "hp": 133,
-                  "atk": 171,
-                  "dif": 144.4,
-                  "satk": 152,
-                  "sdif": 159.6,
-                  "maxlvl": 19,
-                  "unlocked": 0,
-                  "lvl": 19,
-                  "phys": 19,
-                  "magic": 19,
-                  "special": 19,
-                  "drop":{"exp": 3, "resources": [["Cow hide",1,10],["Beef",1,10],["Physical gems",1,10],["Magical gems",1,10],["Special gems",1,10]]},
-                  "skill": ["Rear kick", 5, 2, "Phys"]
-            },
-            {
-                  "name": "Snake",
-                  "hp": 187.2,
-                  "atk": 211.2,
-                  "dif": 172.8,
-                  "satk":201.6,
-                  "sdif": 187.2,
-                  "maxlvl": 24,
-                  "unlocked": 0,
-                  "lvl": 24,
-                  "phys": 24,
-                  "magic": 24,
-                  "special": 24,
-                  "drop":{"exp": 4, "resources": [["Snake skin",1,10],["Physical gems",1,10],["Magical gems",1,10],["Special gems",1,10]]},
-                  "skill": ["Squeeze", 9, 2.8, "Phys"]
-            },
-            {
-                  "name": "Brother Francesco",
-                  "hp": 1200,
-                  "atk": 100,
-                  "dif": 100,
-                  "satk":100,
-                  "sdif": 100,
-                  "maxlvl": 30,
-                  "unlocked": 0,
-                  "lvl": 30,
-                  "phys": 30,
-                  "magic": 30,
-                  "special": 30,
-                  "drop":{"exp": 5, "resources": [["Physical gems",1,10],["Magical gems",1,10],["Special gems",1,10]]},
-                  "skill": ["Azura blow", 13, 3.5, "Phys"]
-            }
-      ],
       "party": [
             {
                   "name": "You",
@@ -127,15 +12,149 @@
                   "lvl": 1,
                   "phys": 0,
                   "magic": 0,
-                  "special": 0
+                  "special": 0,
+                  "drop": {
+                        "exp": 1,
+                        "resources": [
+                              [
+                                    "Physical gems",
+                                    1,
+                                    10
+                              ],
+                              [
+                                    "Magical gems",
+                                    1,
+                                    10
+                              ],
+                              [
+                                    "Special gems",
+                                    1,
+                                    10
+                              ]
+                        ]
+                  }
             }
-
       ],
-      "reserve": [
-
-      ],
-      "loopactionvisibility": [
-            true,
-            true
-      ]
+      "reserve": [],
+      "resources": {
+            "Wood": [
+                  3948,
+                  1,
+                  {
+                        "Father": 2
+                  },
+                  "Wood",
+                  0
+            ],
+            "Weeds": [
+                  0,
+                  10,
+                  {
+                        "Mother": 5
+                  },
+                  "Herbs",
+                  0
+            ],
+            "Herbs": [
+                  0,
+                  1,
+                  {
+                        "Mother": 5
+                  },
+                  "Herbs",
+                  0
+            ],
+            "Gold": [
+                  0,
+                  60,
+                  {
+                        "Mother": 5
+                  },
+                  "Gold",
+                  0
+            ],
+            "Beef": [
+                  0,
+                  10,
+                  {
+                        "Mother": 11
+                  },
+                  "Meats",
+                  0
+            ],
+            "Cow hide": [
+                  0,
+                  10,
+                  {
+                        "Mother": 11
+                  },
+                  "Hides",
+                  0
+            ],
+            "Butterfly wings": [
+                  0,
+                  10,
+                  {
+                        "Father": 7
+                  },
+                  "Materials",
+                  0
+            ],
+            "Frog legs": [
+                  0,
+                  10,
+                  {
+                        "Father": 7
+                  },
+                  "Materials",
+                  0
+            ],
+            "Fate": [
+                  970,
+                  10,
+                  {
+                        "Father": 0
+                  },
+                  "Fate",
+                  0
+            ],
+            "Physical gems": [
+                  299,
+                  1,
+                  {
+                        "Father": 7
+                  },
+                  "Gems",
+                  0
+            ],
+            "Magical gems": [
+                  329,
+                  1,
+                  {
+                        "Father": 7
+                  },
+                  "Gems",
+                  0
+            ],
+            "Special gems": [
+                  329,
+                  1,
+                  {
+                        "Father": 7
+                  },
+                  "Gems",
+                  0
+            ]
+      },
+      "flags": {
+            "Main": 0,
+            "Popup": 0,
+            "Dubious home": 0,
+            "Father": 0,
+            "Mother": 0,
+            "Billy": 0,
+            "Zen": 0,
+            "Butcher": 0,
+            "Brother": 0
+      }
 }
