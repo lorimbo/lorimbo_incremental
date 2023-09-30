@@ -28,7 +28,6 @@ class Skill:
         self.effect = effect
         self.unlockflags = unlockflags
 
-
     def useskill(self, user, target):
         multiplier = 1 + self.power / 10
         if self.category == 'Phys':
@@ -42,7 +41,6 @@ class Skill:
         randomdamage = random.uniform(-((basedamage) ** 0.5) / 2, ((basedamage) ** 0.5 / 2))
         damage = max(basedamage + randomdamage, attack / 10)
         target.currenthp -= damage
-
 
         if target.currenthp < 0:
             target.currenthp = 0
@@ -66,7 +64,7 @@ def numcon(n):
 
 class Dungeon:
     def __init__(self, parent, name, location, unlockflags, closingflags, changeflags, monsterlist, isvisible=True,
-                 isdisabled=False, boss=None,rare=None,usualreward=None,cleared=False,firsttime=None):
+                 isdisabled=False, boss=None, rare=None, usualreward=None, cleared=False, firsttime=None):
         self.parent = parent
         self.name = name
         self.unlockflags = unlockflags
@@ -76,15 +74,15 @@ class Dungeon:
         self.isvisible = isvisible
         self.isdisabled = isdisabled
         self.boss = boss
-        self.rare=rare
+        self.rare = rare
         self.location = location
         self.currentlayout = []
         self.floor = 0
         self.log = []
         self.party = []
-        self.usualrewards=usualreward
-        self.cleared=cleared
-        self.firsttime=firsttime
+        self.usualrewards = usualreward
+        self.cleared = cleared
+        self.firsttime = firsttime
         for pokemon in self.parent.party[0:min(5, len(self.parent.party))]:
             self.party.append(pokemon.copy())
         if location[0] not in self.parent.dungeons.keys():
@@ -103,7 +101,7 @@ class Dungeon:
         if self.boss is None:
             for i in range(5):
                 k = randint(0, 4)
-                n=[3,3,4,4,5][k]
+                n = [3, 3, 4, 4, 5][k]
                 self.currentlayout.append([])
                 for j in range(n):
                     k = randint(0, len(self.monsterlist) - 1)
@@ -111,6 +109,7 @@ class Dungeon:
         else:
             self.currentlayout.append([])
             self.currentlayout[0].append(self.boss.copy())
+
     def docomplete(self):
         if self.usualrewards is not None:
             for i in self.usualrewards:
@@ -154,11 +153,11 @@ class Dungeon:
                     for x in self.parent.resources.keys():
                         for resource in [e for e in self.parent.resources[x] if e.name == name]:
                             resource.max += i[2]
-                elif i[0] =='maxlvl':
-                    quantity=i[1]
-                    for character in [e for e in self.parent.party if e.name=='You']:
-                        character.maxlvl+=quantity
-            self.cleared=True
+                elif i[0] == 'maxlvl':
+                    quantity = i[1]
+                    for character in [e for e in self.parent.party if e.name == 'You']:
+                        character.maxlvl += quantity
+            self.cleared = True
 
     def update(self):
         pass
@@ -266,7 +265,7 @@ class Upgradeactions(menuelement):
                     if energy.quantity + i[1] > -1 / 240:
                         energy.quantity += i[1]
                     if not energy.quantity:
-                        energy.quantity=0
+                        energy.quantity = 0
                         self.docomplete()
                     continue
                 for x in self.parent.resources.keys():
@@ -305,7 +304,6 @@ class Upgradeactions(menuelement):
         if self.changeflags is not None:
             for key in self.changeflags:
                 self.parent.flags[key] += self.changeflags[key]
-
 
     def update(self):
         self.isdisabled = False
@@ -356,7 +354,7 @@ class Upgradeactions(menuelement):
 class Instantactions(menuelement):
     def __init__(self,
                  cost=[['Wood', 0, 0, 0]],
-                 complete=[['Wood', 0, 0, 0]], location=None,area=False, *args, **kwargs):
+                 complete=[['Wood', 0, 0, 0]], location=None, area=False, *args, **kwargs):
         menuelement.__init__(self, elementlist=None, *args, **kwargs)
         if location is not None:
             if not area:
@@ -365,7 +363,7 @@ class Instantactions(menuelement):
                 self.parent.instantactions[location].append(self)
             else:
                 if location not in self.parent.areainstants.keys():
-                    self.parent.areainstants[location] =[]
+                    self.parent.areainstants[location] = []
                 self.parent.areainstants[location].append(self)
 
         self.cost = cost
@@ -390,8 +388,8 @@ class Instantactions(menuelement):
                 costname = i[0]
                 for energy in [e for e in self.parent.energies if e.name == costname]:
                     energy.quantity += i[1]
-                    if energy.quantity<0:
-                        energy.quantity=0
+                    if energy.quantity < 0:
+                        energy.quantity = 0
                     continue
                 for x in self.parent.resources.keys():
                     for resource in [e for e in self.parent.resources[x] if e.name == costname]:
@@ -452,7 +450,7 @@ class Instantactions(menuelement):
 class Loopaction(menuelement):
     def __init__(self, progress=0, speed=1 / 1200, isactive=False, location=None,
                  cost=[['Wood', 0, 0, 0]], progresscost=[['Wood', 0, 0, 0]],
-                 progresseffect=[['Wood', 0, 0, 0]], complete=[['Wood', 0, 0, 0]],area=False, *args, **kwargs):
+                 progresseffect=[['Wood', 0, 0, 0]], complete=[['Wood', 0, 0, 0]], area=False, *args, **kwargs):
         menuelement.__init__(self, elementlist=None, *args, **kwargs)
         if location is not None:
             if not area:
@@ -542,9 +540,9 @@ class Loopaction(menuelement):
                 if energy.quantity >= -i[1]:
                     energy.quantity += i[1]
                 else:
-                    costpaid=False
+                    costpaid = False
                 if not energy.quantity:
-                    energy.quantity=0
+                    energy.quantity = 0
                 continue
             for x in self.parent.resources.keys():
                 for resource in [e for e in self.parent.resources[x] if e.name == costname]:
@@ -606,8 +604,8 @@ class Loopaction(menuelement):
                 for resource in [e for e in self.parent.resources[x] if e.name == costname]:
                     if resource.quantity > -i[1]:
                         resource.quantity += i[1]
-                        if resource.quantity>resource.max:
-                            resource.quantity=resource.max
+                        if resource.quantity > resource.max:
+                            resource.quantity = resource.max
 
 
 class Pokemon(menuelement):
@@ -630,14 +628,14 @@ class Pokemon(menuelement):
         self.special = special
         self.wild = wild
         if drop == None:
-            self.drop={'exp': 1, 'resources': [['Physical gems', 1, 10], ['Magical gems', 1, 10],
-                                                          ['Special gems', 1, 10]]}
+            self.drop = {'exp': 1, 'resources': [['Physical gems', 1, 10], ['Magical gems', 1, 10],
+                                                 ['Special gems', 1, 10]]}
         else:
             self.drop = drop
 
         self.updatestats()
         if skill is not None:
-            self.skill=Skill(*skill)
+            self.skill = Skill(*skill)
             self.cd = self.skill.interval * 240
         else:
             self.skill = Skill('Tackle', 7, 2.8, 'Phys', None, None, None, None)
@@ -701,17 +699,16 @@ def getgamestate():
     return Information
 
 
-
-
-
 def createmenu(parent):
     menuelement(parent=parent, name='Main', isvisible=True, elementlist=parent.mainelements)
     menuelement(parent=parent, name='Party', isvisible=True, elementlist=parent.mainelements)
-    menuelement(parent=parent, name='Training', isvisible=False, elementlist=parent.mainelements,unlockflags={'Main': 1})
+    menuelement(parent=parent, name='Training', isvisible=False, elementlist=parent.mainelements,
+                unlockflags={'Main': 1})
     menuelement(parent=parent, name='Routine', isvisible=False, elementlist=parent.mainelements,
                 unlockflags={'Main': 2})
     menuelement(parent=parent, name='Story', isvisible=False, elementlist=parent.mainelements, unlockflags={'Main': 2})
-    menuelement(parent=parent, name='Dungeon', isvisible=False, elementlist=parent.mainelements,unlockflags={'Father': 7})
+    menuelement(parent=parent, name='Dungeon', isvisible=False, elementlist=parent.mainelements,
+                unlockflags={'Father': 7})
     menuelement(parent=parent, name='Settings', isvisible=True, elementlist=parent.mainelements)
 
 
@@ -729,15 +726,12 @@ def createmainsubmenu(parent):
 
 
 def createpartytabs(parent):
-    menuelement(parent=parent, name='Main', isvisible=True, elementlist=parent.partyelements)
+    menuelement(parent=parent, name='Party selection', isvisible=True, elementlist=parent.partyelements)
     menuelement(parent=parent, name='Level up', isvisible=True, elementlist=parent.partyelements)
     menuelement(parent=parent, name='Quest', isvisible=False, elementlist=parent.partyelements, unlockflags={'Main': 2})
     menuelement(parent=parent, name='Bestiary', isvisible=False, elementlist=parent.partyelements,
                 unlockflags={'Main': 2})
     menuelement(parent=parent, name='SKill', isvisible=False, elementlist=parent.partyelements, unlockflags={'Main': 2})
-
-
-
 
 
 def createpokemon(parent):
@@ -747,6 +741,7 @@ def createpokemon(parent):
         Pokemon(parent=parent, wild=False, elementlist=parent.party, **pokemonkey)
     for pokemonkey in Information['reserve']:
         Pokemon(parent=parent, wild=False, elementlist=parent.reserve, **pokemonkey)
+
 
 def createinstantactions(parent):
     Instantactions(parent=parent, name='Ponder the future', isvisible=True,
@@ -758,26 +753,31 @@ def createinstantactions(parent):
     Instantactions(parent=parent, name='"Eat" herbs', isvisible=True, location='Garden activities',
                    unlockflags={'Mother': 7}, cost=[['Herbs', -1, 0, 0]],
                    complete=[['Fate', 5, 0, 0]])
+
+
 def createareainstant(parent):
     Instantactions(parent=parent, name='Look for weeds', isvisible=True, location='Village',
-                   unlockflags={'Mother': 5}, cost=[['Energy', -0.4, 0, 0]],area=True,
+                   unlockflags={'Mother': 5}, cost=[['Energy', -0.4, 0, 0]], area=True,
                    complete=[['Weeds', 1, 0, 0], ['Gold', 2, 0, 0]])
+
 
 def createloopactions(parent):
     Loopaction(parent=parent, name='Rest', isvisible=True,
                location='Common loopactions', speed=1 / 1200,
                progresseffect=[['Energy', 1 / 240, 0, 0]])
     Loopaction(parent=parent, name='Parse through weeds', isvisible=True,
-               location='Garden', speed=1 / 240,cost=[['Weeds', -5, 0, 0]],
-               progresscost=[['Energy', -1 / 240, 0, 0]],complete=[['Herbs',1,0,0]],
+               location='Garden', speed=1 / 240, cost=[['Weeds', -5, 0, 0]],
+               progresscost=[['Energy', -1 / 240, 0, 0]], complete=[['Herbs', 1, 0, 0]],
                unlockflags={'Mother': 5})
     Loopaction(parent=parent, name='Meditate', isvisible=True,
                location='Your room', speed=1 / 240,
                progresscost=[['Energy', -1 / 240, 0, 0]], complete=[['Fate', 1, 0, 0]],
                unlockflags={'Zen': 1})
+
+
 def createarealoops(parent):
     Loopaction(parent=parent, name='Exercise', isvisible=True,
-               location='Village', speed=1 / 600,area=True,
+               location='Village', speed=1 / 600, area=True,
                progresscost=[['Energy', -1 / 240, 0, 0]], progresseffect=[['Endurance', 1 / 240, 0, 0]],
                unlockflags={'Father': 2})
 
@@ -785,12 +785,12 @@ def createarealoops(parent):
 def createupgradeactions(parent):
     Upgradeactions(parent=parent, name='Talk to Father 1/12', isvisible=True,
                    location=['Village', 'Home'],
-                   unlockflags={'Father': 0}, closingflags={'Father': 1}, changeflags={'Father': 1},
+                   unlockflags={'Father': 0}, closingflags={'Father': 1}, changeflags={'Father': 1,'Popup':2},
                    cost=[['Fate', -5, 0, 0]], complete=[['max', 'Fate', 5, 0, 0]]
                    )
     Upgradeactions(parent=parent, name='Talk to Father 2/12', isvisible=True,
                    location=['Village', 'Home'],
-                   unlockflags={'Father': 1}, closingflags={'Father': 2}, changeflags={'Father': 1},
+                   unlockflags={'Father': 1}, closingflags={'Father': 2}, changeflags={'Father': 1,'Popup':3},
                    cost=[['Fate', -10, 0, 0]], complete=[['max', 'Fate', 5, 0, 0]]
                    )
     Upgradeactions(parent=parent, name='Talk to Father 3/12', isvisible=True,
@@ -815,12 +815,12 @@ def createupgradeactions(parent):
                    )
     Upgradeactions(parent=parent, name='Talk to Father 7/12', isvisible=True,
                    location=['Village', 'Home'],
-                   unlockflags={'Father': 6}, closingflags={'Father': 7}, changeflags={'Father': 1},
+                   unlockflags={'Father': 6}, closingflags={'Father': 7}, changeflags={'Father': 1,'Popup':4},
                    cost=[['Wood', -10, 0, 0]], complete=[['max', 'Fate', 5, 0, 0]],
                    )
     Upgradeactions(parent=parent, name='Talk to Father 8/12', isvisible=True,
                    location=['Village', 'Home'],
-                   unlockflags={'Father': 7}, closingflags={'Father': 8}, changeflags={'Father': 1},
+                   unlockflags={'Father': 7}, closingflags={'Father': 8}, changeflags={'Father': 1,'Popup':5},
                    cost=[['Physical gems', -1, 0, 0]], complete=[['max', 'Physical gems', 19, 0, 0]],
                    )
     Upgradeactions(parent=parent, name='Talk to Father 9/12', isvisible=True,
@@ -841,7 +841,9 @@ def createupgradeactions(parent):
     Upgradeactions(parent=parent, name='Talk to Father 12/12', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Father': 11}, closingflags={'Father': 12}, changeflags={'Father': 1},
-                   cost=[['Fate', -35, 0, 0]], complete=[['max', 'Fate', 10, 0, 0],['stat', 'hp', 5, 0, 0], ['stat', 'patk', 5, 0, 0], ['stat', 'pdef', 5, 0, 0],
+                   cost=[['Fate', -35, 0, 0]],
+                   complete=[['max', 'Fate', 10, 0, 0], ['stat', 'hp', 5, 0, 0], ['stat', 'patk', 5, 0, 0],
+                             ['stat', 'pdef', 5, 0, 0],
                              ['stat', 'matk', 5, 0, 0], ['stat', 'mdef', 5, 0, 0]],
                    )
     Upgradeactions(parent=parent, name='Talk to Mother 1/10', isvisible=True,
@@ -887,7 +889,8 @@ def createupgradeactions(parent):
     Upgradeactions(parent=parent, name='Talk to Mother 9/10', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Mother': 9}, closingflags={'Mother': 10}, changeflags={'Mother': 1},
-                   cost=[['Herbs', -10, 0, 0]], complete=[['stat', 'hp', 5, 0, 0], ['stat', 'patk', 5, 0, 0], ['stat', 'pdef', 5, 0, 0],
+                   cost=[['Herbs', -10, 0, 0]],
+                   complete=[['stat', 'hp', 5, 0, 0], ['stat', 'patk', 5, 0, 0], ['stat', 'pdef', 5, 0, 0],
                              ['stat', 'matk', 5, 0, 0], ['stat', 'mdef', 5, 0, 0]],
                    )
     Upgradeactions(parent=parent, name='Talk to Mother 10/10', isvisible=True,
@@ -923,7 +926,8 @@ def createupgradeactions(parent):
     Upgradeactions(parent=parent, name='Talk with Billy the kid 3/3', isvisible=True,
                    location=['Village', 'Village'],
                    unlockflags={'Billy': 2}, closingflags={'Billy': 3}, changeflags={'Billy': 1},
-                   cost=[['Butterfly wings', -20, 0, 0]], complete=[['stat', 'hp', 0.5, 0, 0], ['stat', 'patk', 0.5, 0, 0], ['stat', 'pdef', 0.5, 0, 0],
+                   cost=[['Butterfly wings', -20, 0, 0]],
+                   complete=[['stat', 'hp', 0.5, 0, 0], ['stat', 'patk', 0.5, 0, 0], ['stat', 'pdef', 0.5, 0, 0],
                              ['stat', 'matk', 0.5, 0, 0], ['stat', 'mdef', 0.5, 0, 0]],
                    )
     Upgradeactions(parent=parent, name='Talk to the zen master 1/5', isvisible=True,
@@ -939,7 +943,8 @@ def createupgradeactions(parent):
     Upgradeactions(parent=parent, name='Talk to the zen master 3/5', isvisible=True,
                    location=['Village', 'Village'],
                    unlockflags={'Zen': 2}, closingflags={'Zen': 3}, changeflags={'Zen': 1},
-                   cost=[['Gold', -40, 0, 0]], complete=[['stat', 'hp', 0.5, 0, 0], ['stat', 'patk', 0.5, 0, 0], ['stat', 'pdef', 0.5, 0, 0],
+                   cost=[['Gold', -40, 0, 0]],
+                   complete=[['stat', 'hp', 0.5, 0, 0], ['stat', 'patk', 0.5, 0, 0], ['stat', 'pdef', 0.5, 0, 0],
                              ['stat', 'matk', 0.5, 0, 0], ['stat', 'mdef', 0.5, 0, 0]]
                    )
     Upgradeactions(parent=parent, name='Talk to the zen master 4/5', isvisible=True,
@@ -968,31 +973,30 @@ def createupgradeactions(parent):
                    )
     Upgradeactions(parent=parent, name='Butcher shop 3/6', isvisible=True,
                    location=['Village', 'Home'],
-                   unlockflags={'Butcher': 2}, closingflags={'Butcher': 3}, changeflags={'Butcher':1},
-                   cost=[['Frog legs', -10, 0, 0]], complete=[['stat', 'hp', 0.5, 0, 0], ['stat', 'patk', 0.5, 0, 0], ['stat', 'pdef', 0.5, 0, 0],
+                   unlockflags={'Butcher': 2}, closingflags={'Butcher': 3}, changeflags={'Butcher': 1},
+                   cost=[['Frog legs', -10, 0, 0]],
+                   complete=[['stat', 'hp', 0.5, 0, 0], ['stat', 'patk', 0.5, 0, 0], ['stat', 'pdef', 0.5, 0, 0],
                              ['stat', 'matk', 0.5, 0, 0], ['stat', 'mdef', 0.5, 0, 0]]
                    )
     Upgradeactions(parent=parent, name='Butcher shop 4/6', isvisible=True,
                    location=['Village', 'Home'],
-                   unlockflags={'Butcher': 3,'Brother':1}, closingflags={'Butcher': 4}, changeflags={'Butcher':1},
+                   unlockflags={'Butcher': 3, 'Brother': 1}, closingflags={'Butcher': 4}, changeflags={'Butcher': 1},
                    cost=[['Cow hide', -5, 0, 0]],
                    complete=[['max', 'Cow hide', 5, 0, 0]]
                    )
     Upgradeactions(parent=parent, name='Butcher shop 5/6', isvisible=True,
                    location=['Village', 'Home'],
-                   unlockflags={'Butcher': 4}, closingflags={'Butcher': 5}, changeflags={'Butcher':1},
+                   unlockflags={'Butcher': 4}, closingflags={'Butcher': 5}, changeflags={'Butcher': 1},
                    cost=[['Cow hide', -10, 0, 0]],
                    complete=[['max', 'Cow hide', 5, 0, 0]]
                    )
     Upgradeactions(parent=parent, name='Butcher shop 6/6', isvisible=True,
                    location=['Village', 'Home'],
-                   unlockflags={'Butcher': 5}, closingflags={'Butcher': 6}, changeflags={'Butcher':1},
+                   unlockflags={'Butcher': 5}, closingflags={'Butcher': 6}, changeflags={'Butcher': 1},
                    cost=[['Cow hide', -10, 0, 0]],
                    complete=[['stat', 'hp', 0.5, 0, 0], ['stat', 'patk', 0.5, 0, 0], ['stat', 'pdef', 0.5, 0, 0],
                              ['stat', 'matk', 0.5, 0, 0], ['stat', 'mdef', 0.5, 0, 0]]
                    )
-
-
 
     '''Upgradeactions(parent=parent, name='Wood quest2', isvisible=True,
                    location=['Village', 'old house'],
@@ -1004,50 +1008,55 @@ def createupgradeactions(parent):
                    location=['Village', 'old house 2'],
                    unlockflags={'Dubious home': 0, }, closingflags={'Dubious home': 3}, changeflags={'Dubious home': 1})'''
 
+
 def loadflags(parent):
     Information = getgamestate()
     for flag in Information['flags']:
-        parent.flags[flag]=Information['flags'][flag]
+        parent.flags[flag] = Information['flags'][flag]
+
 
 def createresources(parent):
     Information = getgamestate()
     for resourcename in Information['resources']:
-        if resourcename not in ['Fate','Physical gems','Magical gems','Special gems']:
-            Resource(parent,resourcename,*Information['resources'][resourcename],resources=parent.resources)
+        if resourcename not in ['Fate', 'Physical gems', 'Magical gems', 'Special gems']:
+            Resource(parent, resourcename, *Information['resources'][resourcename], resources=parent.resources)
     parent.fate = Resource(parent, 'Fate', *Information['resources']['Fate'], 0, resources=parent.resources)
-    parent.physgems = Resource(parent, 'Physical gems',*Information['resources']['Physical gems'],
+    parent.physgems = Resource(parent, 'Physical gems', *Information['resources']['Physical gems'],
                                resources=parent.resources)
-    parent.magicgems = Resource(parent, 'Magical gems',*Information['resources']['Magical gems'],
+    parent.magicgems = Resource(parent, 'Magical gems', *Information['resources']['Magical gems'],
                                 resources=parent.resources)
     parent.specialgems = Resource(parent, 'Special gems', *Information['resources']['Special gems'],
                                   resources=parent.resources)
 
 
 def createenergies(parent):
-    Energy(parent=parent, name='Energy', quantity=0, max=5, unlockflags={'Father': 0}, color=red, regen=0)
+    Energy(parent=parent, name='Energy', quantity=5, max=5, unlockflags={'Father': 0}, color=red, regen=0)
     Energy(parent=parent, name='Endurance', quantity=0, max=1, unlockflags={'Father': 2}, color=(255, 255, 0),
            regen=0)
-    Energy(parent=parent, name='Mana', quantity=0, max=1, unlockflags={'Father': 14}, color=(0, 0, 205),isvisible=False,
+    Energy(parent=parent, name='Mana', quantity=0, max=1, unlockflags={'Father': 14}, color=(0, 0, 205),
+           isvisible=False,
            regen=1 / 240)
-    Energy(parent=parent, name='Fire', quantity=0, max=1, unlockflags={'Father': 14}, color=orange,isvisible=False,
+    Energy(parent=parent, name='Fire', quantity=0, max=1, unlockflags={'Father': 14}, color=orange, isvisible=False,
            regen=1 / 240)
-    Energy(parent=parent, name='Wind', quantity=0, max=1, unlockflags={'Father': 14}, color=teal,isvisible=False,
+    Energy(parent=parent, name='Wind', quantity=0, max=1, unlockflags={'Father': 14}, color=teal, isvisible=False,
            regen=1 / 240)
-    Energy(parent=parent, name='Earth', quantity=0, max=1, unlockflags={'Father': 14}, color=brown,isvisible=False,
+    Energy(parent=parent, name='Earth', quantity=0, max=1, unlockflags={'Father': 14}, color=brown, isvisible=False,
            regen=1 / 240)
 
 
 def createdungeons(parent):
-    Dungeon(parent=parent, name="Field", location=['Village', 'Surroundings'], changeflags={'Brother':1},
-            unlockflags={'Mother': 11}, closingflags={},usualreward=[['resource', 'Special gems', 1, 0, 0]],firsttime=[['maxlvl',7]],
+    Dungeon(parent=parent, name="Field", location=['Village', 'Surroundings'], changeflags={'Brother': 1},
+            unlockflags={'Mother': 11}, closingflags={}, usualreward=[['resource', 'Special gems', 1, 0, 0]],
+            firsttime=[['maxlvl', 7]],
             monsterlist=[parent.pokemonlist[i].copy() for i in range(3, 6)])
-    Dungeon(parent=parent, name="Garden", location=['Village', 'Home'], changeflags={'Mother':1},
-            unlockflags={'Father': 12}, closingflags={},usualreward=[['resource', 'Magical gems', 1, 0, 0]],firsttime=[['maxlvl',6]],
+    Dungeon(parent=parent, name="Garden", location=['Village', 'Home'], changeflags={'Mother': 1},
+            unlockflags={'Father': 12}, closingflags={}, usualreward=[['resource', 'Magical gems', 1, 0, 0]],
+            firsttime=[['maxlvl', 6]],
             monsterlist=[parent.pokemonlist[i].copy() for i in range(1, 4)])
-    Dungeon(parent=parent, name="Training hall", location=['Village', 'Home'], changeflags={'Main':1},
-            unlockflags={'Father':7}, closingflags={},usualreward=[['resource', 'Physical gems', 1, 0, 0]],firsttime=[['maxlvl',5]],
-            monsterlist=[],boss=parent.pokemonlist[0].copy())
+    Dungeon(parent=parent, name="Training hall", location=['Village', 'Home'], changeflags={'Main': 1,'Popup':5},
+            unlockflags={'Father': 7}, closingflags={}, usualreward=[['resource', 'Physical gems', 1, 0, 0]],
+            firsttime=[['maxlvl', 5]],
+            monsterlist=[], boss=parent.pokemonlist[0].copy())
     Dungeon(parent=parent, name="Brother fight", location=['Village', 'Surroundings'], changeflags={},
-            unlockflags={'Brother':4}, closingflags={},firsttime=[['maxlvl',10]],
+            unlockflags={'Brother': 4}, closingflags={}, firsttime=[['maxlvl', 10]],
             monsterlist=[], boss=parent.pokemonlist[6].copy())
-

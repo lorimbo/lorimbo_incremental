@@ -64,7 +64,21 @@ Themes = {
 Popups = {1: "Welcome to Yet another shitty game!.I'm Lorimbo, the author of the game. You can start your adventure by "
              "clicking on the 'Ponder the future' button in the 'Actions' section to gain some Fate. Fate is used as the "
              "main way of progressing through the storyline. Once you have 5 fate click on the 'Talk to father 1/12' "
-             "quest to complete it and proceed with the story "}
+             "quest to complete it and proceed with the story ",
+          2:"You can use the loopaction 'Rest' to regain energy and keep grinding fate, loopactions go on in the "
+            "background while you do other things.",
+          3:"You have now unlocked new actions, together with the Wood resource, try to proceed with the quest",
+          4:"You have now unlocked your first dungeon!You can find it in the top right corner of the main section."
+            "In the dungeon your party will fight monsters and bosses!Dungeons also keep going on in the background."
+            "The dungeon progression status is indicated by the bar under it.If you defeat all the monsters in the dungeon or"
+            "if your party is defeated the dungeon will restart automatically.You can quit the current dungeon by going into the "
+            "'Dungeon tab in the left menu and pressing the 'Quit' button"
+            "Dungeons' layout and monsters are randomly generated.Monsters drop seeds and other useful loot that you can"
+            " use to become more powerful",
+          5:"Congratulation adventurer,you've gotten your first seed!In the 'Party' tab in the left menu you can use Fate to level up your character and"
+            "seeds to improve your stats",
+          6:"In this dungeon you will find your first actual monsters, they have a chance to drop their souls, which you can use in the 'Party' tab to"
+            " unlock them as party members and level them up.To do so,press the 'Summon' Button in the 'Level up' menu and then add them in the party in the 'Party selection menu"}
 for e in Popups:
     Popups[e] = autospacer155(Popups[e])
 
@@ -1146,7 +1160,7 @@ class Graphics:
         imgui.set_next_window_position(cls.resizewidth(0),
                                        list(pygame.display.get_window_size())[1] - cls.resizeheight(100))
         backgroundecorator(imgui.begin, cls.theme)('Bottonbar', False, cls.flags)
-        if Gamelogic.flags['Popup'] == 1:
+        if Gamelogic.flags['Popup']:
             Gamelogic.bottomlog.insert(0,Popups[Gamelogic.flags['Popup']])
             now=datetime.datetime.now()
             Gamelogic.bottomtimes.insert(0,str(now.time())[0:8])
@@ -1266,7 +1280,7 @@ class Graphics:
         if Gamelogic.tab == 'Party':
             cls.draw_party_tabs()
             cls.draw_Adventurer()
-            if Gamelogic.partysubtab == 'Main':
+            if Gamelogic.partysubtab == 'Party selection':
                 cls.draw_party_menu()
             elif Gamelogic.partysubtab == 'Level up':
                 cls.draw_levelup_menu()
@@ -1276,3 +1290,4 @@ class Graphics:
             cls.draw_dungeon()
         if Gamelogic.tab == 'Settings':
             cls.draw_settings()
+

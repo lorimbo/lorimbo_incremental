@@ -39,7 +39,7 @@ class Gamelogic:
     upgradeaction = None
     tab = 'Main'
     subtab = 'Village'
-    partysubtab = 'Main'
+    partysubtab = 'Party selection'
     mainelements = []
     mainsubelements = []
     partyelements = []
