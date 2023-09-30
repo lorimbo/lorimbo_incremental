@@ -203,7 +203,7 @@ class Energy:
 
 class Resource:
     def __init__(self, parent, name, quantity, max, unlockflags, category, regen=0, effect=None, resources=None,
-                 isvisible=True):
+                 isvisible=False):
         self.parent = parent
         self.name = name
         self.quantity = quantity
@@ -560,7 +560,7 @@ class Loopaction(menuelement):
                 if energy.quantity >= -i[1] and energy.quantity + i[
                     1] < energy.max:
                     energy.quantity += i[1]
-                elif costname == 'Action':
+                elif costname == 'Energy':
                     for key in self.parent.loopactions:
                         for e in self.parent.loopactions[key]:
                             if e.previouslyactive:
@@ -581,7 +581,7 @@ class Loopaction(menuelement):
                     if energy.quantity >= -i[1]:
                         energy.quantity += i[1]
                         self.dopassiveeffect()
-                    elif costname == 'Action':
+                    elif costname == 'Energy':
                         self.previouslyactive = True
                         self.parent.loopactions['Common loopactions'][0].activation()
                     continue
@@ -706,34 +706,34 @@ def getgamestate():
 def createmenu(parent):
     menuelement(parent=parent, name='Main', isvisible=True, elementlist=parent.mainelements)
     menuelement(parent=parent, name='Party', isvisible=True, elementlist=parent.mainelements)
-    menuelement(parent=parent, name='Ritual', isvisible=False, elementlist=parent.mainelements, unlockflags={'Main': 1})
+    menuelement(parent=parent, name='Training', isvisible=False, elementlist=parent.mainelements,unlockflags={'Main': 1})
     menuelement(parent=parent, name='Routine', isvisible=False, elementlist=parent.mainelements,
-                unlockflags={'Main': 1})
-    menuelement(parent=parent, name='Story', isvisible=False, elementlist=parent.mainelements, unlockflags={'Main': 1})
-    menuelement(parent=parent, name='Dungeon', isvisible=True, elementlist=parent.mainelements)
+                unlockflags={'Main': 2})
+    menuelement(parent=parent, name='Story', isvisible=False, elementlist=parent.mainelements, unlockflags={'Main': 2})
+    menuelement(parent=parent, name='Dungeon', isvisible=False, elementlist=parent.mainelements,unlockflags={'Father': 7})
     menuelement(parent=parent, name='Settings', isvisible=True, elementlist=parent.mainelements)
 
 
 def createmainsubmenu(parent):
     menuelement(parent=parent, name='Village', isvisible=True, elementlist=parent.mainsubelements)
-    menuelement(parent=parent, name='Forest', isvisible=True, elementlist=parent.mainsubelements,
+    menuelement(parent=parent, name='Forest', elementlist=parent.mainsubelements,
                 unlockflags={'Main': 1})
-    menuelement(parent=parent, name='City', isvisible=True, elementlist=parent.mainsubelements, unlockflags={'Main': 1})
-    menuelement(parent=parent, name='Coast', isvisible=True, elementlist=parent.mainsubelements,
+    menuelement(parent=parent, name='City', elementlist=parent.mainsubelements, unlockflags={'Main': 2})
+    menuelement(parent=parent, name='Coast', elementlist=parent.mainsubelements,
                 unlockflags={'Main': 1})
-    menuelement(parent=parent, name='Jungle', isvisible=True, elementlist=parent.mainsubelements,
+    menuelement(parent=parent, name='Jungle', elementlist=parent.mainsubelements,
                 unlockflags={'Main': 1})
-    menuelement(parent=parent, name='Astral plane', isvisible=True, elementlist=parent.mainsubelements,
+    menuelement(parent=parent, name='Astral plane', elementlist=parent.mainsubelements,
                 unlockflags={'Main': 1})
 
 
 def createpartytabs(parent):
     menuelement(parent=parent, name='Main', isvisible=True, elementlist=parent.partyelements)
     menuelement(parent=parent, name='Level up', isvisible=True, elementlist=parent.partyelements)
-    menuelement(parent=parent, name='Quest', isvisible=False, elementlist=parent.partyelements, unlockflags={'Main': 1})
+    menuelement(parent=parent, name='Quest', isvisible=False, elementlist=parent.partyelements, unlockflags={'Main': 2})
     menuelement(parent=parent, name='Bestiary', isvisible=False, elementlist=parent.partyelements,
-                unlockflags={'Main': 1})
-    menuelement(parent=parent, name='SKill', isvisible=False, elementlist=parent.partyelements, unlockflags={'Main': 1})
+                unlockflags={'Main': 2})
+    menuelement(parent=parent, name='SKill', isvisible=False, elementlist=parent.partyelements, unlockflags={'Main': 2})
 
 
 
@@ -750,35 +750,35 @@ def createpokemon(parent):
 
 def createinstantactions(parent):
     Instantactions(parent=parent, name='Ponder the future', isvisible=True,
-                   location='Common actions', cost=[['Action', -1, 0, 0]],
+                   location='Common actions', cost=[['Energy', -1, 0, 0]],
                    complete=[['Fate', +1, 0, 0]])
     Instantactions(parent=parent, name='Cut wood', isvisible=True, location='Woodcutting',
-                   unlockflags={'Father': 2}, cost=[['Stamina', -1, 0, 0]],
+                   unlockflags={'Father': 2}, cost=[['Endurance', -1, 0, 0]],
                    complete=[['Wood', 1, 0, 0]])
     Instantactions(parent=parent, name='"Eat" herbs', isvisible=True, location='Garden activities',
                    unlockflags={'Mother': 7}, cost=[['Herbs', -1, 0, 0]],
                    complete=[['Fate', 5, 0, 0]])
 def createareainstant(parent):
     Instantactions(parent=parent, name='Look for weeds', isvisible=True, location='Village',
-                   unlockflags={'Mother': 5}, cost=[['Action', -0.4, 0, 0]],area=True,
+                   unlockflags={'Mother': 5}, cost=[['Energy', -0.4, 0, 0]],area=True,
                    complete=[['Weeds', 1, 0, 0], ['Gold', 2, 0, 0]])
 
 def createloopactions(parent):
     Loopaction(parent=parent, name='Rest', isvisible=True,
                location='Common loopactions', speed=1 / 1200,
-               progresseffect=[['Action', 1 / 240, 0, 0]])
+               progresseffect=[['Energy', 1 / 240, 0, 0]])
     Loopaction(parent=parent, name='Parse through weeds', isvisible=True,
                location='Garden', speed=1 / 240,cost=[['Weeds', -5, 0, 0]],
-               progresscost=[['Action', -1 / 240, 0, 0]],complete=[['Herbs',1,0,0]],
+               progresscost=[['Energy', -1 / 240, 0, 0]],complete=[['Herbs',1,0,0]],
                unlockflags={'Mother': 5})
     Loopaction(parent=parent, name='Meditate', isvisible=True,
                location='Your room', speed=1 / 240,
-               progresscost=[['Action', -1 / 240, 0, 0]], complete=[['Fate', 1, 0, 0]],
+               progresscost=[['Energy', -1 / 240, 0, 0]], complete=[['Fate', 1, 0, 0]],
                unlockflags={'Zen': 1})
 def createarealoops(parent):
     Loopaction(parent=parent, name='Exercise', isvisible=True,
                location='Village', speed=1 / 600,area=True,
-               progresscost=[['Action', -1 / 240, 0, 0]], progresseffect=[['Stamina', 1 / 240, 0, 0]],
+               progresscost=[['Energy', -1 / 240, 0, 0]], progresseffect=[['Endurance', 1 / 240, 0, 0]],
                unlockflags={'Father': 2})
 
 
@@ -1007,7 +1007,7 @@ def createupgradeactions(parent):
 
 def createresources(parent):
     parent.fate = Resource(parent, 'Fate', 1000, 10, {'Father': 0}, 'Fate', 0, resources=parent.resources)
-    Resource(parent, 'Wood', 0, 1, {'Father': 2}, 'Wood', 0, resources=parent.resources)
+    Resource(parent, 'Wood', 4000, 1, {'Father': 2}, 'Wood', 0, resources=parent.resources)
     Resource(parent, 'Weeds', 0, 10, {'Mother': 5}, 'Herbes', 0, resources=parent.resources)
     Resource(parent, 'Herbs', 0, 1, {'Mother': 5}, 'Herbes', 0, resources=parent.resources)
     Resource(parent, 'Gold', 0, 60, {'Mother': 5}, 'Gold', 0, resources=parent.resources)
@@ -1024,8 +1024,8 @@ def createresources(parent):
 
 
 def createenergies(parent):
-    Energy(parent=parent, name='Action', quantity=0, max=5, unlockflags={'Father': 0}, color=red, regen=0)
-    Energy(parent=parent, name='Stamina', quantity=0, max=1, unlockflags={'Father': 2}, color=(255, 255, 0),
+    Energy(parent=parent, name='Energy', quantity=0, max=5, unlockflags={'Father': 0}, color=red, regen=0)
+    Energy(parent=parent, name='Endurance', quantity=0, max=1, unlockflags={'Father': 2}, color=(255, 255, 0),
            regen=0)
     Energy(parent=parent, name='Mana', quantity=0, max=1, unlockflags={'Father': 14}, color=(0, 0, 205),isvisible=False,
            regen=1 / 240)
@@ -1044,7 +1044,7 @@ def createdungeons(parent):
     Dungeon(parent=parent, name="Garden", location=['Village', 'Home'], changeflags={'Mother':1},
             unlockflags={'Father': 12}, closingflags={},usualreward=[['resource', 'Magical gems', 1, 0, 0]],firsttime=[['maxlvl',6]],
             monsterlist=[parent.pokemonlist[i].copy() for i in range(1, 4)])
-    Dungeon(parent=parent, name="Training hall", location=['Village', 'Home'], changeflags={},
+    Dungeon(parent=parent, name="Training hall", location=['Village', 'Home'], changeflags={'Main':1},
             unlockflags={'Father':7}, closingflags={},usualreward=[['resource', 'Physical gems', 1, 0, 0]],firsttime=[['maxlvl',5]],
             monsterlist=[],boss=parent.pokemonlist[0].copy())
     Dungeon(parent=parent, name="Brother fight", location=['Village', 'Surroundings'], changeflags={},

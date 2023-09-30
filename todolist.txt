@@ -1,17 +1,26 @@
-next action/flags for submenu
-habits
-area actions
+Functionality:
+next actions
+exp/ranking
+habits/some kinda of upgrade system
 resources effects with tooltips
 astral plane
 save function is incomplete
 party effects with tooltips
 party templates
-change fonts in dungeons
 implement skills effects
-loop actions are bugged(cost is not applied if you are not clicking)
-change new pokemons not to be wild without breaking the game(test it!)
 
+
+
+Organizing:
+make a new python file with all the wild pokemon informations
+make a new python file with questlines
+
+Make the game work:
 implement browser(LATER)
 implement exe(DONE)
 
+
+Usability:
 add bold helvetica and use it for energies
+introduce popups to explain the game as a tutorial
+rename things to avoid being copyrighted

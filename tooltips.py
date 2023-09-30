@@ -10,7 +10,7 @@ def autospacer(text):
         if num == len(list) - 1:
             output += "\n"
             output += " ".join(list[n:num + 1])
-    return [output]
+    return [output[1:]]
 
 
 description = {

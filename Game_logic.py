@@ -2,6 +2,7 @@ import json
 import initialization_elements
 import random
 import pygame
+import datetime
 
 red = (255, 0, 0)
 green = (0, 255, 0)
@@ -33,7 +34,7 @@ class Gamelogic:
     energies = []
     unlockedenergies = []
     resources = {}
-    flags = {'Main': 0, 'Dubious home': 0, 'Father': 0, 'Mother': 0, 'Billy': 0, 'Zen': 0, 'Butcher': 0, 'Brother': 0}
+    flags = {'Main': 0,'Popup':1, 'Dubious home': 0, 'Father': 0, 'Mother': 0, 'Billy': 0, 'Zen': 0, 'Butcher': 0, 'Brother': 0}
     action = None
     upgradeaction = None
     tab = 'Main'
@@ -47,6 +48,8 @@ class Gamelogic:
     upgradeactions = {}
     areainstants={}
     arealoops = {}
+    bottomlog=[]
+    bottomtimes=[]
     exp = 0
     dungeons = {}
     activedungeon = None
@@ -70,10 +73,10 @@ class Gamelogic:
     @classmethod
     def checkflags(cls):
         elements = [cls.instantactions, cls.loopactions]
-        if cls.subtab in cls.dungeons.keys():
-            elements.append(cls.dungeons[cls.subtab])
         if cls.subtab in cls.upgradeactions.keys():
             elements.append(cls.upgradeactions[cls.subtab])
+        if cls.subtab in cls.dungeons.keys():
+            elements.append(cls.dungeons[cls.subtab])
         areaactions=[]
         if cls.subtab in cls.areainstants.keys():
             for key in cls.areainstants[cls.subtab]:
@@ -94,6 +97,10 @@ class Gamelogic:
             if temp:
                 action.isvisible = False
             else:
+                if not action.isvisible:
+                    cls.bottomlog.insert(0,[f"Unlocked the {action.name} action in the {cls.subtab} location!"])
+                    now = datetime.datetime.now()
+                    cls.bottomtimes.insert(0,str(now.time())[0:8])
                 action.isvisible = True
         for actionlist in elements:
             for key1 in actionlist:
@@ -110,10 +117,34 @@ class Gamelogic:
                     if temp:
                         action.isvisible = False
                     else:
+                        if not action.isvisible:
+                            now = datetime.datetime.now()
+                            cls.bottomtimes.insert(0,str(now.time())[0:8])
+                            if actionlist is cls.dungeons[cls.subtab]:
+                                cls.bottomlog.insert(0, [f"Unlocked the {action.name} dungeon!"])
+                            else:
+                                cls.bottomlog.insert(0,[f"Unlocked the {action.name} action!"])
                         action.isvisible = True
+        for element in cls.mainelements:
+            temp = 0
+            if element.closingflags is not None:
+                for key in element.closingflags.keys():
+                    if element.closingflags[key] <= cls.flags[key]:
+                        temp = 1
+            if element.unlockflags is not None:
+                for key in element.unlockflags.keys():
+                    if element.unlockflags[key] > cls.flags[key]:
+                        temp = 1
+            if temp:
+                element.isvisible = False
+            else:
+                if not element.isvisible:
+                    now = datetime.datetime.now()
+                    cls.bottomtimes.insert(0,str(now.time())[0:8])
+                    cls.bottomlog.insert(0,[f"Unlocked {element.name} Menu!"])
+                element.isvisible = True
         for key in cls.resources:
             for resource in cls.resources[key]:
-                resource.isvisible = False
                 temp = 1
                 if resource.unlockflags is not None:
                     for key2 in resource.unlockflags.keys():
@@ -122,7 +153,6 @@ class Gamelogic:
                 if temp:
                     resource.isvisible = True
         for key in cls.mainsubelements:
-            key.isvisible = False
             temp = 1
             if key.unlockflags is not None:
                 for key2 in key.unlockflags.keys():
@@ -130,6 +160,7 @@ class Gamelogic:
                         temp = 0
             if temp:
                 key.isvisible = True
+
 
     @classmethod
     def deactivateloopactions(cls):
@@ -212,22 +243,6 @@ class Gamelogic:
         Information['basepokemons'] = []
         Information['party'] = []
         Information['reserve'] = []
-
-        for x in cls.pokemonlist:
-            pokemondict = {}
-            pokemondict["name"] = x.name
-            pokemondict["hp"] = x.hp
-            pokemondict["atk"] = x.patk
-            pokemondict["dif"] = x.pdef
-            pokemondict["satk"] = x.matk
-            pokemondict["sdif"] = x.mdef
-            pokemondict["maxlvl"] = x.maxlvl
-            pokemondict["unlocked"] = x.unlocked
-            pokemondict["lvl"] = x.lvl
-            pokemondict["phys"] = x.phys
-            pokemondict["magic"] = x.magic
-            pokemondict["special"] = x.special
-            Information["basepokemons"].append(pokemondict)
         for x in cls.party:
             pokemondict = {}
             pokemondict["name"] = x.name
@@ -388,6 +403,10 @@ class Gamelogic:
 
                     if cls.activedungeon.floor >= len(cls.activedungeon.currentlayout):
                         cls.activedungeon.generate()
+                        cls.activedungeon.log.append('You cleared the dungeon!')
+                        victory=pygame.mixer.Sound('Sounds/victory.mp3')
+                        victory.set_volume(cls.volume)
+                        pygame.mixer.Sound.play(victory)
                         cls.regenpokemonhealt(cls.party[0:5])
                         cls.activedungeon.docomplete()
                         if cls.activedungeon.changeflags is not None:
@@ -420,6 +439,7 @@ class Gamelogic:
                     cls.activepartypokemon = 0
                     cls.activeenemypokemon = 0
                     cls.activedungeon.generate()
+                    cls.activedungeon.log.append('You and your party were defeated')
                     cls.regenpokemonhealt(cls.party[0:5])
                 return
             cls.activeenemypokemon += 1

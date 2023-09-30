@@ -2,6 +2,7 @@ from __future__ import absolute_import
 import imgui
 import pygame.display
 from pygame.locals import *
+import datetime
 
 import tooltips
 from Game_logic import Gamelogic
@@ -27,6 +28,22 @@ buttoncolor = (82, 56, 116)
 buttontextcolor = (173, 241, 130)
 evangelionorange = (220, 125, 104)
 
+
+def autospacer155(text):
+    list = text.split(" ")
+    output = ""
+    n = 0
+    for num, i in enumerate(list):
+        if len(" ".join(list[n:num])) > 145:
+            output += "\n"
+            output += " ".join(list[n:num - 1])
+            n = num - 1
+        if num == len(list) - 1:
+            output += "\n"
+            output += " ".join(list[n:num + 1])
+    return [output[1:]]
+
+
 Themes = {
     'EVA': {'backgroundhovercolor': (188, 122, 249), 'menubackgroundcolor': (145, 108, 173),
             'buttoncolor': (82, 56, 116),
@@ -43,6 +60,13 @@ Themes = {
               'buttontextcolor': (214, 92, 48), 'mainbackground': (166, 111, 140), 'buttonactivecolor': (255, 161, 245),
               'darkerbuttoncolor': (128, 0, 128)}
 }
+
+Popups = {1: "Welcome to Yet another shitty game!.I'm Lorimbo, the author of the game. You can start your adventure by "
+             "clicking on the 'Ponder the future' button in the 'Actions' section to gain some Fate. Fate is used as the "
+             "main way of progressing through the storyline. Once you have 5 fate click on the 'Talk to father 1/12' "
+             "quest to complete it and proceed with the story "}
+for e in Popups:
+    Popups[e] = autospacer155(Popups[e])
 
 
 def tooltipdecorator(function, theme):
@@ -132,7 +156,18 @@ def backgroundecorator(function, theme):
         imgui.push_style_color(imgui.COLOR_TITLE_BACKGROUND_COLLAPSED, *[e / 255 for e in Themes[theme]['buttoncolor']])
         imgui.push_style_color(imgui.COLOR_BUTTON_HOVERED, *[e / 255 for e in Themes[theme]['buttonhovercolor']])
         imgui.push_style_color(imgui.COLOR_TEXT, *[e / 255 for e in Themes[theme]['buttontextcolor']])
+        imgui.push_style_color(imgui.COLOR_SCROLLBAR_BACKGROUND, *[e / 255 for e in Themes[theme]['buttonhovercolor']])
+        imgui.push_style_color(imgui.COLOR_SCROLLBAR_GRAB, *[e / 255 for e in Themes[theme]['buttoncolor']])
+        imgui.push_style_color(imgui.COLOR_SCROLLBAR_GRAB_HOVERED, *[e / 255 for e in Themes[theme]['menubackgroundcolor']])
+        imgui.push_style_color(imgui.COLOR_SCROLLBAR_GRAB_ACTIVE, *[e / 255 for e in Themes[theme]['menubackgroundcolor']])
+
+
+
         func = function(*args, **kwargs)
+        imgui.pop_style_color(1)
+        imgui.pop_style_color(1)
+        imgui.pop_style_color(1)
+        imgui.pop_style_color(1)
         imgui.pop_style_color(1)
         imgui.pop_style_color(1)
         imgui.pop_style_color(1)
@@ -284,14 +319,14 @@ class Graphics:
         if 'instantactions' not in cls.toggles.keys():
             cls.toggles['instantactions'] = {}
         if 'areainstants' not in cls.toggles.keys():
-            cls.toggles['areainstants']={}
+            cls.toggles['areainstants'] = {}
         height = list(pygame.display.get_window_size())[1] - cls.resizeheight(150)
 
         imgui.set_next_window_size(16 + cls.resizewidth(160),
                                    height)
         imgui.set_next_window_position(50 + cls.resizewidth(180), finishline
                                        )
-        backgroundecorator(imgui.begin, cls.theme)('Instantactions', False, cls.resourcesflags)
+        backgroundecorator(imgui.begin, cls.theme)('Actions', False, cls.resourcesflags)
         for key in Gamelogic.instantactions:
             visible = cls.get_visible_elements(Gamelogic.instantactions[key])
             if not len(visible):
@@ -360,7 +395,7 @@ class Graphics:
         if 'loopactions' not in cls.toggles.keys():
             cls.toggles['loopactions'] = {}
         if 'arealoops' not in cls.toggles.keys():
-            cls.toggles['arealoops']={}
+            cls.toggles['arealoops'] = {}
         height = list(pygame.display.get_window_size())[1] - cls.resizeheight(150)
         imgui.set_next_window_size(16 + cls.resizewidth(160),
                                    height)
@@ -452,7 +487,7 @@ class Graphics:
                                    height)
         imgui.set_next_window_position(100 + cls.resizewidth(500), finishline
                                        )
-        backgroundecorator(imgui.begin, cls.theme)('Upgradeactions', False, cls.resourcesflags)
+        backgroundecorator(imgui.begin, cls.theme)('Quests', False, cls.resourcesflags)
         if Gamelogic.subtab in Gamelogic.upgradeactions:
             for key in Gamelogic.upgradeactions[Gamelogic.subtab]:
                 visible = cls.get_visible_elements(Gamelogic.upgradeactions[Gamelogic.subtab][key])
@@ -1111,6 +1146,18 @@ class Graphics:
         imgui.set_next_window_position(cls.resizewidth(0),
                                        list(pygame.display.get_window_size())[1] - cls.resizeheight(100))
         backgroundecorator(imgui.begin, cls.theme)('Bottonbar', False, cls.flags)
+        if Gamelogic.flags['Popup'] == 1:
+            Gamelogic.bottomlog.insert(0,Popups[Gamelogic.flags['Popup']])
+            now=datetime.datetime.now()
+            Gamelogic.bottomtimes.insert(0,str(now.time())[0:8])
+            Gamelogic.flags['Popup'] = 0
+
+        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
+            for num,i in enumerate(Gamelogic.bottomlog):
+                actiondecorator(imgui.text, cls.theme)(Gamelogic.bottomtimes[num])
+                imgui.same_line()
+                for j in i:
+                    actiondecorator(imgui.text, cls.theme)(j)
 
         imgui.end()
 
@@ -1154,9 +1201,10 @@ class Graphics:
                     progressbardecorator(imgui.progress_bar, cls.theme)(pokemon.currenthp / pokemon.actualhp,
                                                                         (cls.resizewidth(250), cls.resizeheight(20)),
                                                                         f'{numcon(pokemon.currenthp)}/{numcon(pokemon.actualhp)}')
-                    progressbardecorator(imgui.progress_bar, cls.theme)((1 - (pokemon.cd / (pokemon.skill.interval * 240))),
-                                                                        (cls.resizewidth(250), cls.resizeheight(20)),
-                                                                        str(pokemon.skill.name))
+                    progressbardecorator(imgui.progress_bar, cls.theme)(
+                        (1 - (pokemon.cd / (pokemon.skill.interval * 240))),
+                        (cls.resizewidth(250), cls.resizeheight(20)),
+                        str(pokemon.skill.name))
                 imgui.end_child()
 
                 imgui.same_line(spacing=cls.resizewidth(40))
@@ -1168,10 +1216,12 @@ class Graphics:
                                    0:min(5, len(dungeon.currentlayout[dungeon.floor]))]:
                         actiondecorator(imgui.text, cls.theme)(pokemon.name)
                         progressbardecorator(imgui.progress_bar, cls.theme)(pokemon.currenthp / pokemon.actualhp,
-                                                                            (cls.resizewidth(250), cls.resizeheight(20)),
+                                                                            (
+                                                                            cls.resizewidth(250), cls.resizeheight(20)),
                                                                             f'{numcon(pokemon.currenthp)}/{numcon(pokemon.actualhp)}')
                         progressbardecorator(imgui.progress_bar, cls.theme)(
-                            1 - (pokemon.cd / (pokemon.skill.interval * 240)), (cls.resizewidth(250), cls.resizeheight(20)),
+                            1 - (pokemon.cd / (pokemon.skill.interval * 240)),
+                            (cls.resizewidth(250), cls.resizeheight(20)),
                             str(pokemon.skill.name))
                 imgui.end_child()
                 imgui.same_line(spacing=cls.resizewidth(30))
@@ -1190,6 +1240,15 @@ class Graphics:
         imgui.end()
 
     @classmethod
+    def draw_training(cls):
+        imgui.set_next_window_size(cls.resizewidth(1075), cls.resizeheight(440))
+        imgui.set_next_window_position(cls.resizewidth(120), cls.resizeheight(55))
+        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
+            backgroundecorator(imgui.begin, cls.theme)('Dungeon', False, cls.flags)
+
+            imgui.end()
+
+    @classmethod
     def creategui(cls):
         # window size thingy
         cls.update_window_size()
@@ -1202,18 +1261,18 @@ class Graphics:
         cls.draw_resources()
 
         # Submenu
-        if Gamelogic.tab == Gamelogic.mainelements[0].name:
+        if Gamelogic.tab == 'Main':
             cls.draw_main()
-        if Gamelogic.tab == Gamelogic.mainelements[1].name:
+        if Gamelogic.tab == 'Party':
             cls.draw_party_tabs()
             cls.draw_Adventurer()
-            if Gamelogic.partysubtab == Gamelogic.partyelements[0].name:
+            if Gamelogic.partysubtab == 'Main':
                 cls.draw_party_menu()
-            elif Gamelogic.partysubtab == Gamelogic.partyelements[1].name:
+            elif Gamelogic.partysubtab == 'Level up':
                 cls.draw_levelup_menu()
-        if Gamelogic.tab == Gamelogic.mainelements[2].name:
-            pass
-        if Gamelogic.tab == Gamelogic.mainelements[5].name:
+        if Gamelogic.tab == 'Training':
+            cls.draw_training()
+        if Gamelogic.tab == 'Dungeon':
             cls.draw_dungeon()
-        if Gamelogic.tab == Gamelogic.mainelements[6].name:
+        if Gamelogic.tab == 'Settings':
             cls.draw_settings()
