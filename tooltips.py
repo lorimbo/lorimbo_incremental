@@ -23,7 +23,7 @@ description = {
     'Talk to Father 1/12': 'Welcome gamer!You can use the instant action "Ponder the future" to gain fate',
     'Talk to Father 2/12': 'Fate is used as the main resource of this adventure,to proceed with the story and unlock new resources',
     'Talk to Father 3/12': 'You have now unlocked wood!To gain stamina you can use the loop action "Exercise"',
-    'Talk to Father 4/12': 'Upgrade actions, such as the one you are seeing right now, can have a variety of effects',
+    'Talk to Father 4/12': 'Quests, such as the one you are seeing right now, can have a variety of effects',
     'Talk to Father 5/12': 'For example, right now you are raising the maximum cap for your wood resource',
     'Talk to Father 6/12': "There are many other possible effects that you will discover with time",
     'Talk to Father 7/12': "Let's now talk about dungeons: this will be another way of proceeding in the story",
@@ -120,7 +120,7 @@ def actionTooltip(name, cost, complete):
     return finaltooltip
 
 
-def upgradeTooltip(name, cost, complete, requirements):
+def questTooltip(name, cost, complete, requirements):
     finaltooltip = []
     if name in description.keys():
         for i in description[name]:
