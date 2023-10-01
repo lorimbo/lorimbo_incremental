@@ -491,46 +491,86 @@ class Graphics:
         imgui.end()
 
     @classmethod
-    def draw_upgradeactions(cls):
+    def draw_proceedactions(cls):
+        if 'proceedactions' not in cls.toggles.keys():
+            cls.toggles['proceedactions'] = {}
+        height = list(pygame.display.get_window_size())[1] - cls.resizeheight(150)
+        imgui.set_next_window_size(16 + cls.resizewidth(160),
+                                   height)
+        imgui.set_next_window_position(125 + cls.resizewidth(660), cls.resizeheight(50)
+                                       )
+        backgroundecorator(imgui.begin, cls.theme)('Proceed', False, cls.resourcesflags)
+        if Gamelogic.subtab in Gamelogic.proceedactions:
+            visible = cls.get_visible_elements(Gamelogic.proceedactions[Gamelogic.subtab])
+            if Gamelogic.subtab not in cls.toggles['proceedactions']:
+                cls.toggles['proceedactions'][Gamelogic.subtab] = True
+            if len(visible):
+                with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.resizeheight(10))}']):
+                    if cls.toggles['proceedactions'][Gamelogic.subtab]:
+                        direction = imgui.DIRECTION_DOWN
+                    else:
+                        direction = imgui.DIRECTION_RIGHT
+                    if actiondecorator(imgui.arrow_button, cls.theme)(f'Toggle##{Gamelogic.subtab}', direction):
+                        cls.toggles['proceedactions'][Gamelogic.subtab] = not cls.toggles['proceedactions'][Gamelogic.subtab]
+                    imgui.same_line()
+                with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
+                    actiondecorator(imgui.text, cls.theme)(f'{Gamelogic.subtab}')
+            if cls.toggles['proceedactions'][Gamelogic.subtab]:
+                with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
+                    for button in visible:
+                        use = button.isdisabled
+                        if cls.disabledecorator(imgui.button, use)(button.name, cls.resizewidth(160),
+                                                                   cls.resizeheight(50)) and not button.isdisabled:
+                            Gamelogic.action = button.name
+                        if imgui.is_item_hovered():
+                            with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
+                                actiondecorator(imgui.text, cls.theme)(f"{button.name}")
+                                tooltip = tooltips.questTooltip(button.name, button.cost, button.complete,[['Wood',0,0,0]]
+                                                                  )
+                                for i in tooltip:
+                                    actiondecorator(imgui.text, cls.theme)(f"{i}")
+        imgui.end()
+    @classmethod
+    def draw_quests(cls):
         finishline = cls.resizeheight(50)
 
-        if 'upgradeactions' not in cls.toggles.keys():
-            cls.toggles['upgradeactions'] = {}
+        if 'quests' not in cls.toggles.keys():
+            cls.toggles['quests'] = {}
         height = list(pygame.display.get_window_size())[1] - cls.resizeheight(150)
         imgui.set_next_window_size(16 + cls.resizewidth(160),
                                    height)
         imgui.set_next_window_position(100 + cls.resizewidth(500), finishline
                                        )
         backgroundecorator(imgui.begin, cls.theme)('Quests', False, cls.resourcesflags)
-        if Gamelogic.subtab in Gamelogic.upgradeactions:
-            for key in Gamelogic.upgradeactions[Gamelogic.subtab]:
-                visible = cls.get_visible_elements(Gamelogic.upgradeactions[Gamelogic.subtab][key])
+        if Gamelogic.subtab in Gamelogic.quests:
+            for key in Gamelogic.quests[Gamelogic.subtab]:
+                visible = cls.get_visible_elements(Gamelogic.quests[Gamelogic.subtab][key])
                 if not len(visible):
                     continue
-                if key not in cls.toggles['upgradeactions']:
-                    cls.toggles['upgradeactions'][key] = True
+                if key not in cls.toggles['quests']:
+                    cls.toggles['quests'][key] = True
 
                 with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.resizeheight(10))}']):
-                    if cls.toggles['upgradeactions'][key]:
+                    if cls.toggles['quests'][key]:
                         direction = imgui.DIRECTION_DOWN
                     else:
                         direction = imgui.DIRECTION_RIGHT
                     if actiondecorator(imgui.arrow_button, cls.theme)(f'Toggle##{key}', direction):
-                        cls.toggles['upgradeactions'][key] = not cls.toggles['upgradeactions'][key]
+                        cls.toggles['quests'][key] = not cls.toggles['quests'][key]
                     imgui.same_line()
                 with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
                     actiondecorator(imgui.text, cls.theme)(f'{key}')
-                if cls.toggles['upgradeactions'][key]:
+                if cls.toggles['quests'][key]:
                     with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
                         for button in visible:
                             use = button.isdisabled
                             if cls.disabledecorator(imgui.button, use)(button.name, cls.resizewidth(160),
                                                                        cls.resizeheight(50)) and not button.isdisabled:
-                                Gamelogic.upgradeaction = button.name
+                                Gamelogic.quest = button.name
                             if imgui.is_item_hovered():
                                 with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
                                     actiondecorator(imgui.text, cls.theme)(f"{button.name}")
-                                    tooltip = tooltips.upgradeTooltip(button.name, button.cost, button.complete,
+                                    tooltip = tooltips.questTooltip(button.name, button.cost, button.complete,
                                                                       button.requirements)
                                     for i in tooltip:
                                         actiondecorator(imgui.text, cls.theme)(f"{i}")
@@ -594,7 +634,8 @@ class Graphics:
     def draw_area(cls):
         cls.draw_instantactions()
         cls.draw_loopactions()
-        cls.draw_upgradeactions()
+        cls.draw_quests()
+        cls.draw_proceedactions()
         cls.draw_dungeons()
 
     @classmethod

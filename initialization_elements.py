@@ -167,7 +167,7 @@ class Corestats:
     def __init__(self, parent):
         self.parent = parent
         self.basestats = {'hp': 10, 'patk': 10, 'pdef': 10, 'matk': 10, 'mdef': 10}
-        self.modifiers = {'Upgradeactions': {'type': 'add', 'hp': 1, 'patk': 0, 'pdef': 0, 'matk': 0, 'mdef': 0}}
+        self.modifiers = {'Quests': {'type': 'add', 'hp': 1, 'patk': 0, 'pdef': 0, 'matk': 0, 'mdef': 0}}
 
     def updatepokemons(self):
         for pokemon in self.parent.party:
@@ -235,17 +235,17 @@ class menuelement:
             elementlist.append(self)
 
 
-class Upgradeactions(menuelement):
+class Quests(menuelement):
     def __init__(self, cost=[['Wood', 0, 0, 0]],
                  complete=[['resource', 'Wood', 0, 0, 0]], location=None, requirements=[['Wood', 0, 0, 0]], *args,
                  **kwargs):
         menuelement.__init__(self, elementlist=None, *args, **kwargs)
         if location is not None:
-            if location[0] not in self.parent.upgradeactions.keys():
-                self.parent.upgradeactions[location[0]] = {}
-            if location[1] not in self.parent.upgradeactions[location[0]].keys():
-                self.parent.upgradeactions[location[0]][location[1]] = []
-            self.parent.upgradeactions[location[0]][location[1]].append(self)
+            if location[0] not in self.parent.quests.keys():
+                self.parent.quests[location[0]] = {}
+            if location[1] not in self.parent.quests[location[0]].keys():
+                self.parent.quests[location[0]][location[1]] = []
+            self.parent.quests[location[0]][location[1]].append(self)
         self.cost = cost
         self.complete = complete
         self.requirements = requirements
@@ -273,7 +273,7 @@ class Upgradeactions(menuelement):
                         if resource.quantity >= -i[1]:
                             resource.quantity += i[1]
                             self.docomplete()
-        self.parent.upgradeaction = None
+        self.parent.quest = None
 
     def docomplete(self):
         for i in self.complete:
@@ -298,7 +298,7 @@ class Upgradeactions(menuelement):
                         resource.max += i[2]
             elif i[0] == 'stat':
                 name = i[1]
-                self.parent.corestats.modifiers['Upgradeactions'][name] += i[2]
+                self.parent.corestats.modifiers['Quests'][name] += i[2]
                 self.parent.corestats.updatepokemons()
 
         if self.changeflags is not None:
@@ -349,7 +349,97 @@ class Upgradeactions(menuelement):
                     if i[2] < i[1]:
                         self.isdisabled = True
                     continue
+class Nextaction(menuelement):
+    def __init__(self,
+                 cost=[['Wood', 0, 0, 0]],complete=[['Wood', 0, 0, 0]],location=None,*args, **kwargs):
+        menuelement.__init__(self, elementlist=None, *args, **kwargs)
+        if location is not None:
+            if location not in self.parent.proceedactions.keys():
+                self.parent.proceedactions[location]=[]
+            self.parent.proceedactions[location].append(self)
+        self.cost = cost
+        self.complete = complete
+        self.update()
 
+    def docost(self):
+        temp = 0
+        for i in self.cost:
+            costname = i[0]
+            for energy in [e for e in self.parent.energies if e.name == costname]:
+                if energy.quantity + i[1] <= -1 / 240:
+                    temp = 1
+                continue
+            for x in self.parent.resources.keys():
+                for resource in [e for e in self.parent.resources[x] if e.name == costname]:
+                    if resource.quantity < -i[1]:
+                        temp = 1
+        if not temp:
+            for i in self.cost:
+                costname = i[0]
+                for energy in [e for e in self.parent.energies if e.name == costname]:
+                    energy.quantity += i[1]
+                    if energy.quantity < 0:
+                        energy.quantity = 0
+                    continue
+                for x in self.parent.resources.keys():
+                    for resource in [e for e in self.parent.resources[x] if e.name == costname]:
+                        resource.quantity += i[1]
+            self.docomplete()
+            if self.changeflags is not None:
+                for key in self.changeflags:
+                    self.parent.flags[key] += self.changeflags[key]
+            print(self.parent.flags)
+        self.parent.action = None
+
+    def docomplete(self):
+        for i in self.complete:
+            name = i[0]
+            for energy in [e for e in self.parent.energies if e.name == name]:
+                if energy.max - energy.quantity > -i[1]:
+                    energy.quantity += i[1]
+                continue
+            for x in self.parent.resources.keys():
+                for resource in [e for e in self.parent.resources[x] if e.name == name]:
+                    resource.quantity += i[1]
+                    if resource.quantity > resource.max:
+                        resource.quantity = resource.max
+
+
+    def update(self):
+        self.isdisabled = False
+        for i in self.cost:
+            costname = i[0]
+            for energy in [e for e in self.parent.energies if e.name == costname]:
+                i[2] = round(energy.quantity, 2)
+                i[3] = energy.max
+                if i[2] < -i[1]:
+                    self.isdisabled = True
+                continue
+            for x in self.parent.resources.keys():
+                for resource in [e for e in self.parent.resources[x] if e.name == costname]:
+                    i[2] = resource.quantity
+                    i[3] = resource.max
+                    if i[2] < -i[1]:
+                        self.isdisabled = True
+                    continue
+        temp = 1
+        for i in self.complete:
+            costname = i[0]
+            for energy in [e for e in self.parent.energies if e.name == costname]:
+                i[2] = round(energy.quantity, 2)
+                i[3] = energy.max
+                if i[3] > i[2]:
+                    temp = 0
+                continue
+            for x in self.parent.resources.keys():
+                for resource in [e for e in self.parent.resources[x] if e.name == costname]:
+                    i[2] = resource.quantity
+                    i[3] = resource.max
+                    if i[3] > i[2]:
+                        temp = 0
+                    continue
+        if self.complete[0][1] != 0 and temp:
+            self.isdisabled = True
 
 class Instantactions(menuelement):
     def __init__(self,
@@ -370,6 +460,7 @@ class Instantactions(menuelement):
         self.complete = complete
         self.resourcetype = []
         self.update()
+
 
     def docost(self):
         temp = 0
@@ -782,63 +873,63 @@ def createarealoops(parent):
                unlockflags={'Father': 2})
 
 
-def createupgradeactions(parent):
-    Upgradeactions(parent=parent, name='Talk to Father 1/12', isvisible=True,
+def createquests(parent):
+    Quests(parent=parent, name='Talk to Father 1/12', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Father': 0}, closingflags={'Father': 1}, changeflags={'Father': 1,'Popup':2},
                    cost=[['Fate', -5, 0, 0]], complete=[['max', 'Fate', 5, 0, 0]]
                    )
-    Upgradeactions(parent=parent, name='Talk to Father 2/12', isvisible=True,
+    Quests(parent=parent, name='Talk to Father 2/12', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Father': 1}, closingflags={'Father': 2}, changeflags={'Father': 1,'Popup':3},
                    cost=[['Fate', -10, 0, 0]], complete=[['max', 'Fate', 5, 0, 0]]
                    )
-    Upgradeactions(parent=parent, name='Talk to Father 3/12', isvisible=True,
+    Quests(parent=parent, name='Talk to Father 3/12', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Father': 2}, closingflags={'Father': 3}, changeflags={'Father': 1},
                    cost=[['Wood', -1, 0, 0]], complete=[['max', 'Wood', 2, 0, 0]]
                    )
-    Upgradeactions(parent=parent, name='Talk to Father 4/12', isvisible=True,
+    Quests(parent=parent, name='Talk to Father 4/12', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Father': 3}, closingflags={'Father': 4}, changeflags={'Father': 1},
                    cost=[['Wood', -3, 0, 0]], complete=[['max', 'Wood', 2, 0, 0]],
                    )
-    Upgradeactions(parent=parent, name='Talk to Father 5/12', isvisible=True,
+    Quests(parent=parent, name='Talk to Father 5/12', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Father': 4}, closingflags={'Father': 5}, changeflags={'Father': 1},
                    cost=[['Wood', -5, 0, 0]], complete=[['max', 'Wood', 2, 0, 0]],
                    )
-    Upgradeactions(parent=parent, name='Talk to Father 6/12', isvisible=True,
+    Quests(parent=parent, name='Talk to Father 6/12', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Father': 5}, closingflags={'Father': 6}, changeflags={'Father': 1},
                    cost=[['Wood', -7, 0, 0]], complete=[['max', 'Wood', 3, 0, 0]],
                    )
-    Upgradeactions(parent=parent, name='Talk to Father 7/12', isvisible=True,
+    Quests(parent=parent, name='Talk to Father 7/12', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Father': 6}, closingflags={'Father': 7}, changeflags={'Father': 1,'Popup':4},
                    cost=[['Wood', -10, 0, 0]], complete=[['max', 'Fate', 5, 0, 0]],
                    )
-    Upgradeactions(parent=parent, name='Talk to Father 8/12', isvisible=True,
+    Quests(parent=parent, name='Talk to Father 8/12', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Father': 7}, closingflags={'Father': 8}, changeflags={'Father': 1,'Popup':5},
                    cost=[['Physical gems', -1, 0, 0]], complete=[['max', 'Physical gems', 19, 0, 0]],
                    )
-    Upgradeactions(parent=parent, name='Talk to Father 9/12', isvisible=True,
+    Quests(parent=parent, name='Talk to Father 9/12', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Father': 8}, closingflags={'Father': 9}, changeflags={'Father': 1},
                    cost=[['Magical gems', -1, 0, 0]], complete=[['max', 'Magical gems', 19, 0, 0]],
                    )
-    Upgradeactions(parent=parent, name='Talk to Father 10/12', isvisible=True,
+    Quests(parent=parent, name='Talk to Father 10/12', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Father': 9}, closingflags={'Father': 10}, changeflags={'Father': 1},
                    cost=[['Special gems', -1, 0, 0]], complete=[['max', 'Special gems', 19, 0, 0]],
                    )
-    Upgradeactions(parent=parent, name='Talk to Father 11/12', isvisible=True,
+    Quests(parent=parent, name='Talk to Father 11/12', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Father': 10}, closingflags={'Father': 11}, changeflags={'Father': 1},
                    cost=[['Fate', -20, 0, 0]], complete=[['max', 'Fate', 10, 0, 0]],
                    )
-    Upgradeactions(parent=parent, name='Talk to Father 12/12', isvisible=True,
+    Quests(parent=parent, name='Talk to Father 12/12', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Father': 11}, closingflags={'Father': 12}, changeflags={'Father': 1},
                    cost=[['Fate', -35, 0, 0]],
@@ -846,151 +937,151 @@ def createupgradeactions(parent):
                              ['stat', 'pdef', 5, 0, 0],
                              ['stat', 'matk', 5, 0, 0], ['stat', 'mdef', 5, 0, 0]],
                    )
-    Upgradeactions(parent=parent, name='Talk to Mother 1/10', isvisible=True,
+    Quests(parent=parent, name='Talk to Mother 1/10', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Mother': 1}, closingflags={'Mother': 2}, changeflags={'Mother': 1},
                    cost=[['Fate', -45, 0, 0]], complete=[['max', 'Fate', 5, 0, 0]],
                    )
-    Upgradeactions(parent=parent, name='Talk to Mother 2/10', isvisible=True,
+    Quests(parent=parent, name='Talk to Mother 2/10', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Mother': 2}, closingflags={'Mother': 3}, changeflags={'Mother': 1},
                    cost=[['Fate', -20, 0, 0]], complete=[['max', 'Fate', 5, 0, 0]],
                    )
-    Upgradeactions(parent=parent, name='Talk to Mother 3/10', isvisible=True,
+    Quests(parent=parent, name='Talk to Mother 3/10', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Mother': 3}, closingflags={'Mother': 4}, changeflags={'Mother': 1},
                    cost=[['Fate', -25, 0, 0]], complete=[['max', 'Fate', 5, 0, 0]],
                    )
-    Upgradeactions(parent=parent, name='Talk to Mother 4/10', isvisible=True,
+    Quests(parent=parent, name='Talk to Mother 4/10', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Mother': 4}, closingflags={'Mother': 5}, changeflags={'Mother': 1},
                    cost=[['Fate', -30, 0, 0]], complete=[['max', 'Fate', 5, 0, 0]],
                    )
-    Upgradeactions(parent=parent, name='Talk to Mother 5/10', isvisible=True,
+    Quests(parent=parent, name='Talk to Mother 5/10', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Mother': 5}, closingflags={'Mother': 6}, changeflags={'Mother': 1},
                    cost=[['Weeds', -5, 0, 0]], complete=[['max', 'Weeds', 10, 0, 0]],
                    )
-    Upgradeactions(parent=parent, name='Talk to Mother 6/10', isvisible=True,
+    Quests(parent=parent, name='Talk to Mother 6/10', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Mother': 6}, closingflags={'Mother': 7}, changeflags={'Mother': 1},
                    cost=[['Herbs', -1, 0, 0]], complete=[['max', 'Herbs', 3, 0, 0]],
                    )
-    Upgradeactions(parent=parent, name='Talk to Mother 7/10', isvisible=True,
+    Quests(parent=parent, name='Talk to Mother 7/10', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Mother': 7}, closingflags={'Mother': 8}, changeflags={'Mother': 1},
                    cost=[['Herbs', -4, 0, 0]], complete=[['max', 'Herbs', 3, 0, 0]],
                    )
-    Upgradeactions(parent=parent, name='Talk to Mother 8/10', isvisible=True,
+    Quests(parent=parent, name='Talk to Mother 8/10', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Mother': 8}, closingflags={'Mother': 9}, changeflags={'Mother': 1},
                    cost=[['Herbs', -7, 0, 0]], complete=[['max', 'Herbs', 3, 0, 0]],
                    )
-    Upgradeactions(parent=parent, name='Talk to Mother 9/10', isvisible=True,
+    Quests(parent=parent, name='Talk to Mother 9/10', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Mother': 9}, closingflags={'Mother': 10}, changeflags={'Mother': 1},
                    cost=[['Herbs', -10, 0, 0]],
                    complete=[['stat', 'hp', 5, 0, 0], ['stat', 'patk', 5, 0, 0], ['stat', 'pdef', 5, 0, 0],
                              ['stat', 'matk', 5, 0, 0], ['stat', 'mdef', 5, 0, 0]],
                    )
-    Upgradeactions(parent=parent, name='Talk to Mother 10/10', isvisible=True,
+    Quests(parent=parent, name='Talk to Mother 10/10', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Mother': 10}, closingflags={'Mother': 11}, changeflags={'Mother': 1},
                    cost=[['Fate', -40, 0, 0]], complete=[['max', 'Fate', 10, 0, 0]],
                    )
-    Upgradeactions(parent=parent, name='Talk to Brother 1/3', isvisible=True,
+    Quests(parent=parent, name='Talk to Brother 1/3', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Brother': 1}, closingflags={'Brother': 2}, changeflags={'Brother': 1},
                    cost=[['Fate', -80, 0, 0]], complete=[['max', 'Fate', 10, 0, 0]],
                    )
-    Upgradeactions(parent=parent, name='Talk to Brother 2/3', isvisible=True,
+    Quests(parent=parent, name='Talk to Brother 2/3', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Brother': 2}, closingflags={'Brother': 3}, changeflags={'Brother': 1},
                    cost=[['Fate', -90, 0, 0]], complete=[['max', 'Fate', 10, 0, 0]]
                    )
-    Upgradeactions(parent=parent, name='Talk to Brother 3/3', isvisible=True,
+    Quests(parent=parent, name='Talk to Brother 3/3', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Brother': 3}, closingflags={'Brother': 4}, changeflags={'Brother': 1},
                    cost=[['Fate', -100, 0, 0]], complete=[['max', 'Fate', 10, 0, 0]]
                    )
-    Upgradeactions(parent=parent, name='Talk with Billy the kid 1/3', isvisible=True,
+    Quests(parent=parent, name='Talk with Billy the kid 1/3', isvisible=True,
                    location=['Village', 'Village'],
                    unlockflags={'Mother': 1}, closingflags={'Billy': 1}, changeflags={'Billy': 1},
                    cost=[['Butterfly wings', -5, 0, 0]], complete=[['max', 'Butterfly wings', 5, 0, 0]],
                    )
-    Upgradeactions(parent=parent, name='Talk with Billy the kid 2/3', isvisible=True,
+    Quests(parent=parent, name='Talk with Billy the kid 2/3', isvisible=True,
                    location=['Village', 'Village'],
                    unlockflags={'Billy': 1}, closingflags={'Billy': 2}, changeflags={'Billy': 1},
                    cost=[['Butterfly wings', -10, 0, 0]], complete=[['max', 'Butterfly wings', 5, 0, 0]],
                    )
-    Upgradeactions(parent=parent, name='Talk with Billy the kid 3/3', isvisible=True,
+    Quests(parent=parent, name='Talk with Billy the kid 3/3', isvisible=True,
                    location=['Village', 'Village'],
                    unlockflags={'Billy': 2}, closingflags={'Billy': 3}, changeflags={'Billy': 1},
                    cost=[['Butterfly wings', -20, 0, 0]],
                    complete=[['stat', 'hp', 0.5, 0, 0], ['stat', 'patk', 0.5, 0, 0], ['stat', 'pdef', 0.5, 0, 0],
                              ['stat', 'matk', 0.5, 0, 0], ['stat', 'mdef', 0.5, 0, 0]],
                    )
-    Upgradeactions(parent=parent, name='Talk to the zen master 1/5', isvisible=True,
+    Quests(parent=parent, name='Talk to the zen master 1/5', isvisible=True,
                    location=['Village', 'Village'],
                    unlockflags={'Mother': 5}, closingflags={'Zen': 1}, changeflags={'Zen': 1},
                    cost=[['Gold', -20, 0, 0]], complete=[['max', 'Fate', 10, 0, 0]],
                    )
-    Upgradeactions(parent=parent, name='Talk to the zen master 2/5', isvisible=True,
+    Quests(parent=parent, name='Talk to the zen master 2/5', isvisible=True,
                    location=['Village', 'Village'],
                    unlockflags={'Zen': 1}, closingflags={'Zen': 2}, changeflags={'Zen': 1},
                    cost=[['Gold', -30, 0, 0]], complete=[['max', 'Fate', 10, 0, 0]],
                    )
-    Upgradeactions(parent=parent, name='Talk to the zen master 3/5', isvisible=True,
+    Quests(parent=parent, name='Talk to the zen master 3/5', isvisible=True,
                    location=['Village', 'Village'],
                    unlockflags={'Zen': 2}, closingflags={'Zen': 3}, changeflags={'Zen': 1},
                    cost=[['Gold', -40, 0, 0]],
                    complete=[['stat', 'hp', 0.5, 0, 0], ['stat', 'patk', 0.5, 0, 0], ['stat', 'pdef', 0.5, 0, 0],
                              ['stat', 'matk', 0.5, 0, 0], ['stat', 'mdef', 0.5, 0, 0]]
                    )
-    Upgradeactions(parent=parent, name='Talk to the zen master 4/5', isvisible=True,
+    Quests(parent=parent, name='Talk to the zen master 4/5', isvisible=True,
                    location=['Village', 'Village'],
                    unlockflags={'Zen': 3}, closingflags={'Zen': 4}, changeflags={'Zen': 1},
                    cost=[['Gold', -50, 0, 0]],
                    complete=[['stat', 'hp', 0.5, 0, 0], ['stat', 'patk', 0.5, 0, 0], ['stat', 'pdef', 0.5, 0, 0],
                              ['stat', 'matk', 0.5, 0, 0], ['stat', 'mdef', 0.5, 0, 0]]
                    )
-    Upgradeactions(parent=parent, name='Talk to the zen master 5/5', isvisible=True,
+    Quests(parent=parent, name='Talk to the zen master 5/5', isvisible=True,
                    location=['Village', 'Village'],
                    unlockflags={'Zen': 4}, closingflags={'Zen': 5}, changeflags={'Zen': 1},
                    cost=[['Gold', -60, 0, 0]],
                    complete=[['stat', 'hp', 0.5, 0, 0], ['stat', 'patk', 0.5, 0, 0], ['stat', 'pdef', 0.5, 0, 0],
                              ['stat', 'matk', 0.5, 0, 0], ['stat', 'mdef', 0.5, 0, 0]]
                    )
-    Upgradeactions(parent=parent, name='Butcher shop 1/6', isvisible=True,
+    Quests(parent=parent, name='Butcher shop 1/6', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Mother': 11}, closingflags={'Butcher': 1}, changeflags={'Butcher': 1},
                    cost=[['Frog legs', -5, 0, 0]], complete=[['max', 'Frog legs', 5, 0, 0]]
                    )
-    Upgradeactions(parent=parent, name='Butcher shop 2/6', isvisible=True,
+    Quests(parent=parent, name='Butcher shop 2/6', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Butcher': 1}, closingflags={'Butcher': 2}, changeflags={'Butcher': 1},
                    cost=[['Frog legs', -10, 0, 0]], complete=[['max', 'Frog legs', 5, 0, 0]]
                    )
-    Upgradeactions(parent=parent, name='Butcher shop 3/6', isvisible=True,
+    Quests(parent=parent, name='Butcher shop 3/6', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Butcher': 2}, closingflags={'Butcher': 3}, changeflags={'Butcher': 1},
                    cost=[['Frog legs', -10, 0, 0]],
                    complete=[['stat', 'hp', 0.5, 0, 0], ['stat', 'patk', 0.5, 0, 0], ['stat', 'pdef', 0.5, 0, 0],
                              ['stat', 'matk', 0.5, 0, 0], ['stat', 'mdef', 0.5, 0, 0]]
                    )
-    Upgradeactions(parent=parent, name='Butcher shop 4/6', isvisible=True,
+    Quests(parent=parent, name='Butcher shop 4/6', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Butcher': 3, 'Brother': 1}, closingflags={'Butcher': 4}, changeflags={'Butcher': 1},
                    cost=[['Cow hide', -5, 0, 0]],
                    complete=[['max', 'Cow hide', 5, 0, 0]]
                    )
-    Upgradeactions(parent=parent, name='Butcher shop 5/6', isvisible=True,
+    Quests(parent=parent, name='Butcher shop 5/6', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Butcher': 4}, closingflags={'Butcher': 5}, changeflags={'Butcher': 1},
                    cost=[['Cow hide', -10, 0, 0]],
                    complete=[['max', 'Cow hide', 5, 0, 0]]
                    )
-    Upgradeactions(parent=parent, name='Butcher shop 6/6', isvisible=True,
+    Quests(parent=parent, name='Butcher shop 6/6', isvisible=True,
                    location=['Village', 'Home'],
                    unlockflags={'Butcher': 5}, closingflags={'Butcher': 6}, changeflags={'Butcher': 1},
                    cost=[['Cow hide', -10, 0, 0]],
@@ -998,16 +1089,18 @@ def createupgradeactions(parent):
                              ['stat', 'matk', 0.5, 0, 0], ['stat', 'mdef', 0.5, 0, 0]]
                    )
 
-    '''Upgradeactions(parent=parent, name='Wood quest2', isvisible=True,
+    '''Quests(parent=parent, name='Wood quest2', isvisible=True,
                    location=['Village', 'old house'],
                    cost=[['Wood', -10, 0, 0]], complete=[['resource', 'Wood', 20, 0, 0]],
                    unlockflags={'Dubious home': 0, }, closingflags={'Dubious home': 2}, changeflags={'Dubious home': 1})
-    Upgradeactions(parent=parent, name='Wood quest3', isvisible=True,
+    Quests(parent=parent, name='Wood quest3', isvisible=True,
                    complete=[['stat', 'hp', 20, 0, 0], ['stat', 'patk', 1000, 0, 0], ['stat', 'pdef', 70, 0, 0],
                              ['stat', 'matk', 5, 0, 0], ['stat', 'mdef', 10, 0, 0]],
                    location=['Village', 'old house 2'],
                    unlockflags={'Dubious home': 0, }, closingflags={'Dubious home': 3}, changeflags={'Dubious home': 1})'''
 
+def createproceedactions(parent):
+    Nextaction(parent=parent,name='Unlock the world',location='Village',unlockflags={'Main': 1}, closingflags={'Main':2}, changeflags={'Main': 1},cost=[['Fate', -10, 0, 0]])
 
 def loadflags(parent):
     Information = getgamestate()

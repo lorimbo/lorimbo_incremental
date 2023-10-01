@@ -36,7 +36,7 @@ class Gamelogic:
     resources = {}
     flags = {}
     action = None
-    upgradeaction = None
+    quest = None
     tab = 'Main'
     subtab = 'Village'
     partysubtab = 'Party selection'
@@ -44,8 +44,9 @@ class Gamelogic:
     mainsubelements = []
     partyelements = []
     instantactions = {}
+    proceedactions={}
     loopactions = {}
-    upgradeactions = {}
+    quests = {}
     areainstants={}
     arealoops = {}
     bottomlog=[]
@@ -56,7 +57,6 @@ class Gamelogic:
     activepartypokemon = 0
     activeenemypokemon = 0
     souls = {}
-    nextactions = []
     pokemonlist = []
     reserve = []
     party = []
@@ -73,8 +73,8 @@ class Gamelogic:
     @classmethod
     def checkflags(cls):
         elements = [cls.instantactions, cls.loopactions]
-        if cls.subtab in cls.upgradeactions.keys():
-            elements.append(cls.upgradeactions[cls.subtab])
+        if cls.subtab in cls.quests.keys():
+            elements.append(cls.quests[cls.subtab])
         if cls.subtab in cls.dungeons.keys():
             elements.append(cls.dungeons[cls.subtab])
         areaactions=[]
@@ -84,6 +84,26 @@ class Gamelogic:
         if cls.subtab in cls.arealoops.keys():
             for key in cls.arealoops[cls.subtab]:
                 areaactions.append(key)
+
+        for action in cls.proceedactions[cls.subtab]:
+            temp = 0
+            if action.closingflags is not None:
+                for key in action.closingflags.keys():
+                    if action.closingflags[key] <= cls.flags[key]:
+                        temp = 1
+            if action.unlockflags is not None:
+                for key in action.unlockflags.keys():
+                    if action.unlockflags[key] > cls.flags[key]:
+                        temp = 1
+            if temp:
+                action.isvisible = False
+            else:
+                if not action.isvisible:
+                    cls.bottomlog.insert(0, [f"Unlocked the {action.name} option to proceed in the {cls.subtab} location!"])
+                    now = datetime.datetime.now()
+                    cls.bottomtimes.insert(0, str(now.time())[0:8])
+                action.isvisible = True
+
         for action in areaactions:
             temp = 0
             if action.closingflags is not None:
@@ -230,9 +250,10 @@ class Gamelogic:
         initialization_elements.createareainstant(cls)
         initialization_elements.createloopactions(cls)
         initialization_elements.createarealoops(cls)
+        initialization_elements.createproceedactions(cls)
         initialization_elements.createpokemon(cls)
         initialization_elements.createpartytabs(cls)
-        initialization_elements.createupgradeactions(cls)
+        initialization_elements.createquests(cls)
         initialization_elements.createresources(cls)
         initialization_elements.createenergies(cls)
         initialization_elements.createdungeons(cls)
@@ -297,9 +318,9 @@ class Gamelogic:
 
     @classmethod
     def updatebuttons(cls):
-        for key in cls.upgradeactions:
-            for location in cls.upgradeactions[key]:
-                for i in cls.upgradeactions[key][location]:
+        for key in cls.quests:
+            for location in cls.quests[key]:
+                for i in cls.quests[key][location]:
                     i.update()
         for key in cls.loopactions:
             for i in cls.loopactions[key]:
@@ -316,6 +337,9 @@ class Gamelogic:
                 i.update()
         for key in cls.arealoops:
             for i in cls.arealoops[key]:
+                i.update()
+        for key in cls.proceedactions:
+            for i in cls.proceedactions[key]:
                 i.update()
 
     @classmethod
@@ -484,8 +508,11 @@ class Gamelogic:
             for i in cls.areainstants[cls.subtab]:
                 if i.name == cls.action:
                     i.docost()
-        if cls.upgradeaction is not None:
-            for key in cls.upgradeactions[cls.subtab]:
-                for i in cls.upgradeactions[cls.subtab][key]:
-                    if i.name == cls.upgradeaction:
+            for i in cls.proceedactions[cls.subtab]:
+                if i.name == cls.action:
+                    i.docost()
+        if cls.quest is not None:
+            for key in cls.quests[cls.subtab]:
+                for i in cls.quests[cls.subtab][key]:
+                    if i.name == cls.quest:
                         i.docost()
