@@ -60,6 +60,8 @@ class Gamelogic:
     pokemonlist = []
     reserve = []
     party = []
+    templates=[[],[]]
+    savingtotemplates=False
     unlockablepokemons = []
     switch = None
     remove = None
@@ -69,6 +71,13 @@ class Gamelogic:
     fps = 240
     volume = 0.2
     musicvolume = 0.3
+
+
+    @classmethod
+    def changetemplateto(cls,num):
+        cls.party=cls.templates[num][0]
+        cls.reserve = cls.templates[num][1]
+
 
     @classmethod
     def checkflags(cls):
@@ -84,25 +93,25 @@ class Gamelogic:
         if cls.subtab in cls.arealoops.keys():
             for key in cls.arealoops[cls.subtab]:
                 areaactions.append(key)
-
-        for action in cls.proceedactions[cls.subtab]:
-            temp = 0
-            if action.closingflags is not None:
-                for key in action.closingflags.keys():
-                    if action.closingflags[key] <= cls.flags[key]:
-                        temp = 1
-            if action.unlockflags is not None:
-                for key in action.unlockflags.keys():
-                    if action.unlockflags[key] > cls.flags[key]:
-                        temp = 1
-            if temp:
-                action.isvisible = False
-            else:
-                if not action.isvisible:
-                    cls.bottomlog.insert(0, [f"Unlocked the {action.name} option to proceed in the {cls.subtab} location!"])
-                    now = datetime.datetime.now()
-                    cls.bottomtimes.insert(0, str(now.time())[0:8])
-                action.isvisible = True
+        if cls.subtab in cls.proceedactions.keys():
+            for action in cls.proceedactions[cls.subtab]:
+                temp = 0
+                if action.closingflags is not None:
+                    for key in action.closingflags.keys():
+                        if action.closingflags[key] <= cls.flags[key]:
+                            temp = 1
+                if action.unlockflags is not None:
+                    for key in action.unlockflags.keys():
+                        if action.unlockflags[key] > cls.flags[key]:
+                            temp = 1
+                if temp:
+                    action.isvisible = False
+                else:
+                    if not action.isvisible:
+                        cls.bottomlog.insert(0, [f"Unlocked the {action.name} option to proceed in the {cls.subtab} location!"])
+                        now = datetime.datetime.now()
+                        cls.bottomtimes.insert(0, str(now.time())[0:8])
+                    action.isvisible = True
 
         for action in areaactions:
             temp = 0
@@ -142,8 +151,10 @@ class Gamelogic:
                             cls.bottomtimes.insert(0,str(now.time())[0:8])
                             if actionlist is cls.dungeons[cls.subtab]:
                                 cls.bottomlog.insert(0, [f"Unlocked the {action.name} dungeon!"])
+                            elif actionlist is cls.quests[cls.subtab]:
+                                cls.bottomlog.insert(0,[f"Unlocked the {action.name} quest!"])
                             else:
-                                cls.bottomlog.insert(0,[f"Unlocked the {action.name} action!"])
+                                cls.bottomlog.insert(0, [f"Unlocked the {action.name} action!"])
                         action.isvisible = True
         for element in cls.mainelements:
             temp = 0
@@ -161,7 +172,7 @@ class Gamelogic:
                 if not element.isvisible:
                     now = datetime.datetime.now()
                     cls.bottomtimes.insert(0,str(now.time())[0:8])
-                    cls.bottomlog.insert(0,[f"Unlocked {element.name} Menu!"])
+                    cls.bottomlog.insert(0,[f"Unlocked the {element.name} Menu!"])
                 element.isvisible = True
         for key in cls.resources:
             for resource in cls.resources[key]:

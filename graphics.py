@@ -34,7 +34,7 @@ def autospacer155(text):
     output = ""
     n = 0
     for num, i in enumerate(list):
-        if len(" ".join(list[n:num])) > 145:
+        if len(" ".join(list[n:num])) > 140:
             output += "\n"
             output += " ".join(list[n:num - 1])
             n = num - 1
@@ -766,9 +766,17 @@ class Graphics:
         imgui.set_next_window_size(cls.resizewidth(1050), 16 + cls.resizeheight(335))
         imgui.set_next_window_position(cls.resizewidth(120), 16 + cls.resizeheight(145))
         backgroundecorator(imgui.begin, cls.theme)('Partymenu', False, cls.flags)
+        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
+            actiondecorator(imgui.text,cls.theme)('Templates')
+            imgui.same_line()
+            for num,template in enumerate(Gamelogic.templates):
+                if actiondecorator(imgui.button,cls.theme)(f'{num}  ',cls.resizewidth(20),cls.resizeheight(20))and Gamelogic.templates[num]!=[]:
+                    Gamelogic.changetemplateto(num)
+                imgui.same_line()
+        imgui.new_line()
         with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 40)}']):
             actiondecorator(imgui.text, cls.theme)('Party')
-        imgui.begin_child("Child 1", height=cls.resizeheight(110), border=True, flags=cls.resourcesflags)
+        imgui.begin_child("Child 1", height=cls.resizeheight(80), border=True, flags=cls.resourcesflags)
 
         for num, pokemon in enumerate(Gamelogic.party):
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
@@ -864,7 +872,7 @@ class Graphics:
         imgui.end_child()
         with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 40)}']):
             actiondecorator(imgui.text, cls.theme)('Reserve')
-        imgui.begin_child("Child 2", height=cls.resizeheight(170), border=True)
+        imgui.begin_child("Child 2", height=cls.resizeheight(140), border=True)
         for num, pokemon in enumerate(Gamelogic.reserve):
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
                 actiondecorator(imgui.text, cls.theme)(pokemon.name)
@@ -934,6 +942,23 @@ class Graphics:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
 
         imgui.end_child()
+        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
+            if actiondecorator(imgui.button,cls.theme)('Save template',cls.resizewidth(150),cls.resizeheight(20)):
+                Gamelogic.savingtotemplates=not Gamelogic.savingtotemplates
+            imgui.same_line()
+            if Gamelogic.savingtotemplates:
+                actiondecorator(imgui.text,cls.theme)('Save to')
+                imgui.same_line()
+                for i in range(2):
+                    if actiondecorator(imgui.button,cls.theme)(f'{i} ',cls.resizewidth(20),cls.resizeheight(20)):
+                        Gamelogic.templates[i]=[]
+                        partycopy=[i.copy() for i in Gamelogic.party]
+                        reservecopy = [i.copy() for i in Gamelogic.reserve]
+                        Gamelogic.templates[i].append(partycopy)
+                        Gamelogic.templates[i].append(reservecopy)
+
+
+                    imgui.same_line()
         imgui.end()
 
     @classmethod

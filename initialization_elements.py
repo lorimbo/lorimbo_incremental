@@ -388,7 +388,7 @@ class Nextaction(menuelement):
             if self.changeflags is not None:
                 for key in self.changeflags:
                     self.parent.flags[key] += self.changeflags[key]
-            print(self.parent.flags)
+
         self.parent.action = None
 
     def docomplete(self):
