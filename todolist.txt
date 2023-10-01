@@ -4,15 +4,12 @@ exp/ranking
 habits/some kinda of upgrade system
 resources effects with tooltips
 astral plane
-save function is incomplete
 party effects with tooltips
 party templates
 implement skills effects
 
 
-
 Organizing:
-make a new python file with all the wild pokemon informations
 make a new python file with questlines
 
 Make the game work:
@@ -22,5 +19,4 @@ implement exe(DONE)
 
 Usability:
 add bold helvetica and use it for energies
-introduce popups to explain the game as a tutorial
 rename things to avoid being copyrighted
