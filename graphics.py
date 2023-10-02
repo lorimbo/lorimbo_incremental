@@ -772,6 +772,12 @@ class Graphics:
             for num,template in enumerate(Gamelogic.templates):
                 if actiondecorator(imgui.button,cls.theme)(f'{num}  ',cls.resizewidth(20),cls.resizeheight(20))and Gamelogic.templates[num]!=[]:
                     Gamelogic.changetemplateto(num)
+                if template != []:
+                    if imgui.is_item_hovered():
+                        with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
+                            tooltip = tooltips.templatetooltip(template[0])
+                            for i in tooltip:
+                                actiondecorator(imgui.text, cls.theme)(f"{i}")
                 imgui.same_line()
         imgui.new_line()
         with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 40)}']):

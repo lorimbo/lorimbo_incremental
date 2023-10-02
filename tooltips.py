@@ -67,6 +67,12 @@ def numcon(n):
         return f'{round(n / 1000, 2)}K'
     return str(round(n, 1))
 
+def templatetooltip(partytemplate):
+    finaltooltip = []
+    finaltooltip.append(f'Party')
+    for pokemon in partytemplate:
+        finaltooltip.append(pokemon.name)
+    return finaltooltip
 
 def pokemontooltip(pokemon, status, soul=None, cost=None):
     finaltooltip = []

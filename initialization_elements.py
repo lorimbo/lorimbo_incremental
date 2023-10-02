@@ -955,7 +955,7 @@ def createdungeons(parent):
             monsterlist=[parent.pokemonlist[i].copy() for i in range(1, 4)])
     Dungeon(parent=parent, name="Training hall", location=['Village', 'Home'], changeflags={'Main': 1,'Popup':5},
             unlockflags={'Father': 7}, closingflags={}, usualreward=[['resource', 'Physical gems', 1, 0, 0]],
-            firsttime=[['maxlvl', 5]],
+            firsttime=[['maxlvl', 5],['resource', 'Physical gems', 1, 0, 0],['resource', 'Magical gems', 1, 0, 0],['resource', 'Special gems', 1, 0, 0]],
             monsterlist=[], boss=parent.pokemonlist[0].copy())
     Dungeon(parent=parent, name="Brother fight", location=['Village', 'Surroundings'], changeflags={},
             unlockflags={'Brother': 4}, closingflags={}, firsttime=[['maxlvl', 10]],
