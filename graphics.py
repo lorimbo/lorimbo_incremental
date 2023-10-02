@@ -1356,15 +1356,20 @@ class Graphics:
         imgui.set_next_window_size(cls.resizewidth(1050), 16 + cls.resizeheight(335))
         imgui.set_next_window_position(cls.resizewidth(120), 16 + cls.resizeheight(145))
         backgroundecorator(imgui.begin, cls.theme)('Skills', False, cls.flags)
+        temp=0
         if Gamelogic.changeskill is not None:
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 30)}']):
                 actiondecorator(imgui.text, cls.theme)(Gamelogic.changeskill.name)
-                imgui.same_line(position=240)
+                imgui.same_line(position=250)
                 actiondecorator(imgui.text, cls.theme)('Name')
-                imgui.same_line(position=490)
+                imgui.same_line(position=480)
                 actiondecorator(imgui.text, cls.theme)('Power')
-                imgui.same_line(position=740)
-                actiondecorator(imgui.text, cls.theme)('Interval')
+                imgui.same_line(position=705)
+                actiondecorator(imgui.text, cls.theme)('Countdown')
+                imgui.same_line(position=940)
+                if actiondecorator(imgui.button,cls.theme)('Back',cls.resizewidth(90),cls.resizeheight(20)):
+                    Gamelogic.partysubtab='Party selection'
+                    temp=1
                 actiondecorator(imgui.text,cls.theme)('Default skill')
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
                 imgui.begin_child('Default skill',height=cls.resizeheight(25),border=True)
@@ -1406,6 +1411,8 @@ class Graphics:
                 if actiondecorator(imgui.button,cls.theme)(f'Assign###{num}',cls.resizewidth(90),cls.resizeheight(15)):
                     Gamelogic.changeskillfunction(Gamelogic.changeskill,skill)
                 imgui.end_child()
+                if temp:
+                    Gamelogic.changeskill=None
 
         imgui.end()
 

@@ -72,6 +72,7 @@ def templatetooltip(partytemplate):
     finaltooltip.append(f'Party')
     for pokemon in partytemplate:
         finaltooltip.append(pokemon.name)
+        finaltooltip.append(f'-{pokemon.skill.name}')
     return finaltooltip
 
 def pokemontooltip(pokemon, status, soul=None, cost=None):
