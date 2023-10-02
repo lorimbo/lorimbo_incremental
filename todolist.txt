@@ -16,6 +16,7 @@ magic damage vs physical damage
 add rare enemies to dungeons
 
 Organizing:
+change default cost,complete exc to None
 
 Make the game work:
 implement browser(LATER)

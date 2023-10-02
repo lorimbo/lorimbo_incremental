@@ -269,20 +269,25 @@ class Quests(menuelement):
                     if resource.quantity < i[1]:
                         temp = 1
         if not temp:
+            temp2=0
             for i in self.cost:
                 costname = i[0]
                 for energy in [e for e in self.parent.energies if e.name == costname]:
                     if energy.quantity + i[1] > -1 / 120:
                         energy.quantity += i[1]
+                    else:
+                        temp2=1
                     if not energy.quantity:
                         energy.quantity = 0
-                        self.docomplete()
                     continue
                 for x in self.parent.resources.keys():
                     for resource in [e for e in self.parent.resources[x] if e.name == costname]:
                         if resource.quantity >= -i[1]:
                             resource.quantity += i[1]
-                            self.docomplete()
+                        else:
+                            temp2=1
+            if not temp2:
+                self.docomplete()
         self.parent.quest = None
 
     def docomplete(self):

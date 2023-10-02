@@ -5,6 +5,7 @@ def createquests(parent):
     billythekidquestline(parent)
     zenmasterquestline(parent)
     butchershopquestline(parent)
+    testquest(parent)
 def butchershopquestline(parent):
     from initialization_elements import Quests
     Quests(parent=parent, name='Butcher shop 1/6',
@@ -230,3 +231,42 @@ def fatherquestline(parent):
                      ['stat', 'pdef', 5, 0, 0],
                      ['stat', 'matk', 5, 0, 0], ['stat', 'mdef', 5, 0, 0]],
            )
+
+def testquest(parent):
+    from initialization_elements import Quests
+    Quests(parent=parent, name='Quest 1', cost=[['Leather', -10, 0, 0], ['Wood', -25, 0, 0]],
+           complete=[['max', 'Wood', 10, 0, 0], ['resources', 'Wood', 10, 0, 0], ['stats', 'patk', 0.5, 0, 0]],
+           location=['Village', 'Field'], unlockflags={'Quest 1': 1}, closingflags={'Quest 1': 2},
+           changeflags={'Quest 1': 1, 'Quest 3': 1, 'Quest 8': 1, 'Quest 2': 1})
+    Quests(parent=parent, name='Quest 3', cost=[['Leather', -10, 0, 0], ['Wood', -25, 0, 0]],
+           complete=[['max', 'Wood', 10, 0, 0], ['resources', 'Wood', 10, 0, 0], ['stats', 'patk', 0.5, 0, 0]],
+           location=['Village', 'Field'], unlockflags={'Quest 3': 1}, closingflags={'Quest 3': 2},
+           changeflags={'Quest 3': 1, 'Quest 5': 1, 'Quest 2': 1})
+    Quests(parent=parent, name='Quest 5', cost=[['Leather', -10, 0, 0], ['Wood', -25, 0, 0]],
+           complete=[['max', 'Wood', 10, 0, 0], ['resources', 'Wood', 10, 0, 0], ['stats', 'patk', 0.5, 0, 0]],
+           location=['Village', 'Field'], unlockflags={'Quest 5': 1}, closingflags={'Quest 5': 2},
+           changeflags={'Quest 5': 1, 'Quest 9': 1, 'Quest 7': 1})
+    Quests(parent=parent, name='Quest 9', cost=[['Leather', -10, 0, 0], ['Wood', -25, 0, 0]],
+           complete=[['max', 'Wood', 10, 0, 0], ['resources', 'Wood', 10, 0, 0], ['stats', 'patk', 0.5, 0, 0]],
+           location=['Village', 'Field'], unlockflags={'Quest 9': 1}, closingflags={'Quest 9': 2},
+           changeflags={'Quest 9': 1, })
+    Quests(parent=parent, name='Quest 7', cost=[['Leather', -10, 0, 0], ['Wood', -25, 0, 0]],
+           complete=[['max', 'Wood', 10, 0, 0], ['resources', 'Wood', 10, 0, 0], ['stats', 'patk', 0.5, 0, 0]],
+           location=['Village', 'Field'], unlockflags={'Quest 7': 1}, closingflags={'Quest 7': 4},
+           changeflags={'Quest 7': 3, })
+    Quests(parent=parent, name='Quest 2', cost=[['Leather', -10, 0, 0], ['Wood', -25, 0, 0]],
+           complete=[['max', 'Wood', 10, 0, 0], ['resources', 'Wood', 10, 0, 0], ['stats', 'patk', 0.5, 0, 0]],
+           location=['Village', 'Field'], unlockflags={'Quest 2': 1}, closingflags={'Quest 2': 2},
+           changeflags={'Quest 2': 1, 'Quest 4': 1, 'Quest 3': 1})
+    Quests(parent=parent, name='Quest 4', cost=[['Leather', -10, 0, 0], ['Wood', -25, 0, 0]],
+           complete=[['max', 'Wood', 10, 0, 0], ['resources', 'Wood', 10, 0, 0], ['stats', 'patk', 0.5, 0, 0]],
+           location=['Village', 'Field'], unlockflags={'Quest 4': 1}, closingflags={'Quest 4': 2},
+           changeflags={'Quest 4': 1, 'Quest 6': 1, 'Quest 7': 1})
+    Quests(parent=parent, name='Quest 6', cost=[['Leather', -10, 0, 0], ['Wood', -25, 0, 0]],
+           complete=[['max', 'Wood', 10, 0, 0], ['resources', 'Wood', 10, 0, 0], ['stats', 'patk', 0.5, 0, 0]],
+           location=['Village', 'Field'], unlockflags={'Quest 6': 1}, closingflags={'Quest 6': 2},
+           changeflags={'Quest 6': 1, })
+    Quests(parent=parent, name='Quest 8', cost=[['Leather', -10, 0, 0], ['Wood', -25, 0, 0]],
+           complete=[['max', 'Wood', 10, 0, 0], ['resources', 'Wood', 10, 0, 0], ['stats', 'patk', 0.5, 0, 0]],
+           location=['Village', 'Field'], unlockflags={'Quest 8': 1}, closingflags={'Quest 8': 2},
+           changeflags={'Quest 8': 1, 'Quest 7': 1})

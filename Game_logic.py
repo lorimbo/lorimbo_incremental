@@ -543,6 +543,7 @@ class Gamelogic:
 
     @classmethod
     def frameaction(cls):
+
         cls.updatebuttons()
         cls.regenenergies()
         cls.longactionprogress()
