@@ -833,6 +833,19 @@ def createpokemon(parent):
     for pokemonkey in Information['reserve']:
         Pokemon(parent=parent, wild=False, elementlist=parent.reserve, **pokemonkey)
 
+def createtemplates(parent):
+    Information = getgamestate()
+    for num,template in enumerate(Information['templates']):
+        if template==[]:
+            parent.templates.append([])
+        else:
+            late=[[],[]]
+            for partypok in Information['templates'][num][0]:
+                Pokemon(parent=parent, wild=False, elementlist=late[0], **partypok)
+            for reservepok in Information['templates'][num][1]:
+                Pokemon(parent=parent, wild=False, elementlist=late[1], **reservepok)
+            parent.templates.append(late)
+
 
 def createinstantactions(parent):
     Instantactions(parent=parent, name='Ponder the future', isvisible=True,

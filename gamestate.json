@@ -191,5 +191,9 @@
             "Zen": 0,
             "Butcher": 0,
             "Brother": 0
-      }
+      },
+      "templates": [
+            [],
+            []
+      ]
 }

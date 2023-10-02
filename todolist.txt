@@ -1,12 +1,11 @@
 Functionality:
-next actions
 exp/ranking
 habits/some kinda of upgrade system
 resources effects with tooltips
 astral plane
 party effects with tooltips
-party templates
 implement skills effects
+saving party templates
 
 
 Organizing:
@@ -20,3 +19,7 @@ implement exe(DONE)
 Usability:
 add bold helvetica and use it for energies
 rename things to avoid being copyrighted
+add logs when you unlock new areas in the submenu(like Forest)
+
+BUGS:
+area loopactions won't go back to themselves after resting

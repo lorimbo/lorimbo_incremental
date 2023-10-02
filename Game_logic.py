@@ -60,7 +60,7 @@ class Gamelogic:
     pokemonlist = []
     reserve = []
     party = []
-    templates=[[],[]]
+    templates=[]
     savingtotemplates=False
     unlockablepokemons = []
     switch = None
@@ -263,6 +263,7 @@ class Gamelogic:
         initialization_elements.createarealoops(cls)
         initialization_elements.createproceedactions(cls)
         initialization_elements.createpokemon(cls)
+        initialization_elements.createtemplates(cls)
         initialization_elements.createpartytabs(cls)
         initialization_elements.createquests(cls)
         initialization_elements.createresources(cls)
@@ -277,11 +278,52 @@ class Gamelogic:
         Information['reserve'] = []
         Information['resources']={}
         Information['flags']={}
+        Information['templates']=[]
         for flag in cls.flags:
             Information['flags'][flag]=cls.flags[flag]
         for category in cls.resources:
             for resource in cls.resources[category]:
                 Information['resources'][resource.name]=(resource.quantity,resource.max,resource.unlockflags,resource.category,resource.regen)
+        for template in cls.templates:
+            if template==[]:
+                Information['templates'].append([])
+
+            elif template!=[]:
+                Information['templates'].append([[],[]])
+                for num,x in enumerate(template[0]):
+                    pokemondict = {}
+                    pokemondict["name"] = x.name
+                    pokemondict["hp"] = x.hp
+                    pokemondict["atk"] = x.patk
+                    pokemondict["dif"] = x.pdef
+                    pokemondict["satk"] = x.matk
+                    pokemondict["sdif"] = x.mdef
+                    pokemondict["maxlvl"] = x.maxlvl
+                    pokemondict["unlocked"] = x.unlocked
+                    pokemondict["lvl"] = x.lvl
+                    pokemondict["phys"] = x.phys
+                    pokemondict["magic"] = x.magic
+                    pokemondict["special"] = x.special
+                    pokemondict["drop"] = x.drop
+                    Information['templates'][num][0].append(pokemondict)
+                for num,x in enumerate(template[1]):
+                    pokemondict = {}
+                    pokemondict["name"] = x.name
+                    pokemondict["hp"] = x.hp
+                    pokemondict["atk"] = x.patk
+                    pokemondict["dif"] = x.pdef
+                    pokemondict["satk"] = x.matk
+                    pokemondict["sdif"] = x.mdef
+                    pokemondict["maxlvl"] = x.maxlvl
+                    pokemondict["unlocked"] = x.unlocked
+                    pokemondict["lvl"] = x.lvl
+                    pokemondict["phys"] = x.phys
+                    pokemondict["magic"] = x.magic
+                    pokemondict["special"] = x.special
+                    pokemondict["drop"] = x.drop
+                    Information['templates'][num][1].append(pokemondict)
+
+
         for x in cls.party:
             pokemondict = {}
             pokemondict["name"] = x.name
