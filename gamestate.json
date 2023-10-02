@@ -38,7 +38,7 @@
       "reserve": [],
       "resources": {
             "Wood": [
-                  0,
+                  100,
                   1,
                   {
                         "Father": 2
@@ -110,7 +110,7 @@
                   0
             ],
             "Fate": [
-                  0,
+                  100,
                   10,
                   {
                         "Father": 0

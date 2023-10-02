@@ -29,12 +29,12 @@ buttontextcolor = (173, 241, 130)
 evangelionorange = (220, 125, 104)
 
 
-def autospacer155(text):
+def autospacer155(text,spacing):
     list = text.split(" ")
     output = ""
     n = 0
     for num, i in enumerate(list):
-        if len(" ".join(list[n:num])) > 140:
+        if len(" ".join(list[n:num])) > spacing:
             output += "\n"
             output += " ".join(list[n:num - 1])
             n = num - 1
@@ -80,7 +80,7 @@ Popups = {1: "[TUTORIAL] Welcome to Yet another shitty game!.I'm Lorimbo, the au
           6:"[TUTORIAL] In this dungeon you will find your first actual monsters, they have a chance to drop their souls, which you can use in the 'Party' tab to"
             " unlock them as party members and level them up.To do so,press the 'Summon' Button in the 'Level up' menu and then add them in the party in the 'Party selection menu"}
 for e in Popups:
-    Popups[e] = autospacer155(Popups[e])
+    Popups[e] = autospacer155(Popups[e],135)
 
 
 def tooltipdecorator(function, theme):
@@ -1249,11 +1249,11 @@ class Graphics:
                                    cls.resizeheight(100))
         imgui.set_next_window_position(cls.resizewidth(0),
                                        list(pygame.display.get_window_size())[1] - cls.resizeheight(100))
-        backgroundecorator(imgui.begin, cls.theme)('Bottonbar', False, cls.flags)
+        backgroundecorator(imgui.begin, cls.theme)('Bottombar', False, cls.flags)
         if Gamelogic.flags['Popup']:
-            Gamelogic.bottomlog.insert(0,Popups[Gamelogic.flags['Popup']])
+            Gamelogic.bottomlog.append(Popups[Gamelogic.flags['Popup']])
             now=datetime.datetime.now()
-            Gamelogic.bottomtimes.insert(0,str(now.time())[0:8])
+            Gamelogic.bottomtimes.append(str(now.time())[0:8])
             Gamelogic.flags['Popup'] = 0
 
         with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
@@ -1262,6 +1262,9 @@ class Graphics:
                 imgui.same_line()
                 for j in i:
                     actiondecorator(imgui.text, cls.theme)(j)
+            if len(Gamelogic.bottomlog)!=Gamelogic.bottomlogpreviouslen:
+                Gamelogic.bottomlogpreviouslen=len(Gamelogic.bottomlog)
+                imgui.set_scroll_here_y(1)
 
         imgui.end()
 
@@ -1333,12 +1336,15 @@ class Graphics:
                                                                  height=cls.resizeheight(370), border=True)
                 if dungeon is not None:
                     for string in dungeon.log:
-                        every = 46
-                        string = '\n'.join(string[i:i + every] for i in range(0, len(string), every))
-                        actiondecorator(imgui.text, cls.theme)(string)
+                        string=(autospacer155(string,46))
+                        actiondecorator(imgui.text, cls.theme)(string[0])
                     if len(dungeon.log) > 100:
                         for i in range(len(dungeon.log) - 100):
                             dungeon.log.pop(0)
+                    if len(dungeon.log) != dungeon.previouslen:
+                        dungeon.previouslen = len(dungeon.log)
+                        imgui.set_scroll_here_y(1)
+
                 imgui.end_child()
 
         imgui.end()

@@ -51,6 +51,7 @@ class Gamelogic:
     areainstants={}
     arealongs = {}
     bottomlog=[]
+    bottomlogpreviouslen=len(bottomlog)
     bottomtimes=[]
     exp = 0
     dungeons = {}
@@ -110,9 +111,9 @@ class Gamelogic:
                     action.isvisible = False
                 else:
                     if not action.isvisible:
-                        cls.bottomlog.insert(0, [f"Unlocked the {action.name} option to proceed in the {cls.subtab} location!"])
+                        cls.bottomlog.append( [f"Unlocked the {action.name} option to proceed in the {cls.subtab} location!"])
                         now = datetime.datetime.now()
-                        cls.bottomtimes.insert(0, str(now.time())[0:8])
+                        cls.bottomtimes.append( str(now.time())[0:8])
                     action.isvisible = True
 
         for action in areaactions:
@@ -129,9 +130,9 @@ class Gamelogic:
                 action.isvisible = False
             else:
                 if not action.isvisible:
-                    cls.bottomlog.insert(0,[f"Unlocked the {action.name} action in the {cls.subtab} location!"])
+                    cls.bottomlog.append([f"Unlocked the {action.name} action in the {cls.subtab} location!"])
                     now = datetime.datetime.now()
-                    cls.bottomtimes.insert(0,str(now.time())[0:8])
+                    cls.bottomtimes.append(str(now.time())[0:8])
                 action.isvisible = True
         for actionlist in elements:
             for key1 in actionlist:
@@ -150,13 +151,13 @@ class Gamelogic:
                     else:
                         if not action.isvisible:
                             now = datetime.datetime.now()
-                            cls.bottomtimes.insert(0,str(now.time())[0:8])
+                            cls.bottomtimes.append(str(now.time())[0:8])
                             if actionlist is cls.dungeons[cls.subtab]:
-                                cls.bottomlog.insert(0, [f"Unlocked the {action.name} dungeon!"])
+                                cls.bottomlog.append( [f"Unlocked the {action.name} dungeon!"])
                             elif actionlist is cls.quests[cls.subtab]:
-                                cls.bottomlog.insert(0,[f"Unlocked the {action.name} quest!"])
+                                cls.bottomlog.append([f"Unlocked the {action.name} quest!"])
                             else:
-                                cls.bottomlog.insert(0, [f"Unlocked the {action.name} action!"])
+                                cls.bottomlog.append( [f"Unlocked the {action.name} action!"])
                         action.isvisible = True
         for menulist in [cls.mainelements,cls.mainsubelements,cls.partyelements]:
             for element in menulist:
@@ -174,8 +175,8 @@ class Gamelogic:
                 else:
                     if not element.isvisible:
                         now = datetime.datetime.now()
-                        cls.bottomtimes.insert(0,str(now.time())[0:8])
-                        cls.bottomlog.insert(0,[f"Unlocked the {element.name} Menu!"])
+                        cls.bottomtimes.append(str(now.time())[0:8])
+                        cls.bottomlog.append([f"Unlocked the {element.name} Menu!"])
                     element.isvisible = True
             for key in cls.resources:
                 for resource in cls.resources[key]:
@@ -530,7 +531,7 @@ class Gamelogic:
     @classmethod
     def regenpokemonhealt(cls, list):
         for pokemon in list:
-            pokemon.currenthp = pokemon.actualhpù
+            pokemon.currenthp = pokemon.actualhp
 
     @classmethod
     def changeskillfunction(cls,pokemon,skill):

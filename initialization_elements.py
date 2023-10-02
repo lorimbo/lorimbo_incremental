@@ -82,6 +82,8 @@ class Dungeon:
         self.currentlayout = []
         self.floor = 0
         self.log = []
+        self.len = len(self.log)
+        self.previouslen= self.len
         self.party = []
         self.usualrewards = usualreward
         self.cleared = cleared
