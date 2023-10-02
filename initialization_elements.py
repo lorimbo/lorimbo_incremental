@@ -235,6 +235,11 @@ class menuelement:
         self.unlockflags = unlockflags
         self.closingflags = closingflags
         self.changeflags = changeflags
+        for flagdict in [self.unlockflags,self.closingflags,self.changeflags]:
+            if flagdict is not None:
+                for flagname in flagdict:
+                    if flagname not in parent.flags:
+                        parent.flags[flagname]=0
         self.isdisabled = isdisabled
         if elementlist is not None:
             elementlist.append(self)

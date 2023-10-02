@@ -4,12 +4,18 @@ habits/some kinda of upgrade system
 resources effects with tooltips
 astral plane
 party effects with tooltips
+implement pokemon/skill type 
 implement skills effects
-saving party templates
-
+reserve is not ordered
+add a shop that allowes you to buy skills
+dungeon tooltips
+offline rewards
+name/title
+put fps in the right place
+magic damage vs physical damage
+add rare enemies to dungeons
 
 Organizing:
-make a new python file with questlines
 
 Make the game work:
 implement browser(LATER)
@@ -20,6 +26,7 @@ Usability:
 add bold helvetica and use it for energies
 rename things to avoid being copyrighted
 add logs when you unlock new areas in the submenu(like Forest)
+dungeon log order should be reversed
+dungeon log should cut for words instead of randomly
 
 BUGS:
-area loopactions won't go back to themselves after resting

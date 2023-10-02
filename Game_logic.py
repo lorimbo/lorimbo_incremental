@@ -276,7 +276,8 @@ class Gamelogic:
         Information['flags']={}
         Information['templates']=[]
         for flag in cls.flags:
-            Information['flags'][flag]=cls.flags[flag]
+            if cls.flags[flag]!=0:
+                Information['flags'][flag]=cls.flags[flag]
         for category in cls.resources:
             for resource in cls.resources[category]:
                 Information['resources'][resource.name]=(resource.quantity,resource.max,resource.unlockflags,resource.category,resource.regen)
