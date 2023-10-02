@@ -439,6 +439,14 @@ class Graphics:
                         use = button.isdisabled
                         if cls.disabledecorator(imgui.button, use)(button.name, cls.resizewidth(160),
                                                                    cls.resizeheight(50)) and not button.isdisabled:
+                            if button.name=='Rest':
+                                for key in Gamelogic.longactions:
+                                    for e in Gamelogic.longactions[key]:
+                                        e.previouslyactive= False
+                                for subtab in Gamelogic.mainsubelements:
+                                    if subtab.name in Gamelogic.arealongs:
+                                        for e in Gamelogic.arealongs[subtab.name]:
+                                            e.previouslyactive = False
                             button.activation()
                         if imgui.is_item_hovered():
                             with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
