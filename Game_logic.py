@@ -45,10 +45,10 @@ class Gamelogic:
     partyelements = []
     instantactions = {}
     proceedactions={}
-    loopactions = {}
+    longactions = {}
     quests = {}
     areainstants={}
-    arealoops = {}
+    arealongs = {}
     bottomlog=[]
     bottomtimes=[]
     exp = 0
@@ -68,7 +68,7 @@ class Gamelogic:
     add = None
     levelup = None
     partylenmax = 5
-    fps = 240
+    fps = 120
     volume = 0.2
     musicvolume = 0.3
 
@@ -81,7 +81,7 @@ class Gamelogic:
 
     @classmethod
     def checkflags(cls):
-        elements = [cls.instantactions, cls.loopactions]
+        elements = [cls.instantactions, cls.longactions]
         if cls.subtab in cls.quests.keys():
             elements.append(cls.quests[cls.subtab])
         if cls.subtab in cls.dungeons.keys():
@@ -90,8 +90,8 @@ class Gamelogic:
         if cls.subtab in cls.areainstants.keys():
             for key in cls.areainstants[cls.subtab]:
                 areaactions.append(key)
-        if cls.subtab in cls.arealoops.keys():
-            for key in cls.arealoops[cls.subtab]:
+        if cls.subtab in cls.arealongs.keys():
+            for key in cls.arealongs[cls.subtab]:
                 areaactions.append(key)
         if cls.subtab in cls.proceedactions.keys():
             for action in cls.proceedactions[cls.subtab]:
@@ -194,12 +194,12 @@ class Gamelogic:
 
 
     @classmethod
-    def deactivateloopactions(cls):
-        for key in cls.loopactions:
-            for e in cls.loopactions[key]:
+    def deactivatelongactions(cls):
+        for key in cls.longactions:
+            for e in cls.longactions[key]:
                 e.isactive = False
-        for location in cls.arealoops:
-            for e in cls.arealoops[location]:
+        for location in cls.arealongs:
+            for e in cls.arealongs[location]:
                 e.isactive=False
 
     @classmethod
@@ -219,13 +219,13 @@ class Gamelogic:
         cls.add = None
 
     @classmethod
-    def loopactionprogress(cls):
-        for key in cls.loopactions:
-            for e in cls.loopactions[key]:
+    def longactionprogress(cls):
+        for key in cls.longactions:
+            for e in cls.longactions[key]:
                 if e.isactive:
                     e.dopassiveaction()
                     if e.progress <= 0:
-                        cls.loopactions['Common loopactions'][0].activation()
+                        cls.longactions['Common longactions'][0].activation()
                         if e.docost():
                             e.activation()
                         else:
@@ -235,12 +235,12 @@ class Gamelogic:
                     if e.progress > 1:
                         e.progress = 0
                         e.dofinishaction()
-        for location in cls.arealoops:
-            for e in cls.arealoops[location]:
+        for location in cls.arealongs:
+            for e in cls.arealongs[location]:
                 if e.isactive:
                     e.dopassiveaction()
                     if e.progress <= 0:
-                        cls.loopactions['Common loopactions'][0].activation()
+                        cls.longactions['Common longactions'][0].activation()
                         if e.docost():
                             e.activation()
                         else:
@@ -259,8 +259,8 @@ class Gamelogic:
         initialization_elements.createmainsubmenu(cls)
         initialization_elements.createinstantactions(cls)
         initialization_elements.createareainstant(cls)
-        initialization_elements.createloopactions(cls)
-        initialization_elements.createarealoops(cls)
+        initialization_elements.createlongactions(cls)
+        initialization_elements.createarealongs(cls)
         initialization_elements.createproceedactions(cls)
         initialization_elements.createpokemon(cls)
         initialization_elements.createtemplates(cls)
@@ -375,8 +375,8 @@ class Gamelogic:
             for location in cls.quests[key]:
                 for i in cls.quests[key][location]:
                     i.update()
-        for key in cls.loopactions:
-            for i in cls.loopactions[key]:
+        for key in cls.longactions:
+            for i in cls.longactions[key]:
                 i.update()
         for key in cls.instantactions:
             for i in cls.instantactions[key]:
@@ -388,8 +388,8 @@ class Gamelogic:
         for key in cls.areainstants:
             for i in cls.areainstants[key]:
                 i.update()
-        for key in cls.arealoops:
-            for i in cls.arealoops[key]:
+        for key in cls.arealongs:
+            for i in cls.arealongs[key]:
                 i.update()
         for key in cls.proceedactions:
             for i in cls.proceedactions[key]:
@@ -440,11 +440,11 @@ class Gamelogic:
                 hit = pygame.mixer.Sound('Sounds/hitting.wav')
                 hit.set_volume(cls.volume)
                 pygame.mixer.Sound.play(hit)
-            alive[cls.activepartypokemon].cd = alive[cls.activepartypokemon].skill.interval * 240
+            alive[cls.activepartypokemon].cd = alive[cls.activepartypokemon].skill.interval * 120
             cls.activedungeon.log.append(
                 f'{alive[cls.activepartypokemon].name} dealt {numcon(damagedealt)} dmg to {alive2[0].name}')
             if alive2[0].currenthp == 0:
-                alive2[0].cd = alive2[0].skill.interval * 240
+                alive2[0].cd = alive2[0].skill.interval * 120
                 cls.activedungeon.log.append(
                     f'Enemy {alive2[0].name} fainted!')
                 cls.exp += alive2[0].drop['exp']
@@ -512,13 +512,13 @@ class Gamelogic:
                 hit = pygame.mixer.Sound('Sounds/ouch.wav')
                 hit.set_volume(cls.volume)
                 pygame.mixer.Sound.play(hit)
-            alive2[cls.activeenemypokemon].cd = alive2[cls.activeenemypokemon].skill.interval * 240
+            alive2[cls.activeenemypokemon].cd = alive2[cls.activeenemypokemon].skill.interval * 120
             cls.activedungeon.log.append(
                 f'Enemy {alive2[cls.activeenemypokemon].name} dealt {numcon(damagedealt)} dmg to {alive[0].name}')
             if alive[0].currenthp == 0:
                 cls.activedungeon.log.append(
                     f'{alive[0].name} fainted!')
-                alive[0].cd = alive[0].skill.interval * 240
+                alive[0].cd = alive[0].skill.interval * 120
                 alive = [pokemon for pokemon in cls.activedungeon.party if pokemon.currenthp]
                 cls.activepartypokemon = max(0, cls.activepartypokemon - 1)
                 if not len(alive):
@@ -541,7 +541,7 @@ class Gamelogic:
     def frameaction(cls):
         cls.updatebuttons()
         cls.regenenergies()
-        cls.loopactionprogress()
+        cls.longactionprogress()
         cls.checkflags()
         if cls.activedungeon is not None:
             cls.dungeonprogress()

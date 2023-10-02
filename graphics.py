@@ -61,23 +61,23 @@ Themes = {
               'darkerbuttoncolor': (128, 0, 128)}
 }
 
-Popups = {1: "Welcome to Yet another shitty game!.I'm Lorimbo, the author of the game. You can start your adventure by "
+Popups = {1: "[TUTORIAL] Welcome to Yet another shitty game!.I'm Lorimbo, the author of the game. You can start your adventure by "
              "clicking on the 'Ponder the future' button in the 'Actions' section to gain some Fate. Fate is used as the "
-             "main way of progressing through the storyline. Once you have 5 fate click on the 'Talk to father 1/12' "
+             "main way of progressing through the storyline. Once you have 5 Fate click on the 'Talk to father 1/12' "
              "quest to complete it and proceed with the story ",
-          2:"You can use the loopaction 'Rest' to regain energy and keep grinding fate, loopactions go on in the "
+          2:"[TUTORIAL] You can use the longaction 'Rest' to regain Energy and keep grinding Fate. Longactions go on in the "
             "background while you do other things.",
-          3:"You have now unlocked new actions, together with the Wood resource, try to proceed with the quest",
-          4:"You have now unlocked your first dungeon!You can find it in the top right corner of the main section."
+          3:"[TUTORIAL] You have now unlocked new actions, together with the Wood resource, try to proceed with the quest",
+          4:"[TUTORIAL] You have now unlocked your first dungeon!You can find it in the top right corner of the main section."
             "In the dungeon your party will fight monsters and bosses!Dungeons also keep going on in the background."
             "The dungeon progression status is indicated by the bar under it.If you defeat all the monsters in the dungeon or"
             "if your party is defeated the dungeon will restart automatically.You can quit the current dungeon by going into the "
             "'Dungeon tab in the left menu and pressing the 'Quit' button"
             "Dungeons' layout and monsters are randomly generated.Monsters drop seeds and other useful loot that you can"
             " use to become more powerful",
-          5:"Congratulation adventurer,you've gotten your first seed!In the 'Party' tab in the left menu you can use Fate to level up your character and"
+          5:"[TUTORIAL] Congratulation adventurer,you've gotten your first seed!In the 'Party' tab in the left menu you can use Fate to level up your character and"
             "seeds to improve your stats",
-          6:"In this dungeon you will find your first actual monsters, they have a chance to drop their souls, which you can use in the 'Party' tab to"
+          6:"[TUTORIAL] In this dungeon you will find your first actual monsters, they have a chance to drop their souls, which you can use in the 'Party' tab to"
             " unlock them as party members and level them up.To do so,press the 'Summon' Button in the 'Level up' menu and then add them in the party in the 'Party selection menu"}
 for e in Popups:
     Popups[e] = autospacer155(Popups[e])
@@ -404,36 +404,36 @@ class Graphics:
         imgui.end()
 
     @classmethod
-    def draw_loopactions(cls):
+    def draw_longactions(cls):
         finishline = cls.resizeheight(50)
-        if 'loopactions' not in cls.toggles.keys():
-            cls.toggles['loopactions'] = {}
-        if 'arealoops' not in cls.toggles.keys():
-            cls.toggles['arealoops'] = {}
+        if 'longactions' not in cls.toggles.keys():
+            cls.toggles['longactions'] = {}
+        if 'arealongs' not in cls.toggles.keys():
+            cls.toggles['arealongs'] = {}
         height = list(pygame.display.get_window_size())[1] - cls.resizeheight(150)
         imgui.set_next_window_size(16 + cls.resizewidth(160),
                                    height)
         imgui.set_next_window_position(75 + cls.resizewidth(340), finishline
                                        )
-        backgroundecorator(imgui.begin, cls.theme)('Loopactions', False, cls.resourcesflags)
+        backgroundecorator(imgui.begin, cls.theme)('Long actions', False, cls.resourcesflags)
 
-        for key in Gamelogic.loopactions:
-            visible = cls.get_visible_elements(Gamelogic.loopactions[key])
+        for key in Gamelogic.longactions:
+            visible = cls.get_visible_elements(Gamelogic.longactions[key])
             if not len(visible):
                 continue
-            if key not in cls.toggles['loopactions']:
-                cls.toggles['loopactions'][key] = True
+            if key not in cls.toggles['longactions']:
+                cls.toggles['longactions'][key] = True
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.resizeheight(10))}']):
-                if cls.toggles['loopactions'][key]:
+                if cls.toggles['longactions'][key]:
                     direction = imgui.DIRECTION_DOWN
                 else:
                     direction = imgui.DIRECTION_RIGHT
                 if actiondecorator(imgui.arrow_button, cls.theme)(f'Toggle##{key}', direction):
-                    cls.toggles['loopactions'][key] = not cls.toggles['loopactions'][key]
+                    cls.toggles['longactions'][key] = not cls.toggles['longactions'][key]
                 imgui.same_line()
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
                 actiondecorator(imgui.text, cls.theme)(f'{key}')
-            if cls.toggles['loopactions'][key]:
+            if cls.toggles['longactions'][key]:
                 with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
                     for button in visible:
                         use = button.isdisabled
@@ -453,22 +453,22 @@ class Graphics:
                                                                             (
                                                                                 cls.resizewidth(160),
                                                                                 cls.resizeheight(20)))
-        if Gamelogic.subtab in Gamelogic.arealoops.keys():
-            visible = cls.get_visible_elements(Gamelogic.arealoops[Gamelogic.subtab])
+        if Gamelogic.subtab in Gamelogic.arealongs.keys():
+            visible = cls.get_visible_elements(Gamelogic.arealongs[Gamelogic.subtab])
             if len(visible):
-                if 'Area actions' not in cls.toggles['arealoops']:
-                    cls.toggles['arealoops']['Area actions'] = True
+                if 'Area actions' not in cls.toggles['arealongs']:
+                    cls.toggles['arealongs']['Area actions'] = True
                 with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.resizeheight(10))}']):
-                    if cls.toggles['arealoops']['Area actions']:
+                    if cls.toggles['arealongs']['Area actions']:
                         direction = imgui.DIRECTION_DOWN
                     else:
                         direction = imgui.DIRECTION_RIGHT
                     if actiondecorator(imgui.arrow_button, cls.theme)(f'Toggle', direction):
-                        cls.toggles['arealoops']['Area actions'] = not cls.toggles['arealoops']['Area actions']
+                        cls.toggles['arealongs']['Area actions'] = not cls.toggles['arealongs']['Area actions']
                     imgui.same_line()
                 with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
                     actiondecorator(imgui.text, cls.theme)(f'Area actions')
-                if cls.toggles['arealoops']['Area actions']:
+                if cls.toggles['arealongs']['Area actions']:
                     with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
                         for button in visible:
                             use = button.isdisabled
@@ -633,7 +633,7 @@ class Graphics:
     @classmethod
     def draw_area(cls):
         cls.draw_instantactions()
-        cls.draw_loopactions()
+        cls.draw_longactions()
         cls.draw_quests()
         cls.draw_proceedactions()
         cls.draw_dungeons()
@@ -949,7 +949,7 @@ class Graphics:
             if Gamelogic.savingtotemplates:
                 actiondecorator(imgui.text,cls.theme)('Save to')
                 imgui.same_line()
-                for i in range(2):
+                for i in range(len(Gamelogic.templates)):
                     if actiondecorator(imgui.button,cls.theme)(f'{i} ',cls.resizewidth(20),cls.resizeheight(20)):
                         Gamelogic.templates[i]=[]
                         partycopy=[i.copy() for i in Gamelogic.party]
@@ -1282,7 +1282,7 @@ class Graphics:
                                                                         (cls.resizewidth(250), cls.resizeheight(20)),
                                                                         f'{numcon(pokemon.currenthp)}/{numcon(pokemon.actualhp)}')
                     progressbardecorator(imgui.progress_bar, cls.theme)(
-                        (1 - (pokemon.cd / (pokemon.skill.interval * 240))),
+                        (1 - (pokemon.cd / (pokemon.skill.interval * 120))),
                         (cls.resizewidth(250), cls.resizeheight(20)),
                         str(pokemon.skill.name))
                 imgui.end_child()
@@ -1300,7 +1300,7 @@ class Graphics:
                                                                             cls.resizewidth(250), cls.resizeheight(20)),
                                                                             f'{numcon(pokemon.currenthp)}/{numcon(pokemon.actualhp)}')
                         progressbardecorator(imgui.progress_bar, cls.theme)(
-                            1 - (pokemon.cd / (pokemon.skill.interval * 240)),
+                            1 - (pokemon.cd / (pokemon.skill.interval * 120)),
                             (cls.resizewidth(250), cls.resizeheight(20)),
                             str(pokemon.skill.name))
                 imgui.end_child()

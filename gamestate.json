@@ -7,10 +7,10 @@
                   "dif": 1,
                   "satk": 1,
                   "sdif": 1,
-                  "maxlvl": 15,
+                  "maxlvl": 10,
                   "unlocked": 0,
-                  "lvl": 15,
-                  "phys": 10,
+                  "lvl": 1,
+                  "phys": 0,
                   "magic": 0,
                   "special": 0,
                   "drop": {
@@ -35,46 +35,11 @@
                   }
             }
       ],
-      "reserve": [
-            {
-                  "name": "Worm",
-                  "hp": 150,
-                  "atk": 105,
-                  "dif": 126,
-                  "satk": 105,
-                  "sdif": 114,
-                  "maxlvl": 15,
-                  "unlocked": 0,
-                  "lvl": 6,
-                  "phys": 1,
-                  "magic": 1,
-                  "special": 1,
-                  "drop": {
-                        "exp": 3,
-                        "resources": [
-                              [
-                                    "Physical gems",
-                                    1,
-                                    10
-                              ],
-                              [
-                                    "Magical gems",
-                                    1,
-                                    10
-                              ],
-                              [
-                                    "Special gems",
-                                    1,
-                                    10
-                              ]
-                        ]
-                  }
-            }
-      ],
+      "reserve": [],
       "resources": {
             "Wood": [
                   0,
-                  10,
+                  1,
                   {
                         "Father": 2
                   },
@@ -127,7 +92,7 @@
                   0
             ],
             "Butterfly wings": [
-                  1,
+                  0,
                   10,
                   {
                         "Father": 7
@@ -145,8 +110,8 @@
                   0
             ],
             "Fate": [
+                  0,
                   10,
-                  45,
                   {
                         "Father": 0
                   },
@@ -154,8 +119,8 @@
                   0
             ],
             "Physical gems": [
-                  2,
-                  20,
+                  0,
+                  1,
                   {
                         "Father": 7
                   },
@@ -163,8 +128,8 @@
                   0
             ],
             "Magical gems": [
+                  0,
                   1,
-                  20,
                   {
                         "Father": 7
                   },
@@ -172,8 +137,8 @@
                   0
             ],
             "Special gems": [
+                  0,
                   1,
-                  20,
                   {
                         "Father": 7
                   },
@@ -182,16 +147,16 @@
             ]
       },
       "flags": {
-            "Main": 1,
-            "Popup": 0,
+            "Main": 0,
+            "Popup": 1,
             "Dubious home": 0,
-            "Father": 12,
+            "Father": 0,
             "Mother": 0,
             "Billy": 0,
             "Zen": 0,
             "Butcher": 0,
             "Brother": 0
-      },
+     },
       "templates": [
             [],
             []

@@ -100,7 +100,7 @@ def energyTooltip(name, quantity, max, regen, effect=None):
         for i in description[name]:
             finaltooltip.append(i)
     finaltooltip.append(f'{round(quantity, 1)}/{round(max, 1)}')
-    finaltooltip.append(f'Regeneration    {regen * 240}/s')
+    finaltooltip.append(f'Regeneration    {regen * 120}/s')
     return finaltooltip
 
 

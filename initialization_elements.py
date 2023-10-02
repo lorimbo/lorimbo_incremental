@@ -4,6 +4,7 @@ from random import randint
 import copy
 import pygame
 import pokemonlist
+import questlines
 
 red = (255, 0, 0)
 green = (0, 255, 0)
@@ -44,7 +45,7 @@ class Skill:
 
         if target.currenthp < 0:
             target.currenthp = 0
-            target.cd = target.skill.interval * 240
+            target.cd = target.skill.interval * 120
         return damage
 
 
@@ -262,7 +263,7 @@ class Quests(menuelement):
             for i in self.cost:
                 costname = i[0]
                 for energy in [e for e in self.parent.energies if e.name == costname]:
-                    if energy.quantity + i[1] > -1 / 240:
+                    if energy.quantity + i[1] > -1 / 120:
                         energy.quantity += i[1]
                     if not energy.quantity:
                         energy.quantity = 0
@@ -366,7 +367,7 @@ class Nextaction(menuelement):
         for i in self.cost:
             costname = i[0]
             for energy in [e for e in self.parent.energies if e.name == costname]:
-                if energy.quantity + i[1] <= -1 / 240:
+                if energy.quantity + i[1] <= -1 / 120:
                     temp = 1
                 continue
             for x in self.parent.resources.keys():
@@ -467,7 +468,7 @@ class Instantactions(menuelement):
         for i in self.cost:
             costname = i[0]
             for energy in [e for e in self.parent.energies if e.name == costname]:
-                if energy.quantity + i[1] <= -1 / 240:
+                if energy.quantity + i[1] <= -1 / 120:
                     temp = 1
                 continue
             for x in self.parent.resources.keys():
@@ -538,20 +539,20 @@ class Instantactions(menuelement):
             self.isdisabled = True
 
 
-class Loopaction(menuelement):
+class Longaction(menuelement):
     def __init__(self, progress=0, speed=1 / 1200, isactive=False, location=None,
                  cost=[['Wood', 0, 0, 0]], progresscost=[['Wood', 0, 0, 0]],
                  progresseffect=[['Wood', 0, 0, 0]], complete=[['Wood', 0, 0, 0]], area=False, *args, **kwargs):
         menuelement.__init__(self, elementlist=None, *args, **kwargs)
         if location is not None:
             if not area:
-                if location not in self.parent.loopactions.keys():
-                    self.parent.loopactions[location] = []
-                self.parent.loopactions[location].append(self)
+                if location not in self.parent.longactions.keys():
+                    self.parent.longactions[location] = []
+                self.parent.longactions[location].append(self)
             else:
-                if location not in self.parent.arealoops.keys():
-                    self.parent.arealoops[location] = []
-                self.parent.arealoops[location].append(self)
+                if location not in self.parent.arealongs.keys():
+                    self.parent.arealongs[location] = []
+                self.parent.arealongs[location].append(self)
         self.progress = progress
         self.isactive = isactive
         self.speed = speed
@@ -620,7 +621,7 @@ class Loopaction(menuelement):
             self.isdisabled = True
 
     def activation(self):
-        self.parent.deactivateloopactions()
+        self.parent.deactivatelongactions()
         self.isactive = True
 
     def docost(self):
@@ -641,7 +642,8 @@ class Loopaction(menuelement):
                         resource.quantity += i[1]
                     else:
                         costpaid = False
-        return costpaid
+        self.costpaid = costpaid
+        return self.costpaid
 
     def dopassiveeffect(self):
         for i in self.progresseffect:
@@ -651,8 +653,13 @@ class Loopaction(menuelement):
                     1] < energy.max:
                     energy.quantity += i[1]
                 elif costname == 'Energy':
-                    for key in self.parent.loopactions:
-                        for e in self.parent.loopactions[key]:
+                    for key in self.parent.longactions:
+                        for e in self.parent.longactions[key]:
+                            if e.previouslyactive:
+                                e.activation()
+                                e.previouslyactive = False
+                    for key in self.parent.arealongs:
+                        for e in self.parent.arealongs[key]:
                             if e.previouslyactive:
                                 e.activation()
                                 e.previouslyactive = False
@@ -673,7 +680,7 @@ class Loopaction(menuelement):
                         self.dopassiveeffect()
                     elif costname == 'Energy':
                         self.previouslyactive = True
-                        self.parent.loopactions['Common loopactions'][0].activation()
+                        self.parent.longactions['Common longactions'][0].activation()
                     continue
                 for x in self.parent.resources.keys():
                     for resource in [e for e in self.parent.resources[x] if e.name == costname]:
@@ -727,10 +734,10 @@ class Pokemon(menuelement):
         self.updatestats()
         if skill is not None:
             self.skill = Skill(*skill)
-            self.cd = self.skill.interval * 240
+            self.cd = self.skill.interval * 120
         else:
             self.skill = Skill('Tackle', 7, 2.8, 'Phys', None, None, None, None)
-            self.cd = self.skill.interval * 240
+            self.cd = self.skill.interval * 120
 
     def copy(self):
         return copy.deepcopy(self)
@@ -865,242 +872,29 @@ def createareainstant(parent):
                    complete=[['Weeds', 1, 0, 0], ['Gold', 2, 0, 0]])
 
 
-def createloopactions(parent):
-    Loopaction(parent=parent, name='Rest', isvisible=True,
-               location='Common loopactions', speed=1 / 1200,
-               progresseffect=[['Energy', 1 / 240, 0, 0]])
-    Loopaction(parent=parent, name='Parse through weeds', isvisible=True,
-               location='Garden', speed=1 / 240, cost=[['Weeds', -5, 0, 0]],
-               progresscost=[['Energy', -1 / 240, 0, 0]], complete=[['Herbs', 1, 0, 0]],
+def createlongactions(parent):
+    Longaction(parent=parent, name='Rest', isvisible=True,
+               location='Common longactions', speed=1 / 600,
+               progresseffect=[['Energy', 1 / 120, 0, 0]])
+    Longaction(parent=parent, name='Parse through weeds', isvisible=True,
+               location='Garden', speed=1 / 120, cost=[['Weeds', -5, 0, 0]],
+               progresscost=[['Energy', -1 / 120, 0, 0]], complete=[['Herbs', 1, 0, 0]],
                unlockflags={'Mother': 5})
-    Loopaction(parent=parent, name='Meditate', isvisible=True,
-               location='Your room', speed=1 / 240,
-               progresscost=[['Energy', -1 / 240, 0, 0]], complete=[['Fate', 1, 0, 0]],
+    Longaction(parent=parent, name='Meditate', isvisible=True,
+               location='Your room', speed=1 / 120,
+               progresscost=[['Energy', -1 / 120, 0, 0]], complete=[['Fate', 1, 0, 0]],
                unlockflags={'Zen': 1})
 
 
-def createarealoops(parent):
-    Loopaction(parent=parent, name='Exercise', isvisible=True,
-               location='Village', speed=1 / 600, area=True,
-               progresscost=[['Energy', -1 / 240, 0, 0]], progresseffect=[['Endurance', 1 / 240, 0, 0]],
+def createarealongs(parent):
+    Longaction(parent=parent, name='Exercise', isvisible=True,
+               location='Village', speed=1 / 300, area=True,
+               progresscost=[['Energy', -1 / 120, 0, 0]], progresseffect=[['Endurance', 1 / 120, 0, 0]],
                unlockflags={'Father': 2})
 
 
 def createquests(parent):
-    Quests(parent=parent, name='Talk to Father 1/12', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Father': 0}, closingflags={'Father': 1}, changeflags={'Father': 1,'Popup':2},
-                   cost=[['Fate', -5, 0, 0]], complete=[['max', 'Fate', 5, 0, 0]]
-                   )
-    Quests(parent=parent, name='Talk to Father 2/12', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Father': 1}, closingflags={'Father': 2}, changeflags={'Father': 1,'Popup':3},
-                   cost=[['Fate', -10, 0, 0]], complete=[['max', 'Fate', 5, 0, 0]]
-                   )
-    Quests(parent=parent, name='Talk to Father 3/12', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Father': 2}, closingflags={'Father': 3}, changeflags={'Father': 1},
-                   cost=[['Wood', -1, 0, 0]], complete=[['max', 'Wood', 2, 0, 0]]
-                   )
-    Quests(parent=parent, name='Talk to Father 4/12', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Father': 3}, closingflags={'Father': 4}, changeflags={'Father': 1},
-                   cost=[['Wood', -3, 0, 0]], complete=[['max', 'Wood', 2, 0, 0]],
-                   )
-    Quests(parent=parent, name='Talk to Father 5/12', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Father': 4}, closingflags={'Father': 5}, changeflags={'Father': 1},
-                   cost=[['Wood', -5, 0, 0]], complete=[['max', 'Wood', 2, 0, 0]],
-                   )
-    Quests(parent=parent, name='Talk to Father 6/12', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Father': 5}, closingflags={'Father': 6}, changeflags={'Father': 1},
-                   cost=[['Wood', -7, 0, 0]], complete=[['max', 'Wood', 3, 0, 0]],
-                   )
-    Quests(parent=parent, name='Talk to Father 7/12', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Father': 6}, closingflags={'Father': 7}, changeflags={'Father': 1,'Popup':4},
-                   cost=[['Wood', -10, 0, 0]], complete=[['max', 'Fate', 5, 0, 0]],
-                   )
-    Quests(parent=parent, name='Talk to Father 8/12', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Father': 7}, closingflags={'Father': 8}, changeflags={'Father': 1,'Popup':5},
-                   cost=[['Physical gems', -1, 0, 0]], complete=[['max', 'Physical gems', 19, 0, 0]],
-                   )
-    Quests(parent=parent, name='Talk to Father 9/12', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Father': 8}, closingflags={'Father': 9}, changeflags={'Father': 1},
-                   cost=[['Magical gems', -1, 0, 0]], complete=[['max', 'Magical gems', 19, 0, 0]],
-                   )
-    Quests(parent=parent, name='Talk to Father 10/12', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Father': 9}, closingflags={'Father': 10}, changeflags={'Father': 1},
-                   cost=[['Special gems', -1, 0, 0]], complete=[['max', 'Special gems', 19, 0, 0]],
-                   )
-    Quests(parent=parent, name='Talk to Father 11/12', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Father': 10}, closingflags={'Father': 11}, changeflags={'Father': 1},
-                   cost=[['Fate', -20, 0, 0]], complete=[['max', 'Fate', 10, 0, 0]],
-                   )
-    Quests(parent=parent, name='Talk to Father 12/12', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Father': 11}, closingflags={'Father': 12}, changeflags={'Father': 1},
-                   cost=[['Fate', -35, 0, 0]],
-                   complete=[['max', 'Fate', 10, 0, 0], ['stat', 'hp', 5, 0, 0], ['stat', 'patk', 5, 0, 0],
-                             ['stat', 'pdef', 5, 0, 0],
-                             ['stat', 'matk', 5, 0, 0], ['stat', 'mdef', 5, 0, 0]],
-                   )
-    Quests(parent=parent, name='Talk to Mother 1/10', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Mother': 1}, closingflags={'Mother': 2}, changeflags={'Mother': 1},
-                   cost=[['Fate', -45, 0, 0]], complete=[['max', 'Fate', 5, 0, 0]],
-                   )
-    Quests(parent=parent, name='Talk to Mother 2/10', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Mother': 2}, closingflags={'Mother': 3}, changeflags={'Mother': 1},
-                   cost=[['Fate', -20, 0, 0]], complete=[['max', 'Fate', 5, 0, 0]],
-                   )
-    Quests(parent=parent, name='Talk to Mother 3/10', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Mother': 3}, closingflags={'Mother': 4}, changeflags={'Mother': 1},
-                   cost=[['Fate', -25, 0, 0]], complete=[['max', 'Fate', 5, 0, 0]],
-                   )
-    Quests(parent=parent, name='Talk to Mother 4/10', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Mother': 4}, closingflags={'Mother': 5}, changeflags={'Mother': 1},
-                   cost=[['Fate', -30, 0, 0]], complete=[['max', 'Fate', 5, 0, 0]],
-                   )
-    Quests(parent=parent, name='Talk to Mother 5/10', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Mother': 5}, closingflags={'Mother': 6}, changeflags={'Mother': 1},
-                   cost=[['Weeds', -5, 0, 0]], complete=[['max', 'Weeds', 10, 0, 0]],
-                   )
-    Quests(parent=parent, name='Talk to Mother 6/10', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Mother': 6}, closingflags={'Mother': 7}, changeflags={'Mother': 1},
-                   cost=[['Herbs', -1, 0, 0]], complete=[['max', 'Herbs', 3, 0, 0]],
-                   )
-    Quests(parent=parent, name='Talk to Mother 7/10', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Mother': 7}, closingflags={'Mother': 8}, changeflags={'Mother': 1},
-                   cost=[['Herbs', -4, 0, 0]], complete=[['max', 'Herbs', 3, 0, 0]],
-                   )
-    Quests(parent=parent, name='Talk to Mother 8/10', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Mother': 8}, closingflags={'Mother': 9}, changeflags={'Mother': 1},
-                   cost=[['Herbs', -7, 0, 0]], complete=[['max', 'Herbs', 3, 0, 0]],
-                   )
-    Quests(parent=parent, name='Talk to Mother 9/10', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Mother': 9}, closingflags={'Mother': 10}, changeflags={'Mother': 1},
-                   cost=[['Herbs', -10, 0, 0]],
-                   complete=[['stat', 'hp', 5, 0, 0], ['stat', 'patk', 5, 0, 0], ['stat', 'pdef', 5, 0, 0],
-                             ['stat', 'matk', 5, 0, 0], ['stat', 'mdef', 5, 0, 0]],
-                   )
-    Quests(parent=parent, name='Talk to Mother 10/10', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Mother': 10}, closingflags={'Mother': 11}, changeflags={'Mother': 1},
-                   cost=[['Fate', -40, 0, 0]], complete=[['max', 'Fate', 10, 0, 0]],
-                   )
-    Quests(parent=parent, name='Talk to Brother 1/3', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Brother': 1}, closingflags={'Brother': 2}, changeflags={'Brother': 1},
-                   cost=[['Fate', -80, 0, 0]], complete=[['max', 'Fate', 10, 0, 0]],
-                   )
-    Quests(parent=parent, name='Talk to Brother 2/3', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Brother': 2}, closingflags={'Brother': 3}, changeflags={'Brother': 1},
-                   cost=[['Fate', -90, 0, 0]], complete=[['max', 'Fate', 10, 0, 0]]
-                   )
-    Quests(parent=parent, name='Talk to Brother 3/3', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Brother': 3}, closingflags={'Brother': 4}, changeflags={'Brother': 1},
-                   cost=[['Fate', -100, 0, 0]], complete=[['max', 'Fate', 10, 0, 0]]
-                   )
-    Quests(parent=parent, name='Talk with Billy the kid 1/3', isvisible=True,
-                   location=['Village', 'Village'],
-                   unlockflags={'Mother': 1}, closingflags={'Billy': 1}, changeflags={'Billy': 1},
-                   cost=[['Butterfly wings', -5, 0, 0]], complete=[['max', 'Butterfly wings', 5, 0, 0]],
-                   )
-    Quests(parent=parent, name='Talk with Billy the kid 2/3', isvisible=True,
-                   location=['Village', 'Village'],
-                   unlockflags={'Billy': 1}, closingflags={'Billy': 2}, changeflags={'Billy': 1},
-                   cost=[['Butterfly wings', -10, 0, 0]], complete=[['max', 'Butterfly wings', 5, 0, 0]],
-                   )
-    Quests(parent=parent, name='Talk with Billy the kid 3/3', isvisible=True,
-                   location=['Village', 'Village'],
-                   unlockflags={'Billy': 2}, closingflags={'Billy': 3}, changeflags={'Billy': 1},
-                   cost=[['Butterfly wings', -20, 0, 0]],
-                   complete=[['stat', 'hp', 0.5, 0, 0], ['stat', 'patk', 0.5, 0, 0], ['stat', 'pdef', 0.5, 0, 0],
-                             ['stat', 'matk', 0.5, 0, 0], ['stat', 'mdef', 0.5, 0, 0]],
-                   )
-    Quests(parent=parent, name='Talk to the zen master 1/5', isvisible=True,
-                   location=['Village', 'Village'],
-                   unlockflags={'Mother': 5}, closingflags={'Zen': 1}, changeflags={'Zen': 1},
-                   cost=[['Gold', -20, 0, 0]], complete=[['max', 'Fate', 10, 0, 0]],
-                   )
-    Quests(parent=parent, name='Talk to the zen master 2/5', isvisible=True,
-                   location=['Village', 'Village'],
-                   unlockflags={'Zen': 1}, closingflags={'Zen': 2}, changeflags={'Zen': 1},
-                   cost=[['Gold', -30, 0, 0]], complete=[['max', 'Fate', 10, 0, 0]],
-                   )
-    Quests(parent=parent, name='Talk to the zen master 3/5', isvisible=True,
-                   location=['Village', 'Village'],
-                   unlockflags={'Zen': 2}, closingflags={'Zen': 3}, changeflags={'Zen': 1},
-                   cost=[['Gold', -40, 0, 0]],
-                   complete=[['stat', 'hp', 0.5, 0, 0], ['stat', 'patk', 0.5, 0, 0], ['stat', 'pdef', 0.5, 0, 0],
-                             ['stat', 'matk', 0.5, 0, 0], ['stat', 'mdef', 0.5, 0, 0]]
-                   )
-    Quests(parent=parent, name='Talk to the zen master 4/5', isvisible=True,
-                   location=['Village', 'Village'],
-                   unlockflags={'Zen': 3}, closingflags={'Zen': 4}, changeflags={'Zen': 1},
-                   cost=[['Gold', -50, 0, 0]],
-                   complete=[['stat', 'hp', 0.5, 0, 0], ['stat', 'patk', 0.5, 0, 0], ['stat', 'pdef', 0.5, 0, 0],
-                             ['stat', 'matk', 0.5, 0, 0], ['stat', 'mdef', 0.5, 0, 0]]
-                   )
-    Quests(parent=parent, name='Talk to the zen master 5/5', isvisible=True,
-                   location=['Village', 'Village'],
-                   unlockflags={'Zen': 4}, closingflags={'Zen': 5}, changeflags={'Zen': 1},
-                   cost=[['Gold', -60, 0, 0]],
-                   complete=[['stat', 'hp', 0.5, 0, 0], ['stat', 'patk', 0.5, 0, 0], ['stat', 'pdef', 0.5, 0, 0],
-                             ['stat', 'matk', 0.5, 0, 0], ['stat', 'mdef', 0.5, 0, 0]]
-                   )
-    Quests(parent=parent, name='Butcher shop 1/6', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Mother': 11}, closingflags={'Butcher': 1}, changeflags={'Butcher': 1},
-                   cost=[['Frog legs', -5, 0, 0]], complete=[['max', 'Frog legs', 5, 0, 0]]
-                   )
-    Quests(parent=parent, name='Butcher shop 2/6', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Butcher': 1}, closingflags={'Butcher': 2}, changeflags={'Butcher': 1},
-                   cost=[['Frog legs', -10, 0, 0]], complete=[['max', 'Frog legs', 5, 0, 0]]
-                   )
-    Quests(parent=parent, name='Butcher shop 3/6', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Butcher': 2}, closingflags={'Butcher': 3}, changeflags={'Butcher': 1},
-                   cost=[['Frog legs', -10, 0, 0]],
-                   complete=[['stat', 'hp', 0.5, 0, 0], ['stat', 'patk', 0.5, 0, 0], ['stat', 'pdef', 0.5, 0, 0],
-                             ['stat', 'matk', 0.5, 0, 0], ['stat', 'mdef', 0.5, 0, 0]]
-                   )
-    Quests(parent=parent, name='Butcher shop 4/6', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Butcher': 3, 'Brother': 1}, closingflags={'Butcher': 4}, changeflags={'Butcher': 1},
-                   cost=[['Cow hide', -5, 0, 0]],
-                   complete=[['max', 'Cow hide', 5, 0, 0]]
-                   )
-    Quests(parent=parent, name='Butcher shop 5/6', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Butcher': 4}, closingflags={'Butcher': 5}, changeflags={'Butcher': 1},
-                   cost=[['Cow hide', -10, 0, 0]],
-                   complete=[['max', 'Cow hide', 5, 0, 0]]
-                   )
-    Quests(parent=parent, name='Butcher shop 6/6', isvisible=True,
-                   location=['Village', 'Home'],
-                   unlockflags={'Butcher': 5}, closingflags={'Butcher': 6}, changeflags={'Butcher': 1},
-                   cost=[['Cow hide', -10, 0, 0]],
-                   complete=[['stat', 'hp', 0.5, 0, 0], ['stat', 'patk', 0.5, 0, 0], ['stat', 'pdef', 0.5, 0, 0],
-                             ['stat', 'matk', 0.5, 0, 0], ['stat', 'mdef', 0.5, 0, 0]]
-                   )
+    questlines.createquests(parent)
 
     '''Quests(parent=parent, name='Wood quest2', isvisible=True,
                    location=['Village', 'old house'],
@@ -1141,13 +935,13 @@ def createenergies(parent):
            regen=0)
     Energy(parent=parent, name='Mana', quantity=0, max=1, unlockflags={'Father': 14}, color=(0, 0, 205),
            isvisible=False,
-           regen=1 / 240)
+           regen=1 / 120)
     Energy(parent=parent, name='Fire', quantity=0, max=1, unlockflags={'Father': 14}, color=orange, isvisible=False,
-           regen=1 / 240)
+           regen=1 / 120)
     Energy(parent=parent, name='Wind', quantity=0, max=1, unlockflags={'Father': 14}, color=teal, isvisible=False,
-           regen=1 / 240)
+           regen=1 / 120)
     Energy(parent=parent, name='Earth', quantity=0, max=1, unlockflags={'Father': 14}, color=brown, isvisible=False,
-           regen=1 / 240)
+           regen=1 / 120)
 
 
 def createdungeons(parent):
