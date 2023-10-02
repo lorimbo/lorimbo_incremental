@@ -43,6 +43,7 @@ class Gamelogic:
     mainelements = []
     mainsubelements = []
     partyelements = []
+    availableskills=[initialization_elements.Skill('Tackle', 7, 2.8, 'Phys', None, None, None, None)]
     instantactions = {}
     proceedactions={}
     longactions = {}
@@ -67,6 +68,7 @@ class Gamelogic:
     remove = None
     add = None
     levelup = None
+    changeskill = None
     partylenmax = 5
     fps = 120
     volume = 0.2
@@ -156,41 +158,34 @@ class Gamelogic:
                             else:
                                 cls.bottomlog.insert(0, [f"Unlocked the {action.name} action!"])
                         action.isvisible = True
-        for element in cls.mainelements:
-            temp = 0
-            if element.closingflags is not None:
-                for key in element.closingflags.keys():
-                    if element.closingflags[key] <= cls.flags[key]:
-                        temp = 1
-            if element.unlockflags is not None:
-                for key in element.unlockflags.keys():
-                    if element.unlockflags[key] > cls.flags[key]:
-                        temp = 1
-            if temp:
-                element.isvisible = False
-            else:
-                if not element.isvisible:
-                    now = datetime.datetime.now()
-                    cls.bottomtimes.insert(0,str(now.time())[0:8])
-                    cls.bottomlog.insert(0,[f"Unlocked the {element.name} Menu!"])
-                element.isvisible = True
-        for key in cls.resources:
-            for resource in cls.resources[key]:
-                temp = 1
-                if resource.unlockflags is not None:
-                    for key2 in resource.unlockflags.keys():
-                        if resource.unlockflags[key2] > cls.flags[key2]:
-                            temp = 0
+        for menulist in [cls.mainelements,cls.mainsubelements,cls.partyelements]:
+            for element in menulist:
+                temp = 0
+                if element.closingflags is not None:
+                    for key in element.closingflags.keys():
+                        if element.closingflags[key] <= cls.flags[key]:
+                            temp = 1
+                if element.unlockflags is not None:
+                    for key in element.unlockflags.keys():
+                        if element.unlockflags[key] > cls.flags[key]:
+                            temp = 1
                 if temp:
-                    resource.isvisible = True
-        for key in cls.mainsubelements:
-            temp = 1
-            if key.unlockflags is not None:
-                for key2 in key.unlockflags.keys():
-                    if key.unlockflags[key2] > cls.flags[key2]:
-                        temp = 0
-            if temp:
-                key.isvisible = True
+                    element.isvisible = False
+                else:
+                    if not element.isvisible:
+                        now = datetime.datetime.now()
+                        cls.bottomtimes.insert(0,str(now.time())[0:8])
+                        cls.bottomlog.insert(0,[f"Unlocked the {element.name} Menu!"])
+                    element.isvisible = True
+            for key in cls.resources:
+                for resource in cls.resources[key]:
+                    temp = 1
+                    if resource.unlockflags is not None:
+                        for key2 in resource.unlockflags.keys():
+                            if resource.unlockflags[key2] > cls.flags[key2]:
+                                temp = 0
+                    if temp:
+                        resource.isvisible = True
 
 
     @classmethod
@@ -535,7 +530,14 @@ class Gamelogic:
     @classmethod
     def regenpokemonhealt(cls, list):
         for pokemon in list:
-            pokemon.currenthp = pokemon.actualhp
+            pokemon.currenthp = pokemon.actualhpù
+
+    @classmethod
+    def changeskillfunction(cls,pokemon,skill):
+        pokemon.skill=skill.copy()
+        cls.changeskill=None
+        cls.partysubtab='Party selection'
+
 
     @classmethod
     def frameaction(cls):

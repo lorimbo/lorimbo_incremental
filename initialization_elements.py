@@ -28,6 +28,8 @@ class Skill:
         self.type = type
         self.effect = effect
         self.unlockflags = unlockflags
+    def copy(self):
+        return copy.deepcopy(self)
 
     def useskill(self, user, target):
         multiplier = 1 + self.power / 10
@@ -735,9 +737,11 @@ class Pokemon(menuelement):
         if skill is not None:
             self.skill = Skill(*skill)
             self.cd = self.skill.interval * 120
+            self.originalskill = Skill(*skill)
         else:
             self.skill = Skill('Tackle', 7, 2.8, 'Phys', None, None, None, None)
             self.cd = self.skill.interval * 120
+            self.originalskill=Skill('Tackle', 7, 2.8, 'Phys', None, None, None, None)
 
     def copy(self):
         return copy.deepcopy(self)
@@ -813,23 +817,22 @@ def createmenu(parent):
 def createmainsubmenu(parent):
     menuelement(parent=parent, name='Village', isvisible=True, elementlist=parent.mainsubelements)
     menuelement(parent=parent, name='Forest', elementlist=parent.mainsubelements,
-                unlockflags={'Main': 1})
+                unlockflags={'Main': 2})
     menuelement(parent=parent, name='City', elementlist=parent.mainsubelements, unlockflags={'Main': 2})
     menuelement(parent=parent, name='Coast', elementlist=parent.mainsubelements,
-                unlockflags={'Main': 1})
+                unlockflags={'Main': 2})
     menuelement(parent=parent, name='Jungle', elementlist=parent.mainsubelements,
-                unlockflags={'Main': 1})
+                unlockflags={'Main': 2})
     menuelement(parent=parent, name='Astral plane', elementlist=parent.mainsubelements,
-                unlockflags={'Main': 1})
+                unlockflags={'Main': 2})
 
 
 def createpartytabs(parent):
     menuelement(parent=parent, name='Party selection', isvisible=True, elementlist=parent.partyelements)
     menuelement(parent=parent, name='Level up', isvisible=True, elementlist=parent.partyelements)
-    menuelement(parent=parent, name='Quest', isvisible=False, elementlist=parent.partyelements, unlockflags={'Main': 2})
-    menuelement(parent=parent, name='Bestiary', isvisible=False, elementlist=parent.partyelements,
-                unlockflags={'Main': 2})
-    menuelement(parent=parent, name='SKill', isvisible=False, elementlist=parent.partyelements, unlockflags={'Main': 2})
+    menuelement(parent=parent, name='Bestiary', isvisible=True, elementlist=parent.partyelements,
+                unlockflags={'Main': 0})
+    menuelement(parent=parent, name='Skill', isvisible=True, elementlist=parent.partyelements, unlockflags={'Main': 0})
 
 
 def createpokemon(parent):

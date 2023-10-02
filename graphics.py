@@ -870,10 +870,20 @@ class Graphics:
                         tooltip = tooltips.pokemontooltip(pokemon, 'In the party')
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
+                imgui.same_line(position=cls.resizewidth(840))
+                if cls.disabledecorator(imgui.button, False)(f'Skill##{num}', width=cls.resizewidth(90)):
+                    Gamelogic.changeskill = Gamelogic.party[num]
+                    Gamelogic.partysubtab='Skill'
+                if imgui.is_item_hovered():
+                    with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
+                        actiondecorator(imgui.text, cls.theme)(f"{pokemon.name}             lvl{numcon(pokemon.lvl)}")
+                        tooltip = tooltips.pokemontooltip(pokemon, 'In the party')
+                        for i in tooltip:
+                            actiondecorator(imgui.text, cls.theme)(f"{i}")
 
-                imgui.same_line()
+
                 use = (pokemon.name == 'You')
-                imgui.same_line(position=cls.resizewidth(850))
+                imgui.same_line(position=cls.resizewidth(940))
                 if cls.disabledecorator(imgui.button, use)(f'Remove##{num}', width=cls.resizewidth(90)) and not use:
                     Gamelogic.remove = num
                 if imgui.is_item_hovered():
@@ -1341,6 +1351,63 @@ class Graphics:
             backgroundecorator(imgui.begin, cls.theme)('Dungeon', False, cls.flags)
 
             imgui.end()
+    @classmethod
+    def draw_skill_menu(cls):
+        imgui.set_next_window_size(cls.resizewidth(1050), 16 + cls.resizeheight(335))
+        imgui.set_next_window_position(cls.resizewidth(120), 16 + cls.resizeheight(145))
+        backgroundecorator(imgui.begin, cls.theme)('Skills', False, cls.flags)
+        if Gamelogic.changeskill is not None:
+            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 30)}']):
+                actiondecorator(imgui.text, cls.theme)(Gamelogic.changeskill.name)
+                imgui.same_line(position=240)
+                actiondecorator(imgui.text, cls.theme)('Name')
+                imgui.same_line(position=490)
+                actiondecorator(imgui.text, cls.theme)('Power')
+                imgui.same_line(position=740)
+                actiondecorator(imgui.text, cls.theme)('Interval')
+                actiondecorator(imgui.text,cls.theme)('Default skill')
+            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
+                imgui.begin_child('Default skill',height=cls.resizeheight(25),border=True)
+                imgui.same_line(position=250)
+                actiondecorator(imgui.text,cls.theme)(Gamelogic.changeskill.originalskill.name)
+                imgui.same_line(position=500)
+                actiondecorator(imgui.text, cls.theme)(f'{Gamelogic.changeskill.originalskill.power}')
+                imgui.same_line(position=750)
+                actiondecorator(imgui.text, cls.theme)(f'{Gamelogic.changeskill.originalskill.interval}')
+                imgui.end_child()
+            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 30)}']):
+                actiondecorator(imgui.text, cls.theme)('Active skill')
+            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
+                imgui.begin_child('Active skill', height=cls.resizeheight(25), border=True)
+                imgui.same_line(position=250)
+                actiondecorator(imgui.text, cls.theme)(Gamelogic.changeskill.skill.name)
+                imgui.same_line(position=500)
+                actiondecorator(imgui.text, cls.theme)(f'{Gamelogic.changeskill.skill.power}')
+                imgui.same_line(position=750)
+                actiondecorator(imgui.text, cls.theme)(f'{Gamelogic.changeskill.skill.interval}')
+                imgui.same_line(position=940)
+                if actiondecorator(imgui.button,cls.theme)('Remove',cls.resizewidth(90),cls.resizeheight(15)):
+                    Gamelogic.changeskill.skill=Gamelogic.changeskill.originalskill.copy()
+                    Gamelogic.changeskill=None
+                    Gamelogic.partysubtab='Party selection'
+                imgui.end_child()
+            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 30)}']):
+                actiondecorator(imgui.text, cls.theme)('Skill list')
+            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
+                imgui.begin_child('Skill list', border=True)
+                for num,skill in enumerate(Gamelogic.availableskills):
+                    imgui.same_line(position=250)
+                    actiondecorator(imgui.text, cls.theme)(skill.name)
+                    imgui.same_line(position=500)
+                    actiondecorator(imgui.text, cls.theme)(f'{skill.power}')
+                    imgui.same_line(position=750)
+                    actiondecorator(imgui.text, cls.theme)(f'{skill.interval}')
+                    imgui.same_line(position=940)
+                if actiondecorator(imgui.button,cls.theme)(f'Assign###{num}',cls.resizewidth(90),cls.resizeheight(15)):
+                    Gamelogic.changeskillfunction(Gamelogic.changeskill,skill)
+                imgui.end_child()
+
+        imgui.end()
 
     @classmethod
     def creategui(cls):
@@ -1364,6 +1431,8 @@ class Graphics:
                 cls.draw_party_menu()
             elif Gamelogic.partysubtab == 'Level up':
                 cls.draw_levelup_menu()
+            elif Gamelogic.partysubtab == 'Skill':
+                cls.draw_skill_menu()
         if Gamelogic.tab == 'Training':
             cls.draw_training()
         if Gamelogic.tab == 'Dungeon':
