@@ -29,5 +29,6 @@ rename things to avoid being copyrighted
 add logs when you unlock new areas in the submenu(like Forest)
 dungeon log order should be reversed
 dungeon log should cut for words instead of randomly
+(VERY DANGEROUS) INTRODUCE TIME TRAVEL INTO THE QUEST AUTOMATIZATION (AKA MAKE QUESTS FLOW INTO PREVIOUS QUESTS)
 
 BUGS:

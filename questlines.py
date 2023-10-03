@@ -241,7 +241,7 @@ def testquest(parent):
     Quests(parent=parent, name='Quest 3', cost=[['Leather', -10, 0, 0], ['Wood', -25, 0, 0]],
            complete=[['max', 'Wood', 10, 0, 0], ['resources', 'Wood', 10, 0, 0], ['stats', 'patk', 0.5, 0, 0]],
            location=['Village', 'Field'], unlockflags={'Quest 3': 1}, closingflags={'Quest 3': 2},
-           changeflags={'Quest 3': 1, 'Quest 5': 1, 'Quest 2': 1})
+           changeflags={'Quest 2': 1, 'Quest 3': 1, 'Quest 5': 1})
     Quests(parent=parent, name='Quest 5', cost=[['Leather', -10, 0, 0], ['Wood', -25, 0, 0]],
            complete=[['max', 'Wood', 10, 0, 0], ['resources', 'Wood', 10, 0, 0], ['stats', 'patk', 0.5, 0, 0]],
            location=['Village', 'Field'], unlockflags={'Quest 5': 1}, closingflags={'Quest 5': 2},
@@ -257,7 +257,7 @@ def testquest(parent):
     Quests(parent=parent, name='Quest 2', cost=[['Leather', -10, 0, 0], ['Wood', -25, 0, 0]],
            complete=[['max', 'Wood', 10, 0, 0], ['resources', 'Wood', 10, 0, 0], ['stats', 'patk', 0.5, 0, 0]],
            location=['Village', 'Field'], unlockflags={'Quest 2': 1}, closingflags={'Quest 2': 2},
-           changeflags={'Quest 2': 1, 'Quest 4': 1, 'Quest 3': 1})
+           changeflags={'Quest 3': 1, 'Quest 2': 1, 'Quest 4': 1})
     Quests(parent=parent, name='Quest 4', cost=[['Leather', -10, 0, 0], ['Wood', -25, 0, 0]],
            complete=[['max', 'Wood', 10, 0, 0], ['resources', 'Wood', 10, 0, 0], ['stats', 'patk', 0.5, 0, 0]],
            location=['Village', 'Field'], unlockflags={'Quest 4': 1}, closingflags={'Quest 4': 2},
@@ -270,3 +270,31 @@ def testquest(parent):
            complete=[['max', 'Wood', 10, 0, 0], ['resources', 'Wood', 10, 0, 0], ['stats', 'patk', 0.5, 0, 0]],
            location=['Village', 'Field'], unlockflags={'Quest 8': 1}, closingflags={'Quest 8': 2},
            changeflags={'Quest 8': 1, 'Quest 7': 1})
+    Quests(parent=parent, name='Quest M1', cost=[['Leather', -10, 0, 0], ['Wood', -25, 0, 0]],
+           complete=[['max', 'Wood', 10, 0, 0], ['resources', 'Wood', 10, 0, 0], ['stats', 'patk', 0.5, 0, 0]],
+           location=['Village', 'Field'], unlockflags={'Quest M1': 1}, closingflags={'Quest M1': 2},
+           changeflags={'Quest M1': 1, 'Quest M2': 1, 'Quest M3': 1, 'Quest M4': 1})
+    Quests(parent=parent, name='Quest M2', cost=[['Leather', -10, 0, 0], ['Wood', -25, 0, 0]],
+           complete=[['max', 'Wood', 10, 0, 0], ['resources', 'Wood', 10, 0, 0], ['stats', 'patk', 0.5, 0, 0]],
+           location=['Village', 'Field'], unlockflags={'Quest M2': 1}, closingflags={'Quest M2': 2},
+           changeflags={'Quest M2': 1, 'Quest M5': 1})
+    Quests(parent=parent, name='Quest M5', cost=[['Leather', -10, 0, 0], ['Wood', -25, 0, 0]],
+           complete=[['max', 'Wood', 10, 0, 0], ['resources', 'Wood', 10, 0, 0], ['stats', 'patk', 0.5, 0, 0]],
+           location=['Village', 'Field'], unlockflags={'Quest M5': 1}, closingflags={'Quest M5': 2},
+           changeflags={'Quest M6': 101, 'Quest M5': 1, 'Quest M7': 1})
+    Quests(parent=parent, name='Quest M7', cost=[['Leather', -10, 0, 0], ['Wood', -25, 0, 0]],
+           complete=[['max', 'Wood', 10, 0, 0], ['resources', 'Wood', 10, 0, 0], ['stats', 'patk', 0.5, 0, 0]],
+           location=['Village', 'Field'], unlockflags={'Quest M7': 1}, closingflags={'Quest M7': 3},
+           changeflags={'Quest M7': 2, })
+    Quests(parent=parent, name='Quest M6', cost=[['Leather', -10, 0, 0], ['Wood', -25, 0, 0]],
+           complete=[['max', 'Wood', 10, 0, 0], ['resources', 'Wood', 10, 0, 0], ['stats', 'patk', 0.5, 0, 0]],
+           location=['Village', 'Field'], unlockflags={'Quest M6': 1}, closingflags={'Quest M6': 3},
+           changeflags={'Quest M5': 100, 'Quest M6': 2, 'Quest M7': 1})
+    Quests(parent=parent, name='Quest M3', cost=[['Leather', -10, 0, 0], ['Wood', -25, 0, 0]],
+           complete=[['max', 'Wood', 10, 0, 0], ['resources', 'Wood', 10, 0, 0], ['stats', 'patk', 0.5, 0, 0]],
+           location=['Village', 'Field'], unlockflags={'Quest M3': 1}, closingflags={'Quest M3': 2},
+           changeflags={'Quest M3': 1, 'Quest M6': 1})
+    Quests(parent=parent, name='Quest M4', cost=[['Leather', -10, 0, 0], ['Wood', -25, 0, 0]],
+           complete=[['max', 'Wood', 10, 0, 0], ['resources', 'Wood', 10, 0, 0], ['stats', 'patk', 0.5, 0, 0]],
+           location=['Village', 'Field'], unlockflags={'Quest M4': 1}, closingflags={'Quest M4': 2},
+           changeflags={'Quest M4': 1, 'Quest M6': 1})

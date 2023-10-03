@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 import autopep8
 
 
-tree = ET.parse('lock3.drawio')
+tree = ET.parse('hi (2).drawio')
 
 def convertcost(string):
     finalproduct='['
@@ -67,9 +67,10 @@ for diagram in tree.getroot():
     idlist=[]
     idfinder(diagram,idlist)
     lines=[]
+
     for line in [e for e in idlist if 'target' in e.attrib]:
         lines.append([line.attrib['source'],line.attrib['target'],'fillColor=#f8cecc' not in line.attrib['style']])
-        print(line.attrib['style'])
+        redlines=[line for line in lines if not line[2]]
     objects=[e for e in idlist if 'target' not in e.attrib and len(e.attrib['label'])>=3]
     def getquestleng(quest,num=0):
         num+=1
@@ -82,10 +83,15 @@ for diagram in tree.getroot():
 
     def createquest(quest,questlineflag,questlineflagamount,listofidscreated=[]):
         isitamerge=len([e[0] for e in lines if e[1]==quest.attrib['id'] and e[2]])>1
-        childrenid=[e[1] for e in lines if e[0] == quest.attrib['id']]
+        childrenid=[e[1] for e in lines if e[0] == quest.attrib['id'] and e[2]]
+        locksid=[e[1] for e in redlines if e[0] == quest.attrib['id']]
+        childrenlocks=[]
         children=[]
+        for id in locksid:
+            childrenlocks.append([e for e in objects if e.attrib['id']==id][0])
         for id in childrenid:
             children.append([e for e in objects if e.attrib['id']==id][0])
+        #print(quest.attrib['label'],[child.attrib['label'] for child in childrenlocks])
         numberofchildren=len(children)
         if isitamerge:
             questlineflag=quest.attrib['label']
@@ -97,11 +103,14 @@ for diagram in tree.getroot():
         finalstring += 'unlockflags={'+f"'{questlineflag}':{questlineflagamount}"+'},'
         finalstring += 'closingflags={' + f"'{questlineflag}':{questlineflagamount+max(1,len([e[0] for e in lines if e[1]==quest.attrib['id'] and e[2]]))}" + '},'
         finalstring += 'changeflags={'
+        for i in range(len(childrenlocks)):
+            finalstring += f"'{childrenlocks[i].attrib['label']}':{len([e[0] for e in lines if e[1]==childrenlocks[i].attrib['id'] and e[2]])+99},"
         finalstring += f"'{questlineflag}':{max(1,len([e[0] for e in lines if e[1]==quest.attrib['id'] and e[2]]))},"
         for i in range(numberofchildren):
             finalstring+=f"'{children[i].attrib['label']}':1"
             if i!=numberofchildren-1:
                 finalstring+=','
+
         finalstring+='})'
         print(finalstring)
         listofidscreated.append(quest.attrib['id'])
