@@ -627,6 +627,12 @@ class Graphics:
                                 Gamelogic.activepartypokemon = 0
                                 Gamelogic.activeenemypokemon = 0
                                 Gamelogic.tab = 'Dungeon'
+                            if imgui.is_item_hovered():
+                                with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
+                                    tooltip = tooltips.dungeontooltip(dungeon)
+                                    for i in tooltip:
+                                        actiondecorator(imgui.text, cls.theme)(f"{i}")
+
                             if dungeon == Gamelogic.activedungeon:
                                 progressbardecorator(imgui.progress_bar, cls.theme)(
                                     (Gamelogic.activedungeon.floor + 1) / len(Gamelogic.activedungeon.currentlayout),
@@ -1274,6 +1280,7 @@ class Graphics:
                                    cls.resizeheight(50))
         imgui.set_next_window_position(0, 0)
         backgroundecorator(imgui.begin, cls.theme)('Topbar', False, cls.flags)
+        cls.theme_ = actiondecorator(imgui.text, cls.theme)(Gamelogic.fpscounter)
 
         imgui.end()
 

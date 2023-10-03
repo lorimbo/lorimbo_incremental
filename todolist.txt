@@ -11,7 +11,6 @@ add a shop that allowes you to buy skills
 dungeon tooltips
 offline rewards
 name/title
-put fps in the right place
 magic damage vs physical damage
 add rare enemies to dungeons
 

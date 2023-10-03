@@ -72,6 +72,7 @@ class Gamelogic:
     changeskill = None
     partylenmax = 5
     fps = 120
+    fpscounter=''
     volume = 0.2
     musicvolume = 0.3
 

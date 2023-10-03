@@ -66,7 +66,40 @@ def numcon(n):
     elif n >= 1000:
         return f'{round(n / 1000, 2)}K'
     return str(round(n, 1))
+def dungeontooltip(dungeon):
+    finaltooltip = []
+    finaltooltip.append(f'{dungeon.name}')
+    mainenemieslist=''
+    for num,pokemon in enumerate(dungeon.monsterlist):
+        mainenemieslist+=f'{pokemon.name}'
+        if num!= len(dungeon.monsterlist)-1:
+            mainenemieslist+=','
+    if len(mainenemieslist):
+        finaltooltip.append(f"Main enemies: {mainenemieslist}")
+    if dungeon.boss is not None:
+        finaltooltip.append(f"Boss:{dungeon.boss.name}")
+    if len(dungeon.usualrewards):
+        rewardlist=''
+        for num,reward in enumerate(dungeon.usualrewards):
+            rewardlist += f'{reward[1]}:{reward[2]}'
+            if num != len(dungeon.usualrewards) - 1:
+                rewardlist += ','
+        finaltooltip.append(f"[Rewards]:")
+        finaltooltip.append(rewardlist)
+    if len(dungeon.firsttime):
+        rewardlist=''
+        for num,reward in enumerate(dungeon.firsttime):
+            if reward[0]=='maxlvl':
+                rewardlist+=f'Your max level +{reward[1]}'
+            elif reward[0]=='resource':
+                rewardlist += f'{reward[1]}:{reward[2]}'
+            if num != len(dungeon.firsttime) - 1:
+                rewardlist += ','
+        finaltooltip.append(f"[First time clear]:")
+        finaltooltip.append(rewardlist)
 
+
+    return finaltooltip
 def templatetooltip(partytemplate):
     finaltooltip = []
     finaltooltip.append(f'Party')
@@ -75,7 +108,7 @@ def templatetooltip(partytemplate):
         finaltooltip.append(f'-{pokemon.skill.name}')
     return finaltooltip
 
-def pokemontooltip(pokemon, status, soul=None, cost=None):
+def pokemontooltip(pokemon, status, soul=None):
     finaltooltip = []
     if pokemon.name in pokemondescription.keys():
         for i in pokemondescription[pokemon.name]:

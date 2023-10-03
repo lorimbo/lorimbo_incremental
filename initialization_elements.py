@@ -287,7 +287,7 @@ class Quests(menuelement):
                         else:
                             temp2=1
             if not temp2:
-                self.docomplete()
+                self.docomplete = self.docomplete()
         self.parent.quest = None
 
     def docomplete(self):
