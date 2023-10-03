@@ -147,14 +147,10 @@
             ]
       },
       "flags": {
-            "Main": 0,
-            "Popup": 1,
-            "Dubious home": 0,
-            "Father": 0,
-            "Mother": 0,
-            "Billy": 0,
-            "Zen": 0,
-            "Butcher": 0,
-            "Brother": 0
-      }
+            "Popup": 1
+     },
+      "templates": [
+            [],
+            []
+      ]
 }
