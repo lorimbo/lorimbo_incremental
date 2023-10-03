@@ -439,6 +439,9 @@ class Graphics:
                         use = button.isdisabled
                         if cls.disabledecorator(imgui.button, use)(button.name, cls.resizewidth(160),
                                                                    cls.resizeheight(50)) and not button.isdisabled:
+                            hit = pygame.mixer.Sound('Sounds/button.mp3')
+                            hit.set_volume(Gamelogic.volume)
+                            pygame.mixer.Sound.play(hit)
                             if button.name=='Rest':
                                 for key in Gamelogic.longactions:
                                     for e in Gamelogic.longactions[key]:
@@ -482,6 +485,9 @@ class Graphics:
                             use = button.isdisabled
                             if cls.disabledecorator(imgui.button, use)(button.name, cls.resizewidth(160),
                                                                        cls.resizeheight(50)) and not button.isdisabled:
+                                hit = pygame.mixer.Sound('Sounds/button.mp3')
+                                hit.set_volume(Gamelogic.volume)
+                                pygame.mixer.Sound.play(hit)
                                 button.activation()
                             if imgui.is_item_hovered():
                                 with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
@@ -621,6 +627,9 @@ class Graphics:
                             use = dungeon.isdisabled
                             if cls.disabledecorator(imgui.button, use)(dungeon.name, cls.resizewidth(160),
                                                                        cls.resizeheight(50)) and not dungeon.isdisabled:
+                                hit = pygame.mixer.Sound('Sounds/button.mp3')
+                                hit.set_volume(Gamelogic.volume)
+                                pygame.mixer.Sound.play(hit)
                                 if Gamelogic.activedungeon is None or not Gamelogic.activedungeon.name == dungeon.name:
                                     dungeon.generate()
                                 Gamelogic.activedungeon = dungeon

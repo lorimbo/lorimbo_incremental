@@ -818,8 +818,8 @@ def createmenu(parent):
     menuelement(parent=parent, name='Party', isvisible=True, elementlist=parent.mainelements)
     menuelement(parent=parent, name='Training', isvisible=False, elementlist=parent.mainelements,
                 unlockflags={'Main': 1})
-    menuelement(parent=parent, name='Routine', isvisible=False, elementlist=parent.mainelements,
-                unlockflags={'Main': 2})
+    menuelement(parent=parent, name='Shop', isvisible=False, elementlist=parent.mainelements,
+                unlockflags={'Mother': 1})
     menuelement(parent=parent, name='Story', isvisible=False, elementlist=parent.mainelements, unlockflags={'Main': 2})
     menuelement(parent=parent, name='Dungeon', isvisible=False, elementlist=parent.mainelements,
                 unlockflags={'Father': 7})

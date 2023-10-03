@@ -38,7 +38,7 @@
       "reserve": [],
       "resources": {
             "Wood": [
-                  1000,
+                  0,
                   1,
                   {
                         "Father": 2
@@ -110,21 +110,12 @@
                   0
             ],
             "Fate": [
-                  100,
+                  0,
                   10,
                   {
                         "Father": 0
                   },
                   "Fate",
-                  0
-            ],
-            "Leather": [
-                  1000,
-                  10,
-                  {
-                        "Father": 0
-                  },
-                  "Materials",
                   0
             ],
             "Physical gems": [
@@ -155,7 +146,9 @@
                   0
             ]
       },
-      "flags": {"Popup": 1,"Quest 1": 1,"Quest M1": 1},
+      "flags": {
+            "Popup": 1
+     },
       "templates": [
             [],
             []

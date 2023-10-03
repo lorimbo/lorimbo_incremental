@@ -560,6 +560,9 @@ class Gamelogic:
         if cls.levelup is not None:
             cls.levelupfunction(cls.levelup)
         if cls.action is not None:
+            hit = pygame.mixer.Sound('Sounds/button.mp3')
+            hit.set_volume(Gamelogic.volume)
+            pygame.mixer.Sound.play(hit)
             for key in cls.instantactions:
                 for i in cls.instantactions[key]:
                     if i.name == cls.action:
@@ -571,6 +574,9 @@ class Gamelogic:
                 if i.name == cls.action:
                     i.docost()
         if cls.quest is not None:
+            hit = pygame.mixer.Sound('Sounds/button.mp3')
+            hit.set_volume(Gamelogic.volume)
+            pygame.mixer.Sound.play(hit)
             for key in cls.quests[cls.subtab]:
                 for i in cls.quests[cls.subtab][key]:
                     if i.name == cls.quest:
