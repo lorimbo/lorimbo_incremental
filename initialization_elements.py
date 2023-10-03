@@ -244,6 +244,29 @@ class menuelement:
         if elementlist is not None:
             elementlist.append(self)
 
+class Shopitem(menuelement):
+    def __init__(self,cost,*args,**kwargs):
+        menuelement.__init__(self, *args, **kwargs)
+        self.cost=cost
+    def buy(self):
+        gold = [e for e in self.parent.resources['Gold'] if e.name == 'Gold'][0]
+        item=None
+        for category in self.parent.resources:
+            for object in self.parent.resources[category]:
+                if object.name==self.name:
+                    item=object
+        if item is not None:
+            if gold.quantity<self.cost or item.quantity>= item.max:
+                toopoor = pygame.mixer.Sound('Sounds/toopoor.mp3')
+                toopoor.set_volume(self.parent.volume)
+                pygame.mixer.Sound.play(toopoor)
+            else:
+                gold.quantity-=self.cost
+                item.quantity+=1
+                purchase = pygame.mixer.Sound('Sounds/purchase.mp3')
+                purchase.set_volume(self.parent.volume)
+                pygame.mixer.Sound.play(purchase)
+
 
 class Quests(menuelement):
     def __init__(self, cost=[['Wood', 0, 0, 0]],
@@ -487,7 +510,7 @@ class Instantactions(menuelement):
                 continue
             for x in self.parent.resources.keys():
                 for resource in [e for e in self.parent.resources[x] if e.name == costname]:
-                    if resource.quantity <= -i[1]:
+                    if resource.quantity < -i[1]:
                         temp = 1
         if not temp:
             for i in self.cost:
@@ -812,6 +835,10 @@ def getgamestate():
     Information = json.load(f)
     return Information
 
+def createshopitems(parent):
+    Shopitem(parent=parent,name='Frog legs',elementlist=parent.buyablematerials,cost=50)
+    Shopitem(parent=parent, name='Butterfly wings', elementlist=parent.buyablematerials, cost=50)
+
 
 def createmenu(parent):
     menuelement(parent=parent, name='Main', isvisible=True, elementlist=parent.mainelements)
@@ -819,7 +846,7 @@ def createmenu(parent):
     menuelement(parent=parent, name='Training', isvisible=False, elementlist=parent.mainelements,
                 unlockflags={'Main': 1})
     menuelement(parent=parent, name='Shop', isvisible=False, elementlist=parent.mainelements,
-                unlockflags={'Mother': 1})
+                unlockflags={'Mother': 5})
     menuelement(parent=parent, name='Story', isvisible=False, elementlist=parent.mainelements, unlockflags={'Main': 2})
     menuelement(parent=parent, name='Dungeon', isvisible=False, elementlist=parent.mainelements,
                 unlockflags={'Father': 7})
@@ -873,10 +900,10 @@ def createinstantactions(parent):
     Instantactions(parent=parent, name='Ponder the future', isvisible=True,
                    location='Common actions', cost=[['Energy', -1, 0, 0]],
                    complete=[['Fate', +1, 0, 0]])
-    Instantactions(parent=parent, name='Cut wood', isvisible=True, location='Woodcutting',
+    Instantactions(parent=parent, name='Cut wood', location='Woodcutting',
                    unlockflags={'Father': 2}, cost=[['Endurance', -1, 0, 0]],
                    complete=[['Wood', 1, 0, 0]])
-    Instantactions(parent=parent, name='"Eat" herbs', isvisible=True, location='Garden activities',
+    Instantactions(parent=parent, name='"Eat" herbs', location='Garden activities',
                    unlockflags={'Mother': 7}, cost=[['Herbs', -1, 0, 0]],
                    complete=[['Fate', 5, 0, 0]])
 
@@ -968,7 +995,7 @@ def createdungeons(parent):
             unlockflags={'Father': 12}, closingflags={}, usualreward=[['resource', 'Magical gems', 1, 0, 0]],
             firsttime=[['maxlvl', 6]],
             monsterlist=[parent.pokemonlist[i].copy() for i in range(1, 4)])
-    Dungeon(parent=parent, name="Training hall", location=['Village', 'Home'], changeflags={'Main': 1,'Popup':5},
+    Dungeon(parent=parent, name="Training hall", location=['Village', 'Home'], changeflags={'Main': 1},
             unlockflags={'Father': 7}, closingflags={}, usualreward=[['resource', 'Physical gems', 1, 0, 0]],
             firsttime=[['maxlvl', 5],['resource', 'Physical gems', 1, 0, 0],['resource', 'Magical gems', 1, 0, 0],['resource', 'Special gems', 1, 0, 0]],
             monsterlist=[], boss=parent.pokemonlist[0].copy())

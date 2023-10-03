@@ -61,24 +61,25 @@ Themes = {
               'darkerbuttoncolor': (128, 0, 128)}
 }
 
-Popups = {1: "[TUTORIAL] Welcome to Yet another shitty game!.I'm Lorimbo, the author of the game. You can start your adventure by "
+Popups = {1: "[TUTORIAL] Welcome to Yet another shitty game!. I'm Lorimbo, the author of the game. You can start your adventure by "
              "clicking on the 'Ponder the future' button in the 'Actions' section to gain some Fate. Fate is used as the "
              "main way of progressing through the storyline. Once you have 5 Fate click on the 'Talk to father 1/12' "
-             "quest to complete it and proceed with the story ",
+             "quest to complete it and proceed with the story. ",
           2:"[TUTORIAL] You can use the longaction 'Rest' to regain Energy and keep grinding Fate. Longactions go on in the "
             "background while you do other things.",
           3:"[TUTORIAL] You have now unlocked new actions, together with the Wood resource, try to proceed with the quest",
-          4:"[TUTORIAL] You have now unlocked your first dungeon!You can find it in the top right corner of the main section."
-            "In the dungeon your party will fight monsters and bosses!Dungeons also keep going on in the background."
-            "The dungeon progression status is indicated by the bar under it.If you defeat all the monsters in the dungeon or"
-            "if your party is defeated the dungeon will restart automatically.You can quit the current dungeon by going into the "
-            "'Dungeon tab in the left menu and pressing the 'Quit' button"
-            "Dungeons' layout and monsters are randomly generated.Monsters drop seeds and other useful loot that you can"
-            " use to become more powerful",
-          5:"[TUTORIAL] Congratulation adventurer,you've gotten your first seed!In the 'Party' tab in the left menu you can use Fate to level up your character and"
-            "seeds to improve your stats",
-          6:"[TUTORIAL] In this dungeon you will find your first actual monsters, they have a chance to drop their souls, which you can use in the 'Party' tab to"
-            " unlock them as party members and level them up.To do so,press the 'Summon' Button in the 'Level up' menu and then add them in the party in the 'Party selection menu"}
+          4:"[TUTORIAL] You have now unlocked your first dungeon! You can find it in the top right corner of the main section. "
+            "In the dungeon your party will fight monsters and bosses! Dungeons also keep going on in the background."
+            "The dungeon progression status is indicated by the bar under it. If you defeat all the monsters in the dungeon or "
+            "if your party is defeated the dungeon will restart automatically. You can quit the current dungeon by going into the "
+            "'Dungeon' tab in the left menu and pressing the 'Quit' button. "
+            "Dungeon layouts and monsters are randomly generated. Monsters drop seeds and other useful loot that you can "
+            "use to become more powerful",
+          5:"[TUTORIAL] Congratulation adventurer,you've gotten your first seed!In the 'Level up' tab in the 'Party menu' you can use Fate to level up your character and "
+            "seeds to improve your stats. Monsters will instead require souls to level up",
+          6:"[TUTORIAL] In this dungeon you will find your first actual monsters, they have a chance to drop their souls, which you can use in the 'Party' tab to "
+            "unlock them as party members and level them up. To do so,press the 'Summon' Button in the 'Level up' menu "
+            "and then add them in the party in the 'Party selection menu"}
 for e in Popups:
     Popups[e] = autospacer155(Popups[e],135)
 
@@ -1143,7 +1144,7 @@ class Graphics:
                     with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
                         actiondecorator(imgui.text, cls.theme)(f"{pokemon.name}             lvl{numcon(pokemon.lvl)}")
                         tooltip = tooltips.pokemontooltip(pokemon, 'Free',
-                                                          f'1 {pokemon.name} research:({numcon(Gamelogic.souls[pokemon.name])})')
+                                                          f'1 {pokemon.name} soul:({numcon(Gamelogic.souls[pokemon.name])})')
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
                 imgui.same_line(position=cls.resizewidth(530))
@@ -1312,6 +1313,13 @@ class Graphics:
             imgui.same_line(position=cls.resizewidth(630))
             if actiondecorator(imgui.button, cls.theme)('Back', cls.resizewidth(90), cls.resizeheight(30)):
                 Gamelogic.tab = 'Main'
+            imgui.same_line(position=cls.resizewidth(730))
+            if actiondecorator(imgui.button, cls.theme)('Restart', cls.resizewidth(90), cls.resizeheight(30)):
+                Gamelogic.activepartypokemon = 0
+                Gamelogic.activeenemypokemon = 0
+                Gamelogic.activedungeon.generate()
+                Gamelogic.activedungeon.log.append('You restarted the dungeon')
+                Gamelogic.regenpokemonhealt(Gamelogic.party[0:5])
 
             imgui.end_child()
             imgui.text('')
@@ -1365,14 +1373,6 @@ class Graphics:
 
         imgui.end()
 
-    @classmethod
-    def draw_training(cls):
-        imgui.set_next_window_size(cls.resizewidth(1075), cls.resizeheight(440))
-        imgui.set_next_window_position(cls.resizewidth(120), cls.resizeheight(55))
-        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
-            backgroundecorator(imgui.begin, cls.theme)('Dungeon', False, cls.flags)
-
-            imgui.end()
     @classmethod
     def draw_skill_menu(cls):
         imgui.set_next_window_size(cls.resizewidth(1050), 16 + cls.resizeheight(335))
@@ -1438,6 +1438,39 @@ class Graphics:
 
         imgui.end()
 
+
+    @classmethod
+    def draw_training(cls):
+        imgui.set_next_window_size(cls.resizewidth(1075), cls.resizeheight(440))
+        imgui.set_next_window_position(cls.resizewidth(120), cls.resizeheight(55))
+        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
+            backgroundecorator(imgui.begin, cls.theme)('Training', False, cls.flags)
+
+            imgui.end()
+    @classmethod
+    def draw_shop(cls):
+        imgui.set_next_window_size(cls.resizewidth(1075), cls.resizeheight(440))
+        imgui.set_next_window_position(cls.resizewidth(120), cls.resizeheight(55))
+        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
+            backgroundecorator(imgui.begin, cls.theme)('Shop', False, cls.flags)
+        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 30)}']):
+            actiondecorator(imgui.text,cls.theme)("Hart's sleazy shop")
+        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
+            for item in [e for e in Gamelogic.buyablematerials if e.isvisible]:
+                if cls.disabledecorator(imgui.button,False)(f'{item.cost} gold:{item.name}',cls.resizewidth(130),cls.resizeheight(30)):
+                    item.buy()
+
+
+
+
+
+
+
+
+        imgui.end()
+
+        pass
+
     @classmethod
     def creategui(cls):
         # window size thingy
@@ -1464,6 +1497,8 @@ class Graphics:
                 cls.draw_skill_menu()
         if Gamelogic.tab == 'Training':
             cls.draw_training()
+        if Gamelogic.tab == 'Shop':
+            cls.draw_shop()
         if Gamelogic.tab == 'Dungeon':
             cls.draw_dungeon()
         if Gamelogic.tab == 'Settings':

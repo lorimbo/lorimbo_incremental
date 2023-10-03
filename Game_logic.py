@@ -42,6 +42,7 @@ class Gamelogic:
     partysubtab = 'Party selection'
     mainelements = []
     mainsubelements = []
+    buyablematerials=[]
     partyelements = []
     availableskills=[initialization_elements.Skill('Tackle', 7, 2.8, 'Phys', None, None, None, None)]
     instantactions = {}
@@ -73,8 +74,8 @@ class Gamelogic:
     partylenmax = 5
     fps = 120
     fpscounter=''
-    volume = 0.2
-    musicvolume = 0.3
+    volume = 0.1
+    musicvolume = 0.1
 
 
     @classmethod
@@ -97,6 +98,8 @@ class Gamelogic:
         if cls.subtab in cls.arealongs.keys():
             for key in cls.arealongs[cls.subtab]:
                 areaactions.append(key)
+        for item in cls.buyablematerials:
+            areaactions.append(item)
         if cls.subtab in cls.proceedactions.keys():
             for action in cls.proceedactions[cls.subtab]:
                 temp = 0
@@ -253,6 +256,7 @@ class Gamelogic:
         cls.corestats = initialization_elements.Corestats(cls)
         initialization_elements.loadflags(cls)
         initialization_elements.createmenu(cls)
+        initialization_elements.createshopitems(cls)
         initialization_elements.createmainsubmenu(cls)
         initialization_elements.createinstantactions(cls)
         initialization_elements.createareainstant(cls)
@@ -540,6 +544,8 @@ class Gamelogic:
         pokemon.skill=skill.copy()
         cls.changeskill=None
         cls.partysubtab='Party selection'
+
+
 
 
     @classmethod

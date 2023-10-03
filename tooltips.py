@@ -67,8 +67,9 @@ def numcon(n):
         return f'{round(n / 1000, 2)}K'
     return str(round(n, 1))
 def dungeontooltip(dungeon):
-    finaltooltip = []
-    finaltooltip.append(f'{dungeon.name}')
+    finaltooltip = [f'{dungeon.name}']
+    if dungeon.cleared:
+        finaltooltip[0]+='(Cleared)'
     mainenemieslist=''
     for num,pokemon in enumerate(dungeon.monsterlist):
         mainenemieslist+=f'{pokemon.name}'
@@ -78,7 +79,7 @@ def dungeontooltip(dungeon):
         finaltooltip.append(f"Main enemies: {mainenemieslist}")
     if dungeon.boss is not None:
         finaltooltip.append(f"Boss:{dungeon.boss.name}")
-    if len(dungeon.usualrewards):
+    if dungeon.usualrewards is not None:
         rewardlist=''
         for num,reward in enumerate(dungeon.usualrewards):
             rewardlist += f'{reward[1]}:{reward[2]}'
@@ -86,7 +87,7 @@ def dungeontooltip(dungeon):
                 rewardlist += ','
         finaltooltip.append(f"[Rewards]:")
         finaltooltip.append(rewardlist)
-    if len(dungeon.firsttime):
+    if dungeon.firsttime is not None:
         rewardlist=''
         for num,reward in enumerate(dungeon.firsttime):
             if reward[0]=='maxlvl':

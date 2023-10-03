@@ -225,7 +225,7 @@ def fatherquestline(parent):
            )
     Quests(parent=parent, name='Talk to Father 12/12',
            location=['Village', 'Home'],
-           unlockflags={'Father': 11}, closingflags={'Father': 12}, changeflags={'Father': 1},
+           unlockflags={'Father': 11}, closingflags={'Father': 12}, changeflags={'Father': 1,'Popup':6},
            cost=[['Fate', -35, 0, 0]],
            complete=[['max', 'Fate', 10, 0, 0], ['stat', 'hp', 5, 0, 0], ['stat', 'patk', 5, 0, 0],
                      ['stat', 'pdef', 5, 0, 0],
