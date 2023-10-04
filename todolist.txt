@@ -7,12 +7,15 @@ party effects with tooltips
 implement pokemon/skill type 
 implement skills effects
 reserve is not ordered
-add a shop that allowes you to buy skills
-dungeon tooltips
+add a shop that allowes you to buy skills 
+add another one that allows you to buy materials
 offline rewards
 name/title
-magic damage vs physical damage
-add rare enemies to dungeons
+put magic/phys in skill selection
+add rare enemies to dungeons+ add them to the tooltip
+add story log
+add souls to the save
+gear for the monsters
 
 Organizing:
 change default cost,complete exc to None
@@ -25,9 +28,7 @@ implement exe(DONE)
 Usability:
 add bold helvetica and use it for energies
 rename things to avoid being copyrighted
-add logs when you unlock new areas in the submenu(like Forest)
-dungeon log order should be reversed
-dungeon log should cut for words instead of randomly
 (VERY DANGEROUS) INTRODUCE TIME TRAVEL INTO THE QUEST AUTOMATIZATION (AKA MAKE QUESTS FLOW INTO PREVIOUS QUESTS)
+add more tutorials for the start regarding souls, and how to level up exactly
 
 BUGS:

@@ -7,10 +7,10 @@
                   "dif": 1,
                   "satk": 1,
                   "sdif": 1,
-                  "maxlvl": 10,
+                  "maxlvl": 15,
                   "unlocked": 0,
-                  "lvl": 1,
-                  "phys": 0,
+                  "lvl": 15,
+                  "phys": 15,
                   "magic": 0,
                   "special": 0,
                   "drop": {
@@ -32,14 +32,203 @@
                                     10
                               ]
                         ]
-                  }
+                  },
+                  "num": 0,
+                  "Skill": [
+                        "Tackle",
+                        7,
+                        2.8,
+                        "Phys",
+                        false,
+                        false,
+                        false
+                  ],
+                  "Original skill": [
+                        "Tackle",
+                        7,
+                        2.8,
+                        "Phys",
+                        false,
+                        false,
+                        false
+                  ]
+            },
+            {
+                  "name": "Worm",
+                  "hp": 150,
+                  "atk": 105,
+                  "dif": 126,
+                  "satk": 105,
+                  "sdif": 114,
+                  "maxlvl": 15,
+                  "unlocked": 0,
+                  "lvl": 9,
+                  "phys": 1,
+                  "magic": 1,
+                  "special": 1,
+                  "drop": {
+                        "exp": 3,
+                        "resources": [
+                              [
+                                    "Physical gems",
+                                    1,
+                                    10
+                              ],
+                              [
+                                    "Magical gems",
+                                    1,
+                                    10
+                              ],
+                              [
+                                    "Special gems",
+                                    1,
+                                    10
+                              ]
+                        ]
+                  },
+                  "num": 4,
+                  "Skill": [
+                        "Roll over",
+                        8,
+                        2.4,
+                        "Phys",
+                        false,
+                        false,
+                        false
+                  ],
+                  "Original skill": [
+                        "Roll over",
+                        8,
+                        2.4,
+                        "Phys",
+                        false,
+                        false,
+                        false
+                  ]
             }
       ],
-      "reserve": [],
+      "reserve": [
+            {
+                  "name": "Butterfly",
+                  "hp": 80,
+                  "atk": 80,
+                  "dif": 80,
+                  "satk": 80,
+                  "sdif": 80,
+                  "maxlvl": 10,
+                  "unlocked": 0,
+                  "lvl": 5,
+                  "phys": 1,
+                  "magic": 1,
+                  "special": 1,
+                  "drop": {
+                        "exp": 2,
+                        "resources": [
+                              [
+                                    "Butterfly wings",
+                                    1,
+                                    30
+                              ],
+                              [
+                                    "Physical gems",
+                                    1,
+                                    10
+                              ],
+                              [
+                                    "Magical gems",
+                                    1,
+                                    10
+                              ],
+                              [
+                                    "Special gems",
+                                    1,
+                                    10
+                              ]
+                        ]
+                  },
+                  "num": 2,
+                  "Skill": [
+                        "Tackle",
+                        7,
+                        2.8,
+                        "Phys",
+                        false,
+                        false,
+                        false
+                  ],
+                  "Original skill": [
+                        "Tackle",
+                        7,
+                        2.8,
+                        "Phys",
+                        false,
+                        false,
+                        false
+                  ]
+            },
+            {
+                  "name": "Frog",
+                  "hp": 91.2,
+                  "atk": 100.8,
+                  "dif": 91.2,
+                  "satk": 96,
+                  "sdif": 100.8,
+                  "maxlvl": 12,
+                  "unlocked": 0,
+                  "lvl": 12,
+                  "phys": 1,
+                  "magic": 1,
+                  "special": 1,
+                  "drop": {
+                        "exp": 2,
+                        "resources": [
+                              [
+                                    "Frog legs",
+                                    1,
+                                    10
+                              ],
+                              [
+                                    "Physical gems",
+                                    1,
+                                    10
+                              ],
+                              [
+                                    "Magical gems",
+                                    1,
+                                    10
+                              ],
+                              [
+                                    "Special gems",
+                                    1,
+                                    10
+                              ]
+                        ]
+                  },
+                  "num": 3,
+                  "Skill": [
+                        "Jump attack",
+                        6,
+                        2.3,
+                        "Phys",
+                        false,
+                        false,
+                        false
+                  ],
+                  "Original skill": [
+                        "Jump attack",
+                        6,
+                        2.3,
+                        "Phys",
+                        false,
+                        false,
+                        false
+                  ]
+            }
+      ],
       "resources": {
             "Wood": [
-                  1000,
-                  1,
+                  974,
+                  10,
                   {
                         "Father": 2
                   },
@@ -56,7 +245,7 @@
                   0
             ],
             "Herbs": [
-                  100,
+                  0,
                   1,
                   {
                         "Mother": 5
@@ -65,7 +254,7 @@
                   0
             ],
             "Gold": [
-                  1000,
+                  0,
                   60,
                   {
                         "Mother": 5
@@ -92,7 +281,7 @@
                   0
             ],
             "Butterfly wings": [
-                  0,
+                  10,
                   10,
                   {
                         "Father": 7
@@ -101,7 +290,7 @@
                   0
             ],
             "Frog legs": [
-                  8,
+                  4,
                   10,
                   {
                         "Father": 7
@@ -110,8 +299,8 @@
                   0
             ],
             "Fate": [
-                  1000,
-                  10,
+                  916,
+                  45,
                   {
                         "Father": 0
                   },
@@ -119,8 +308,8 @@
                   0
             ],
             "Physical gems": [
-                  0,
-                  1,
+                  20,
+                  20,
                   {
                         "Father": 7
                   },
@@ -128,8 +317,8 @@
                   0
             ],
             "Magical gems": [
-                  0,
-                  1,
+                  20,
+                  20,
                   {
                         "Father": 7
                   },
@@ -137,8 +326,8 @@
                   0
             ],
             "Special gems": [
-                  0,
-                  1,
+                  20,
+                  20,
                   {
                         "Father": 7
                   },
@@ -147,10 +336,465 @@
             ]
       },
       "flags": {
-            "Popup": 1
-     },
+            "Main": 1,
+            "Father": 12
+      },
       "templates": [
-            [],
-            []
+            [
+                  [
+                        {
+                              "name": "You",
+                              "hp": 5,
+                              "atk": 1,
+                              "dif": 1,
+                              "satk": 1,
+                              "sdif": 1,
+                              "maxlvl": 15,
+                              "unlocked": 0,
+                              "lvl": 15,
+                              "phys": 15,
+                              "magic": 0,
+                              "special": 0,
+                              "drop": {
+                                    "exp": 1,
+                                    "resources": [
+                                          [
+                                                "Physical gems",
+                                                1,
+                                                10
+                                          ],
+                                          [
+                                                "Magical gems",
+                                                1,
+                                                10
+                                          ],
+                                          [
+                                                "Special gems",
+                                                1,
+                                                10
+                                          ]
+                                    ]
+                              },
+                              "num": 0,
+                              "Skill": [
+                                    "Tackle",
+                                    7,
+                                    2.8,
+                                    "Phys",
+                                    false,
+                                    false,
+                                    false
+                              ],
+                              "Original skill": [
+                                    "Tackle",
+                                    7,
+                                    2.8,
+                                    "Phys",
+                                    false,
+                                    false,
+                                    false
+                              ]
+                        },
+                        {
+                              "name": "Frog",
+                              "hp": 91.2,
+                              "atk": 100.8,
+                              "dif": 91.2,
+                              "satk": 96,
+                              "sdif": 100.8,
+                              "maxlvl": 12,
+                              "unlocked": 0,
+                              "lvl": 12,
+                              "phys": 1,
+                              "magic": 1,
+                              "special": 1,
+                              "drop": {
+                                    "exp": 2,
+                                    "resources": [
+                                          [
+                                                "Frog legs",
+                                                1,
+                                                10
+                                          ],
+                                          [
+                                                "Physical gems",
+                                                1,
+                                                10
+                                          ],
+                                          [
+                                                "Magical gems",
+                                                1,
+                                                10
+                                          ],
+                                          [
+                                                "Special gems",
+                                                1,
+                                                10
+                                          ]
+                                    ]
+                              },
+                              "num": 3,
+                              "Skill": [
+                                    "Jump attack",
+                                    6,
+                                    2.3,
+                                    "Phys",
+                                    false,
+                                    false,
+                                    false
+                              ],
+                              "Original skill": [
+                                    "Jump attack",
+                                    6,
+                                    2.3,
+                                    "Phys",
+                                    false,
+                                    false,
+                                    false
+                              ]
+                        },
+                        {
+                              "name": "Butterfly",
+                              "hp": 80,
+                              "atk": 80,
+                              "dif": 80,
+                              "satk": 80,
+                              "sdif": 80,
+                              "maxlvl": 10,
+                              "unlocked": 0,
+                              "lvl": 5,
+                              "phys": 1,
+                              "magic": 1,
+                              "special": 1,
+                              "drop": {
+                                    "exp": 2,
+                                    "resources": [
+                                          [
+                                                "Butterfly wings",
+                                                1,
+                                                30
+                                          ],
+                                          [
+                                                "Physical gems",
+                                                1,
+                                                10
+                                          ],
+                                          [
+                                                "Magical gems",
+                                                1,
+                                                10
+                                          ],
+                                          [
+                                                "Special gems",
+                                                1,
+                                                10
+                                          ]
+                                    ]
+                              },
+                              "num": 2,
+                              "Skill": [
+                                    "Tackle",
+                                    7,
+                                    2.8,
+                                    "Phys",
+                                    false,
+                                    false,
+                                    false
+                              ],
+                              "Original skill": [
+                                    "Tackle",
+                                    7,
+                                    2.8,
+                                    "Phys",
+                                    false,
+                                    false,
+                                    false
+                              ]
+                        }
+                  ],
+                  [
+                        {
+                              "name": "Worm",
+                              "hp": 150,
+                              "atk": 105,
+                              "dif": 126,
+                              "satk": 105,
+                              "sdif": 114,
+                              "maxlvl": 15,
+                              "unlocked": 0,
+                              "lvl": 9,
+                              "phys": 1,
+                              "magic": 1,
+                              "special": 1,
+                              "drop": {
+                                    "exp": 3,
+                                    "resources": [
+                                          [
+                                                "Physical gems",
+                                                1,
+                                                10
+                                          ],
+                                          [
+                                                "Magical gems",
+                                                1,
+                                                10
+                                          ],
+                                          [
+                                                "Special gems",
+                                                1,
+                                                10
+                                          ]
+                                    ]
+                              },
+                              "num": 4,
+                              "Skill": [
+                                    "Roll over",
+                                    8,
+                                    2.4,
+                                    "Phys",
+                                    false,
+                                    false,
+                                    false
+                              ],
+                              "Original skill": [
+                                    "Roll over",
+                                    8,
+                                    2.4,
+                                    "Phys",
+                                    false,
+                                    false,
+                                    false
+                              ]
+                        }
+                  ]
+            ],
+            [
+                  [
+                        {
+                              "name": "You",
+                              "hp": 5,
+                              "atk": 1,
+                              "dif": 1,
+                              "satk": 1,
+                              "sdif": 1,
+                              "maxlvl": 15,
+                              "unlocked": 0,
+                              "lvl": 15,
+                              "phys": 15,
+                              "magic": 0,
+                              "special": 0,
+                              "drop": {
+                                    "exp": 1,
+                                    "resources": [
+                                          [
+                                                "Physical gems",
+                                                1,
+                                                10
+                                          ],
+                                          [
+                                                "Magical gems",
+                                                1,
+                                                10
+                                          ],
+                                          [
+                                                "Special gems",
+                                                1,
+                                                10
+                                          ]
+                                    ]
+                              },
+                              "num": 0,
+                              "Skill": [
+                                    "Tackle",
+                                    7,
+                                    2.8,
+                                    "Phys",
+                                    false,
+                                    false,
+                                    false
+                              ],
+                              "Original skill": [
+                                    "Tackle",
+                                    7,
+                                    2.8,
+                                    "Phys",
+                                    false,
+                                    false,
+                                    false
+                              ]
+                        },
+                        {
+                              "name": "Worm",
+                              "hp": 150,
+                              "atk": 105,
+                              "dif": 126,
+                              "satk": 105,
+                              "sdif": 114,
+                              "maxlvl": 15,
+                              "unlocked": 0,
+                              "lvl": 9,
+                              "phys": 1,
+                              "magic": 1,
+                              "special": 1,
+                              "drop": {
+                                    "exp": 3,
+                                    "resources": [
+                                          [
+                                                "Physical gems",
+                                                1,
+                                                10
+                                          ],
+                                          [
+                                                "Magical gems",
+                                                1,
+                                                10
+                                          ],
+                                          [
+                                                "Special gems",
+                                                1,
+                                                10
+                                          ]
+                                    ]
+                              },
+                              "num": 4,
+                              "Skill": [
+                                    "Roll over",
+                                    8,
+                                    2.4,
+                                    "Phys",
+                                    false,
+                                    false,
+                                    false
+                              ],
+                              "Original skill": [
+                                    "Roll over",
+                                    8,
+                                    2.4,
+                                    "Phys",
+                                    false,
+                                    false,
+                                    false
+                              ]
+                        }
+                  ],
+                  [
+                        {
+                              "name": "Butterfly",
+                              "hp": 80,
+                              "atk": 80,
+                              "dif": 80,
+                              "satk": 80,
+                              "sdif": 80,
+                              "maxlvl": 10,
+                              "unlocked": 0,
+                              "lvl": 5,
+                              "phys": 1,
+                              "magic": 1,
+                              "special": 1,
+                              "drop": {
+                                    "exp": 2,
+                                    "resources": [
+                                          [
+                                                "Butterfly wings",
+                                                1,
+                                                30
+                                          ],
+                                          [
+                                                "Physical gems",
+                                                1,
+                                                10
+                                          ],
+                                          [
+                                                "Magical gems",
+                                                1,
+                                                10
+                                          ],
+                                          [
+                                                "Special gems",
+                                                1,
+                                                10
+                                          ]
+                                    ]
+                              },
+                              "num": 2,
+                              "Skill": [
+                                    "Tackle",
+                                    7,
+                                    2.8,
+                                    "Phys",
+                                    false,
+                                    false,
+                                    false
+                              ],
+                              "Original skill": [
+                                    "Tackle",
+                                    7,
+                                    2.8,
+                                    "Phys",
+                                    false,
+                                    false,
+                                    false
+                              ]
+                        },
+                        {
+                              "name": "Frog",
+                              "hp": 91.2,
+                              "atk": 100.8,
+                              "dif": 91.2,
+                              "satk": 96,
+                              "sdif": 100.8,
+                              "maxlvl": 12,
+                              "unlocked": 0,
+                              "lvl": 12,
+                              "phys": 1,
+                              "magic": 1,
+                              "special": 1,
+                              "drop": {
+                                    "exp": 2,
+                                    "resources": [
+                                          [
+                                                "Frog legs",
+                                                1,
+                                                10
+                                          ],
+                                          [
+                                                "Physical gems",
+                                                1,
+                                                10
+                                          ],
+                                          [
+                                                "Magical gems",
+                                                1,
+                                                10
+                                          ],
+                                          [
+                                                "Special gems",
+                                                1,
+                                                10
+                                          ]
+                                    ]
+                              },
+                              "num": 3,
+                              "Skill": [
+                                    "Jump attack",
+                                    6,
+                                    2.3,
+                                    "Phys",
+                                    false,
+                                    false,
+                                    false
+                              ],
+                              "Original skill": [
+                                    "Jump attack",
+                                    6,
+                                    2.3,
+                                    "Phys",
+                                    false,
+                                    false,
+                                    false
+                              ]
+                        }
+                  ]
+            ]
       ]
 }

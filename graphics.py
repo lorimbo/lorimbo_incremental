@@ -996,6 +996,8 @@ class Graphics:
                         reservecopy = [i.copy() for i in Gamelogic.reserve]
                         Gamelogic.templates[i].append(partycopy)
                         Gamelogic.templates[i].append(reservecopy)
+                        print('ok')
+
 
 
                     imgui.same_line()
@@ -1453,23 +1455,17 @@ class Graphics:
         imgui.set_next_window_position(cls.resizewidth(120), cls.resizeheight(55))
         with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
             backgroundecorator(imgui.begin, cls.theme)('Shop', False, cls.flags)
-        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 30)}']):
-            actiondecorator(imgui.text,cls.theme)("Hart's sleazy shop")
+
+        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 25)}']):
+            actiondecorator(imgui.text,cls.theme)("Hart's sleazy material shop")
         with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
+            imgui.begin_child('Material shop',width=cls.resizewidth(300),border=True)
             for item in [e for e in Gamelogic.buyablematerials if e.isvisible]:
-                if cls.disabledecorator(imgui.button,False)(f'{item.cost} gold:{item.name}',cls.resizewidth(130),cls.resizeheight(30)):
+                if cls.disabledecorator(imgui.button,False)(f'{item.cost} gold : {item.name}',cls.resizewidth(285),cls.resizeheight(30)):
                     item.buy()
-
-
-
-
-
-
-
-
+            imgui.end_child()
         imgui.end()
 
-        pass
 
     @classmethod
     def creategui(cls):

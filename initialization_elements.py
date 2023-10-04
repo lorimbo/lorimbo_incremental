@@ -19,7 +19,7 @@ brown = (139, 69, 19)
 
 
 class Skill:
-    def __init__(self, name, power, interval, category, cost=None, type=None, effect=None, unlockflags=None):
+    def __init__(self, name, power, interval, category, cost=False, type=False, effect=False, unlockflags=False):
         self.name = name
         self.power = power
         self.interval = interval
@@ -746,10 +746,11 @@ class Longaction(menuelement):
 class Pokemon(menuelement):
     def __init__(self, hp, atk, dif, satk, sdif, maxlvl=1000, unlocked=0, lvl=0, phys=0, magic=0,
                  special=0, drop=None,
-                 skill=None, wild=True,
+                 skill=None,num=0, wild=True,originalskill=None,
                  *args, **kwargs):
 
         menuelement.__init__(self, *args, **kwargs)
+        self.number=num
         self.patk = atk
         self.pdef = dif
         self.matk = satk
@@ -772,11 +773,17 @@ class Pokemon(menuelement):
         if skill is not None:
             self.skill = Skill(*skill)
             self.cd = self.skill.interval * 120
-            self.originalskill = Skill(*skill)
+            if originalskill is None:
+                self.originalskill = Skill(*skill)
+            else:
+                self.originalskill = Skill(*originalskill)
         else:
-            self.skill = Skill('Tackle', 7, 2.8, 'Phys', None, None, None, None)
+            self.skill = Skill('Tackle', 7, 2.8, 'Phys', False, False, False, False)
             self.cd = self.skill.interval * 120
-            self.originalskill=Skill('Tackle', 7, 2.8, 'Phys', None, None, None, None)
+            if originalskill is None:
+                self.originalskill=Skill('Tackle', 7, 2.8, 'Phys', False, False, False, False)
+            else:
+                self.originalskill = Skill(*originalskill)
 
     def copy(self):
         return copy.deepcopy(self)
@@ -838,6 +845,7 @@ def getgamestate():
 def createshopitems(parent):
     Shopitem(parent=parent,name='Frog legs',elementlist=parent.buyablematerials,cost=50)
     Shopitem(parent=parent, name='Butterfly wings', elementlist=parent.buyablematerials, cost=50)
+    Shopitem(parent=parent, name='Cow hide', elementlist=parent.buyablematerials, cost=50,unlockflags={'Mother':11})
 
 
 def createmenu(parent):
@@ -846,7 +854,7 @@ def createmenu(parent):
     menuelement(parent=parent, name='Training', isvisible=False, elementlist=parent.mainelements,
                 unlockflags={'Main': 1})
     menuelement(parent=parent, name='Shop', isvisible=False, elementlist=parent.mainelements,
-                unlockflags={'Mother': 5})
+                unlockflags={'Shop': 1})
     menuelement(parent=parent, name='Story', isvisible=False, elementlist=parent.mainelements, unlockflags={'Main': 2})
     menuelement(parent=parent, name='Dungeon', isvisible=False, elementlist=parent.mainelements,
                 unlockflags={'Father': 7})
@@ -878,9 +886,17 @@ def createpokemon(parent):
     Information = getgamestate()
     pokemonlist.createpokemonlist(parent)
     for pokemonkey in Information['party']:
-        Pokemon(parent=parent, wild=False, elementlist=parent.party, **pokemonkey)
+        Pokemon(skill=pokemonkey['Skill'],originalskill=pokemonkey['Original skill'],parent=parent, wild=False, elementlist=parent.party, hp=pokemonkey['hp'],name=pokemonkey['name'],atk=pokemonkey['atk'],
+                dif=pokemonkey['dif'],satk=pokemonkey['satk'],sdif=pokemonkey['sdif'],maxlvl=pokemonkey['maxlvl'],unlocked=pokemonkey['unlocked'],lvl=pokemonkey['lvl'],phys=pokemonkey['phys'],
+                magic=pokemonkey['magic'],special=pokemonkey['special'],drop=pokemonkey['drop'],num=pokemonkey['num'])
     for pokemonkey in Information['reserve']:
-        Pokemon(parent=parent, wild=False, elementlist=parent.reserve, **pokemonkey)
+
+        Pokemon(skill=pokemonkey['Skill'], originalskill=pokemonkey['Original skill'], parent=parent, wild=False, elementlist=parent.reserve,
+                hp=pokemonkey['hp'], name=pokemonkey['name'], atk=pokemonkey['atk'],
+                dif=pokemonkey['dif'], satk=pokemonkey['satk'], sdif=pokemonkey['sdif'], maxlvl=pokemonkey['maxlvl'],
+                unlocked=pokemonkey['unlocked'], lvl=pokemonkey['lvl'], phys=pokemonkey['phys'],
+                magic=pokemonkey['magic'], special=pokemonkey['special'], drop=pokemonkey['drop'],
+                num=pokemonkey['num'])
 
 def createtemplates(parent):
     Information = getgamestate()
@@ -890,9 +906,21 @@ def createtemplates(parent):
         else:
             late=[[],[]]
             for partypok in Information['templates'][num][0]:
-                Pokemon(parent=parent, wild=False, elementlist=late[0], **partypok)
+                Pokemon(skill=partypok['Skill'], originalskill=partypok['Original skill'], parent=parent, wild=False, elementlist=late[0],
+                        hp=partypok['hp'], name=partypok['name'], atk=partypok['atk'],
+                        dif=partypok['dif'], satk=partypok['satk'], sdif=partypok['sdif'],
+                        maxlvl=partypok['maxlvl'], unlocked=partypok['unlocked'], lvl=partypok['lvl'],
+                        phys=partypok['phys'],
+                        magic=partypok['magic'], special=partypok['special'], drop=partypok['drop'],
+                        num=partypok['num'])
             for reservepok in Information['templates'][num][1]:
-                Pokemon(parent=parent, wild=False, elementlist=late[1], **reservepok)
+                Pokemon(skill=reservepok['Skill'], originalskill=reservepok['Original skill'], parent=parent, wild=False, elementlist=late[1],
+                        hp=reservepok['hp'], name=reservepok['name'], atk=reservepok['atk'],
+                        dif=reservepok['dif'], satk=reservepok['satk'], sdif=reservepok['sdif'],
+                        maxlvl=reservepok['maxlvl'], unlocked=reservepok['unlocked'], lvl=reservepok['lvl'],
+                        phys=reservepok['phys'],
+                        magic=reservepok['magic'], special=reservepok['special'], drop=reservepok['drop'],
+                        num=reservepok['num'])
             parent.templates.append(late)
 
 

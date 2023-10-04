@@ -6,39 +6,47 @@ def createquests(parent):
     zenmasterquestline(parent)
     butchershopquestline(parent)
     testquest(parent)
+    shopquestline(parent)
+
+def shopquestline(parent):
+    from initialization_elements import Quests
+    Quests(parent=parent, name='Enter the sleazy shop',
+           location=['Village', 'Shop'],
+           unlockflags={'Mother': 5}, closingflags={'Shop': 1}, changeflags={'Shop': 1},
+           cost=[['Fate', -20, 0, 0]])
 def butchershopquestline(parent):
     from initialization_elements import Quests
     Quests(parent=parent, name='Butcher shop 1/6',
-           location=['Village', 'Home'],
-           unlockflags={'Mother': 11}, closingflags={'Butcher': 1}, changeflags={'Butcher': 1},
+           location=['Village', 'Village'],
+           unlockflags={'Mother': 1}, closingflags={'Butcher': 1}, changeflags={'Butcher': 1},
            cost=[['Frog legs', -5, 0, 0]], complete=[['max', 'Frog legs', 5, 0, 0]]
            )
     Quests(parent=parent, name='Butcher shop 2/6',
-           location=['Village', 'Home'],
+           location=['Village', 'Village'],
            unlockflags={'Butcher': 1}, closingflags={'Butcher': 2}, changeflags={'Butcher': 1},
            cost=[['Frog legs', -10, 0, 0]], complete=[['max', 'Frog legs', 5, 0, 0]]
            )
     Quests(parent=parent, name='Butcher shop 3/6',
-           location=['Village', 'Home'],
+           location=['Village', 'Village'],
            unlockflags={'Butcher': 2}, closingflags={'Butcher': 3}, changeflags={'Butcher': 1},
            cost=[['Frog legs', -10, 0, 0]],
            complete=[['stat', 'hp', 0.5, 0, 0], ['stat', 'patk', 0.5, 0, 0], ['stat', 'pdef', 0.5, 0, 0],
                      ['stat', 'matk', 0.5, 0, 0], ['stat', 'mdef', 0.5, 0, 0]]
            )
     Quests(parent=parent, name='Butcher shop 4/6',
-           location=['Village', 'Home'],
+           location=['Village', 'Village'],
            unlockflags={'Butcher': 3, 'Brother': 1}, closingflags={'Butcher': 4}, changeflags={'Butcher': 1},
            cost=[['Cow hide', -5, 0, 0]],
            complete=[['max', 'Cow hide', 5, 0, 0]]
            )
     Quests(parent=parent, name='Butcher shop 5/6',
-           location=['Village', 'Home'],
+           location=['Village', 'Village'],
            unlockflags={'Butcher': 4}, closingflags={'Butcher': 5}, changeflags={'Butcher': 1},
            cost=[['Cow hide', -10, 0, 0]],
            complete=[['max', 'Cow hide', 5, 0, 0]]
            )
     Quests(parent=parent, name='Butcher shop 6/6',
-           location=['Village', 'Home'],
+           location=['Village', 'Village'],
            unlockflags={'Butcher': 5}, closingflags={'Butcher': 6}, changeflags={'Butcher': 1},
            cost=[['Cow hide', -10, 0, 0]],
            complete=[['stat', 'hp', 0.5, 0, 0], ['stat', 'patk', 0.5, 0, 0], ['stat', 'pdef', 0.5, 0, 0],

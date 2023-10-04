@@ -80,8 +80,10 @@ class Gamelogic:
 
     @classmethod
     def changetemplateto(cls,num):
-        cls.party=cls.templates[num][0]
-        cls.reserve = cls.templates[num][1]
+        partycopy=[e.copy() for e in cls.templates[num][0]]
+        reservecopy=[e.copy() for e in cls.templates[num][1]]
+        cls.party=partycopy
+        cls.reserve = reservecopy
 
 
     @classmethod
@@ -286,13 +288,13 @@ class Gamelogic:
         for category in cls.resources:
             for resource in cls.resources[category]:
                 Information['resources'][resource.name]=(resource.quantity,resource.max,resource.unlockflags,resource.category,resource.regen)
-        for template in cls.templates:
+        for num,template in enumerate(cls.templates):
             if template==[]:
-                Information['templates'].append([])
+                Information["templates"].append([])
 
             elif template!=[]:
-                Information['templates'].append([[],[]])
-                for num,x in enumerate(template[0]):
+                Information["templates"].append([[],[]])
+                for x in (template[0]):
                     pokemondict = {}
                     pokemondict["name"] = x.name
                     pokemondict["hp"] = x.hp
@@ -307,8 +309,13 @@ class Gamelogic:
                     pokemondict["magic"] = x.magic
                     pokemondict["special"] = x.special
                     pokemondict["drop"] = x.drop
-                    Information['templates'][num][0].append(pokemondict)
-                for num,x in enumerate(template[1]):
+                    pokemondict["num"] = x.number
+                    pokemondict["Skill"]=[x.skill.name, x.skill.power, x.skill.interval, x.skill.category, x.skill.cost, x.skill.type, x.skill.effect]
+                    pokemondict["Original skill"] = [x.originalskill.name, x.originalskill.power, x.originalskill.interval, x.originalskill.category,
+                                            x.originalskill.cost, x.originalskill.type, x.originalskill.effect]
+
+                    Information["templates"][num][0].append(pokemondict)
+                for x in (template[1]):
                     pokemondict = {}
                     pokemondict["name"] = x.name
                     pokemondict["hp"] = x.hp
@@ -323,7 +330,13 @@ class Gamelogic:
                     pokemondict["magic"] = x.magic
                     pokemondict["special"] = x.special
                     pokemondict["drop"] = x.drop
-                    Information['templates'][num][1].append(pokemondict)
+                    pokemondict["num"] = x.number
+                    pokemondict["Skill"] = [x.skill.name, x.skill.power, x.skill.interval, x.skill.category,
+                                            x.skill.cost, x.skill.type, x.skill.effect]
+                    pokemondict["Original skill"] = [x.originalskill.name, x.originalskill.power,
+                                                     x.originalskill.interval, x.originalskill.category,
+                                                     x.originalskill.cost, x.originalskill.type, x.originalskill.effect]
+                    Information["templates"][num][1].append(pokemondict)
 
 
         for x in cls.party:
@@ -341,6 +354,12 @@ class Gamelogic:
             pokemondict["magic"] = x.magic
             pokemondict["special"] = x.special
             pokemondict["drop"]=x.drop
+            pokemondict["num"]=x.number
+            pokemondict["Skill"] = [x.skill.name, x.skill.power, x.skill.interval, x.skill.category, x.skill.cost,
+                                    x.skill.type, x.skill.effect]
+            pokemondict["Original skill"] = [x.originalskill.name, x.originalskill.power, x.originalskill.interval,
+                                             x.originalskill.category,
+                                             x.originalskill.cost, x.originalskill.type, x.originalskill.effect]
             Information["party"].append(pokemondict)
         for x in cls.reserve:
             pokemondict = {}
@@ -357,6 +376,12 @@ class Gamelogic:
             pokemondict["magic"] = x.magic
             pokemondict["special"] = x.special
             pokemondict["drop"] = x.drop
+            pokemondict["num"] = x.number
+            pokemondict["Skill"] = [x.skill.name, x.skill.power, x.skill.interval, x.skill.category, x.skill.cost,
+                                    x.skill.type, x.skill.effect]
+            pokemondict["Original skill"] = [x.originalskill.name, x.originalskill.power, x.originalskill.interval,
+                                             x.originalskill.category,
+                                             x.originalskill.cost, x.originalskill.type, x.originalskill.effect]
             Information["reserve"].append(pokemondict)
 
         out_file = open("gamestate.json", "w")
@@ -523,6 +548,7 @@ class Gamelogic:
                 alive[0].cd = alive[0].skill.interval * 120
                 alive = [pokemon for pokemon in cls.activedungeon.party if pokemon.currenthp]
                 cls.activepartypokemon = max(0, cls.activepartypokemon - 1)
+                cls.activeenemypokemon+=1
                 if not len(alive):
                     cls.activepartypokemon = 0
                     cls.activeenemypokemon = 0
@@ -545,16 +571,25 @@ class Gamelogic:
         cls.changeskill=None
         cls.partysubtab='Party selection'
 
+    @classmethod
+    def reorderreserve(cls):
+        final=[]
+        for i in range(len(cls.reserve)+20):
+            for e in cls.reserve:
+                if e.number==i:
+                    final.append(e)
+        cls.reserve=final
+
 
 
 
     @classmethod
     def frameaction(cls):
-
         cls.updatebuttons()
         cls.regenenergies()
         cls.longactionprogress()
         cls.checkflags()
+        cls.reorderreserve()
         if cls.activedungeon is not None:
             cls.dungeonprogress()
         if cls.switch is not None:
