@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 import autopep8
 
 
-tree = ET.parse('hi (2).drawio')
+tree = ET.parse('Autoquests.drawio')
 
 def convertcost(string):
     finalproduct='['
@@ -63,6 +63,10 @@ def idfinder(root,idlist):
             idlist.append(child)
         idfinder(child,idlist)
     return idlist
+filecontent='''
+def quest(parent):
+    from initialization_elements import Quests\n'''
+
 for diagram in tree.getroot():
     idlist=[]
     idfinder(diagram,idlist)
@@ -82,6 +86,7 @@ for diagram in tree.getroot():
     numberofmerges=0
 
     def createquest(quest,questlineflag,questlineflagamount,listofidscreated=[]):
+        global filecontent
         isitamerge=len([e[0] for e in lines if e[1]==quest.attrib['id'] and e[2]])>1
         childrenid=[e[1] for e in lines if e[0] == quest.attrib['id'] and e[2]]
         locksid=[e[1] for e in redlines if e[0] == quest.attrib['id']]
@@ -91,11 +96,10 @@ for diagram in tree.getroot():
             childrenlocks.append([e for e in objects if e.attrib['id']==id][0])
         for id in childrenid:
             children.append([e for e in objects if e.attrib['id']==id][0])
-        #print(quest.attrib['label'],[child.attrib['label'] for child in childrenlocks])
         numberofchildren=len(children)
         if isitamerge:
             questlineflag=quest.attrib['label']
-        finalstring='Quests(parent=parent,'
+        finalstring=("Quests(parent=parent,")
         finalstring+=f"name='{quest.attrib['label']}'"
         finalstring+=f',cost={convertcost(quest.attrib["cost"])},'
         finalstring+=f'complete={convertcomplete(quest.attrib["complete"])},'
@@ -112,7 +116,7 @@ for diagram in tree.getroot():
                 finalstring+=','
 
         finalstring+='})'
-        print(finalstring)
+        filecontent+=f'    {finalstring}\n'
         listofidscreated.append(quest.attrib['id'])
         for num,targetid in  enumerate([e[1] for e in lines if e[0]==quest.attrib['id'] ]):
             target=[e for e in objects if e.attrib['id']==targetid][0]
@@ -122,7 +126,14 @@ for diagram in tree.getroot():
     for element in objects:
         if element.attrib['id'] not in targetlist and 'target' not in element.attrib:
             createquest(element,element.attrib['label'],1)
+with open('automaticquests/villagequest.py', "w") as file1:
+    file1.write(filecontent)
+print(filecontent)
 
 
 
-'''Quests(parent=parent, name='Talk to Father 1/12',isvisible=True,location=['Village', 'Home'],unlockflags={'Father': 0}, closingflags={'Father': 1}, changeflags={'Father': 1, 'Popup': 2},cost=[['Fate', -5, 0, 0]], complete=[['max', 'Fate', 5, 0, 0]])'''
+'''def function(parent):
+    from initialization_elements import Quests 
+    Quests(parent=parent, name='Talk to Father 1/12',isvisible=True,location=['Village', 'Home'],unlockflags={
+    'Father': 0}, closingflags={'Father': 1}, changeflags={'Father': 1, 'Popup': 2},cost=[['Fate', -5, 0, 0]], 
+    complete=[['max', 'Fate', 5, 0, 0]])'''

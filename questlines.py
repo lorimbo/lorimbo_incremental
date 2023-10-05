@@ -1,12 +1,22 @@
+import importlib
 def createquests(parent):
+    import os
+    path = "automaticquests"
+    dir_list = os.listdir(path)
+    for dir in dir_list:
+        if not dir.startswith("__"):
+            dir=dir[:-3]
+            my_module = importlib.import_module(f"automaticquests.{dir}")
+            my_module.quest(parent)
     fatherquestline(parent)
     motherquestline(parent)
     brotherquestline(parent)
     billythekidquestline(parent)
-    zenmasterquestline(parent)
-    butchershopquestline(parent)
-    testquest(parent)
-    shopquestline(parent)
+    #zenmasterquestline(parent)
+    #butchershopquestline(parent)
+    #testquest(parent)
+    #shopquestline(parent)
+
 
 def shopquestline(parent):
     from initialization_elements import Quests
@@ -139,7 +149,7 @@ def motherquestline(parent):
            )
     Quests(parent=parent, name='Talk to Mother 4/10',
            location=['Village', 'Home'],
-           unlockflags={'Mother': 4}, closingflags={'Mother': 5}, changeflags={'Mother': 1},
+           unlockflags={'Mother': 4}, closingflags={'Mother': 5}, changeflags={'Mother': 1,'Enter the village':1},
            cost=[['Fate', -30, 0, 0]], complete=[['max', 'Fate', 5, 0, 0]],
            )
     Quests(parent=parent, name='Talk to Mother 5/10',

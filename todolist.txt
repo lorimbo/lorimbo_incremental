@@ -1,5 +1,4 @@
 Functionality:
-exp/ranking
 habits/some kinda of upgrade system
 resources effects with tooltips
 astral plane
@@ -7,15 +6,18 @@ party effects with tooltips
 implement pokemon/skill type 
 implement skills effects
 reserve is not ordered
-add a shop that allowes you to buy skills 
-add another one that allows you to buy materials
+add a dojo that allowes you to buy skills 
 offline rewards
 name/title
 put magic/phys in skill selection
 add rare enemies to dungeons+ add them to the tooltip
-add story log
+implement story log and add it to the save
 add souls to the save
 gear for the monsters
+add exp/ranks to the save
+add cleared dungeons to save
+add corestats to save
+put the wrting hp/atk .... in the party menu
 
 Organizing:
 change default cost,complete exc to None
@@ -32,3 +34,5 @@ rename things to avoid being copyrighted
 add more tutorials for the start regarding souls, and how to level up exactly
 
 BUGS:
+sometimes the fight crashes and i am not sure why(seems to be fixed but needs to be looked into)
+clicking on a dungeon resets the turn order to 0 0(should be fixed too, look into it)

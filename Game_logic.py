@@ -31,6 +31,7 @@ def numcon(n):
 
 
 class Gamelogic:
+    ritualsubtab='Rank'
     energies = []
     unlockedenergies = []
     resources = {}
@@ -54,7 +55,6 @@ class Gamelogic:
     bottomlog=[]
     bottomlogpreviouslen=len(bottomlog)
     bottomtimes=[]
-    exp = 0
     dungeons = {}
     activedungeon = None
     activepartypokemon = 0
@@ -76,6 +76,8 @@ class Gamelogic:
     fpscounter=''
     volume = 0.1
     musicvolume = 0.1
+    cleareddungeons=[]
+    corestats=None
 
 
     @classmethod
@@ -255,7 +257,7 @@ class Gamelogic:
 
     @classmethod
     def initializegame(cls):
-        cls.corestats = initialization_elements.Corestats(cls)
+        initialization_elements.createcorestats(cls)
         initialization_elements.loadflags(cls)
         initialization_elements.createmenu(cls)
         initialization_elements.createshopitems(cls)
@@ -282,6 +284,13 @@ class Gamelogic:
         Information['resources']={}
         Information['flags']={}
         Information['templates']=[]
+        Information['cleareddungeons']=cls.cleareddungeons
+        Information["corestats"]={}
+        Information["corestats"]["basestats"]=cls.corestats.basestats
+        Information["corestats"]["modifiers"] = cls.corestats.modifiers
+        Information["corestats"]["baseexp"]=cls.corestats.baseexp
+        Information["corestats"]["rank"]=cls.corestats.rank
+        Information["corestats"]["exprequiredtorank"]=cls.corestats.exprequiredtorank
         for flag in cls.flags:
             if cls.flags[flag]!=0:
                 Information['flags'][flag]=cls.flags[flag]
@@ -474,7 +483,7 @@ class Gamelogic:
                 alive2[0].cd = alive2[0].skill.interval * 120
                 cls.activedungeon.log.append(
                     f'Enemy {alive2[0].name} fainted!')
-                cls.exp += alive2[0].drop['exp']
+                cls.corestats.baseexp += alive2[0].drop['exp']
                 droplog = f'Enemy {alive2[0].name} dropped {alive2[0].drop["exp"]} exp'
                 for resource in alive2[0].drop['resources']:
                     name = resource[0]
@@ -488,22 +497,22 @@ class Gamelogic:
                                 if resource2.quantity > resource2.max:
                                     resource2.quantity = resource2.max
                                 droplog += f', {quantity} {name}'
-                    n = random.randint(0, 100)
-                    souldrop = 1
-                    if n <= 10 and alive2[0].name not in ['Training dummy']:
-                        if alive2[0].name not in cls.souls:
-                            pokemontounlock = alive2[0].copy()
-                            cls.souls[pokemontounlock.name] = 0
-                            pokemontounlock.phys = 1
-                            pokemontounlock.magic = 1
-                            pokemontounlock.special = 1
-                            pokemontounlock.lvl = 5
-                            pokemontounlock.wild = False
+                n = random.randint(0, 100)
+                souldrop = 1
+                if n <= 33 and alive2[0].name not in ['Training dummy']:
+                    if alive2[0].name not in cls.souls:
+                        pokemontounlock = alive2[0].copy()
+                        cls.souls[pokemontounlock.name] = 0
+                        pokemontounlock.phys = 1
+                        pokemontounlock.magic = 1
+                        pokemontounlock.special = 1
+                        pokemontounlock.lvl = 5
+                        pokemontounlock.wild = False
 
-                            cls.unlockablepokemons.append(pokemontounlock)
-                        cls.souls[alive2[0].name] += souldrop
+                        cls.unlockablepokemons.append(pokemontounlock)
+                    cls.souls[alive2[0].name] += souldrop
 
-                        droplog += f',{souldrop} {alive2[0].name} soul'
+                    droplog += f',{souldrop} {alive2[0].name} soul'
 
                 cls.activedungeon.log.append(droplog)
                 alive2 = [pokemon for pokemon in cls.activedungeon.currentlayout[cls.activedungeon.floor] if
@@ -531,7 +540,8 @@ class Gamelogic:
             cls.activepartypokemon += 1
             if cls.activepartypokemon > len(alive) - 1:
                 cls.activepartypokemon = 0
-
+        if cls.activeenemypokemon>len(alive2)-1:
+            cls.activeenemypokemon = len(alive2) - 1
         alive2[cls.activeenemypokemon].cd -= 1
         if alive2[cls.activeenemypokemon].cd == 0:
             damagedealt = alive2[cls.activeenemypokemon].skill.useskill(alive2[cls.activeenemypokemon], alive[0])

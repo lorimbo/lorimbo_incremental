@@ -29,7 +29,7 @@ buttontextcolor = (173, 241, 130)
 evangelionorange = (220, 125, 104)
 
 
-def autospacer155(text,spacing):
+def autospacer155(text, spacing):
     list = text.split(" ")
     output = ""
     n = 0
@@ -61,27 +61,28 @@ Themes = {
               'darkerbuttoncolor': (128, 0, 128)}
 }
 
-Popups = {1: "[TUTORIAL] Welcome to Yet another shitty game!. I'm Lorimbo, the author of the game. You can start your adventure by "
-             "clicking on the 'Ponder the future' button in the 'Actions' section to gain some Fate. Fate is used as the "
-             "main way of progressing through the storyline. Once you have 5 Fate click on the 'Talk to father 1/12' "
-             "quest to complete it and proceed with the story. ",
-          2:"[TUTORIAL] You can use the longaction 'Rest' to regain Energy and keep grinding Fate. Longactions go on in the "
-            "background while you do other things.",
-          3:"[TUTORIAL] You have now unlocked new actions, together with the Wood resource, try to proceed with the quest",
-          4:"[TUTORIAL] You have now unlocked your first dungeon! You can find it in the top right corner of the main section. "
-            "In the dungeon your party will fight monsters and bosses! Dungeons also keep going on in the background."
-            "The dungeon progression status is indicated by the bar under it. If you defeat all the monsters in the dungeon or "
-            "if your party is defeated the dungeon will restart automatically. You can quit the current dungeon by going into the "
-            "'Dungeon' tab in the left menu and pressing the 'Quit' button. "
-            "Dungeon layouts and monsters are randomly generated. Monsters drop seeds and other useful loot that you can "
-            "use to become more powerful",
-          5:"[TUTORIAL] Congratulation adventurer,you've gotten your first seed!In the 'Level up' tab in the 'Party menu' you can use Fate to level up your character and "
-            "seeds to improve your stats. Monsters will instead require souls to level up",
-          6:"[TUTORIAL] In this dungeon you will find your first actual monsters, they have a chance to drop their souls, which you can use in the 'Party' tab to "
-            "unlock them as party members and level them up. To do so,press the 'Summon' Button in the 'Level up' menu "
-            "and then add them in the party in the 'Party selection menu"}
+Popups = {
+    1: "[TUTORIAL] Welcome to Yet another shitty game!. I'm Lorimbo, the author of the game. You can start your adventure by "
+       "clicking on the 'Ponder the future' button in the 'Actions' section to gain some Fate. Fate is used as the "
+       "main way of progressing through the storyline. Once you have 5 Fate click on the 'Talk to father 1/12' "
+       "quest to complete it and proceed with the story. ",
+    2: "[TUTORIAL] You can use the longaction 'Rest' to regain Energy and keep grinding Fate. Longactions go on in the "
+       "background while you do other things.",
+    3: "[TUTORIAL] You have now unlocked new actions, together with the Wood resource, try to proceed with the quest",
+    4: "[TUTORIAL] You have now unlocked your first dungeon! You can find it in the top right corner of the main section. "
+       "In the dungeon your party will fight monsters and bosses! Dungeons also keep going on in the background."
+       "The dungeon progression status is indicated by the bar under it. If you defeat all the monsters in the dungeon or "
+       "if your party is defeated the dungeon will restart automatically. You can quit the current dungeon by going into the "
+       "'Dungeon' tab in the left menu and pressing the 'Quit' button. "
+       "Dungeon layouts and monsters are randomly generated. Monsters drop seeds and other useful loot that you can "
+       "use to become more powerful",
+    5: "[TUTORIAL] Congratulation adventurer,you've gotten your first seed!In the 'Level up' tab in the 'Party menu' you can use Fate to level up your character and "
+       "seeds to improve your stats. Monsters will instead require souls to level up",
+    6: "[TUTORIAL] In this dungeon you will find your first actual monsters, they have a chance to drop their souls, which you can use in the 'Party' tab to "
+       "unlock them as party members and level them up. To do so,press the 'Summon' Button in the 'Level up' menu "
+       "and then add them in the party in the 'Party selection menu"}
 for e in Popups:
-    Popups[e] = autospacer155(Popups[e],135)
+    Popups[e] = autospacer155(Popups[e], 135)
 
 
 def tooltipdecorator(function, theme):
@@ -173,11 +174,10 @@ def backgroundecorator(function, theme):
         imgui.push_style_color(imgui.COLOR_TEXT, *[e / 255 for e in Themes[theme]['buttontextcolor']])
         imgui.push_style_color(imgui.COLOR_SCROLLBAR_BACKGROUND, *[e / 255 for e in Themes[theme]['buttonhovercolor']])
         imgui.push_style_color(imgui.COLOR_SCROLLBAR_GRAB, *[e / 255 for e in Themes[theme]['buttoncolor']])
-        imgui.push_style_color(imgui.COLOR_SCROLLBAR_GRAB_HOVERED, *[e / 255 for e in Themes[theme]['menubackgroundcolor']])
-        imgui.push_style_color(imgui.COLOR_SCROLLBAR_GRAB_ACTIVE, *[e / 255 for e in Themes[theme]['menubackgroundcolor']])
-
-
-
+        imgui.push_style_color(imgui.COLOR_SCROLLBAR_GRAB_HOVERED,
+                               *[e / 255 for e in Themes[theme]['menubackgroundcolor']])
+        imgui.push_style_color(imgui.COLOR_SCROLLBAR_GRAB_ACTIVE,
+                               *[e / 255 for e in Themes[theme]['menubackgroundcolor']])
         func = function(*args, **kwargs)
         imgui.pop_style_color(1)
         imgui.pop_style_color(1)
@@ -443,10 +443,10 @@ class Graphics:
                             hit = pygame.mixer.Sound('Sounds/button.mp3')
                             hit.set_volume(Gamelogic.volume)
                             pygame.mixer.Sound.play(hit)
-                            if button.name=='Rest':
-                                for key in Gamelogic.longactions:
-                                    for e in Gamelogic.longactions[key]:
-                                        e.previouslyactive= False
+                            if button.name == 'Rest':
+                                for key2 in Gamelogic.longactions:
+                                    for e in Gamelogic.longactions[key2]:
+                                        e.previouslyactive = False
                                 for subtab in Gamelogic.mainsubelements:
                                     if subtab.name in Gamelogic.arealongs:
                                         for e in Gamelogic.arealongs[subtab.name]:
@@ -526,7 +526,8 @@ class Graphics:
                     else:
                         direction = imgui.DIRECTION_RIGHT
                     if actiondecorator(imgui.arrow_button, cls.theme)(f'Toggle##{Gamelogic.subtab}', direction):
-                        cls.toggles['proceedactions'][Gamelogic.subtab] = not cls.toggles['proceedactions'][Gamelogic.subtab]
+                        cls.toggles['proceedactions'][Gamelogic.subtab] = not cls.toggles['proceedactions'][
+                            Gamelogic.subtab]
                     imgui.same_line()
                 with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
                     actiondecorator(imgui.text, cls.theme)(f'{Gamelogic.subtab}')
@@ -540,11 +541,12 @@ class Graphics:
                         if imgui.is_item_hovered():
                             with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
                                 actiondecorator(imgui.text, cls.theme)(f"{button.name}")
-                                tooltip = tooltips.questTooltip(button.name, button.cost, button.complete,[['Wood',0,0,0]]
-                                                                  )
+                                tooltip = tooltips.questTooltip(button.name, button.cost, button.complete,
+                                                                [['Wood', 0, 0, 0]])
                                 for i in tooltip:
                                     actiondecorator(imgui.text, cls.theme)(f"{i}")
         imgui.end()
+
     @classmethod
     def draw_quests(cls):
         finishline = cls.resizeheight(50)
@@ -586,7 +588,7 @@ class Graphics:
                                 with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
                                     actiondecorator(imgui.text, cls.theme)(f"{button.name}")
                                     tooltip = tooltips.questTooltip(button.name, button.cost, button.complete,
-                                                                      button.requirements)
+                                                                    button.requirements)
                                     for i in tooltip:
                                         actiondecorator(imgui.text, cls.theme)(f"{i}")
 
@@ -633,9 +635,9 @@ class Graphics:
                                 pygame.mixer.Sound.play(hit)
                                 if Gamelogic.activedungeon is None or not Gamelogic.activedungeon.name == dungeon.name:
                                     dungeon.generate()
+                                    Gamelogic.activepartypokemon = 0
+                                    Gamelogic.activeenemypokemon = 0
                                 Gamelogic.activedungeon = dungeon
-                                Gamelogic.activepartypokemon = 0
-                                Gamelogic.activeenemypokemon = 0
                                 Gamelogic.tab = 'Dungeon'
                             if imgui.is_item_hovered():
                                 with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
@@ -719,13 +721,6 @@ class Graphics:
 
     @classmethod
     def draw_resources(cls):
-        windowheight = len(Gamelogic.resources)
-        for category in Gamelogic.resources:
-            for resource in Gamelogic.resources[category]:
-                if resource.isvisible:
-                    windowheight += 1
-        if windowheight > 40:
-            windowheight = 40
         visible = [e for e in Gamelogic.energies if e.isvisible]
         imgui.set_next_window_size(cls.resizewidth(300), list(pygame.display.get_window_size())[1] - (
                 5 * len(visible) + cls.resizeheight(50) + cls.resizeheight(20 * len(visible))))
@@ -791,10 +786,11 @@ class Graphics:
         imgui.set_next_window_position(cls.resizewidth(120), 16 + cls.resizeheight(145))
         backgroundecorator(imgui.begin, cls.theme)('Partymenu', False, cls.flags)
         with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
-            actiondecorator(imgui.text,cls.theme)('Templates')
+            actiondecorator(imgui.text, cls.theme)('Templates')
             imgui.same_line()
-            for num,template in enumerate(Gamelogic.templates):
-                if actiondecorator(imgui.button,cls.theme)(f'{num}  ',cls.resizewidth(20),cls.resizeheight(20))and Gamelogic.templates[num]!=[]:
+            for num, template in enumerate(Gamelogic.templates):
+                if actiondecorator(imgui.button, cls.theme)(f'{num}  ', cls.resizewidth(20), cls.resizeheight(20)) and \
+                        Gamelogic.templates[num] != []:
                     Gamelogic.changetemplateto(num)
                 if template != []:
                     if imgui.is_item_hovered():
@@ -889,14 +885,13 @@ class Graphics:
                 imgui.same_line(position=cls.resizewidth(840))
                 if cls.disabledecorator(imgui.button, False)(f'Skill##{num}', width=cls.resizewidth(90)):
                     Gamelogic.changeskill = Gamelogic.party[num]
-                    Gamelogic.partysubtab='Skill'
+                    Gamelogic.partysubtab = 'Skill'
                 if imgui.is_item_hovered():
                     with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
                         actiondecorator(imgui.text, cls.theme)(f"{pokemon.name}             lvl{numcon(pokemon.lvl)}")
                         tooltip = tooltips.pokemontooltip(pokemon, 'In the party')
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
-
 
                 use = (pokemon.name == 'You')
                 imgui.same_line(position=cls.resizewidth(940))
@@ -983,22 +978,20 @@ class Graphics:
 
         imgui.end_child()
         with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
-            if actiondecorator(imgui.button,cls.theme)('Save template',cls.resizewidth(150),cls.resizeheight(20)):
-                Gamelogic.savingtotemplates=not Gamelogic.savingtotemplates
+            if actiondecorator(imgui.button, cls.theme)('Save template', cls.resizewidth(150), cls.resizeheight(20)):
+                Gamelogic.savingtotemplates = not Gamelogic.savingtotemplates
             imgui.same_line()
             if Gamelogic.savingtotemplates:
-                actiondecorator(imgui.text,cls.theme)('Save to')
+                actiondecorator(imgui.text, cls.theme)('Save to')
                 imgui.same_line()
                 for i in range(len(Gamelogic.templates)):
-                    if actiondecorator(imgui.button,cls.theme)(f'{i} ',cls.resizewidth(20),cls.resizeheight(20)):
-                        Gamelogic.templates[i]=[]
-                        partycopy=[i.copy() for i in Gamelogic.party]
+                    if actiondecorator(imgui.button, cls.theme)(f'{i} ', cls.resizewidth(20), cls.resizeheight(20)):
+                        Gamelogic.templates[i] = []
+                        partycopy = [i.copy() for i in Gamelogic.party]
                         reservecopy = [i.copy() for i in Gamelogic.reserve]
                         Gamelogic.templates[i].append(partycopy)
                         Gamelogic.templates[i].append(reservecopy)
                         print('ok')
-
-
 
                     imgui.same_line()
         imgui.end()
@@ -1270,18 +1263,18 @@ class Graphics:
         backgroundecorator(imgui.begin, cls.theme)('Bottombar', False, cls.flags)
         if Gamelogic.flags['Popup']:
             Gamelogic.bottomlog.append(Popups[Gamelogic.flags['Popup']])
-            now=datetime.datetime.now()
+            now = datetime.datetime.now()
             Gamelogic.bottomtimes.append(str(now.time())[0:8])
             Gamelogic.flags['Popup'] = 0
 
         with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
-            for num,i in enumerate(Gamelogic.bottomlog):
+            for num, i in enumerate(Gamelogic.bottomlog):
                 actiondecorator(imgui.text, cls.theme)(Gamelogic.bottomtimes[num])
                 imgui.same_line()
                 for j in i:
                     actiondecorator(imgui.text, cls.theme)(j)
-            if len(Gamelogic.bottomlog)!=Gamelogic.bottomlogpreviouslen:
-                Gamelogic.bottomlogpreviouslen=len(Gamelogic.bottomlog)
+            if len(Gamelogic.bottomlog) != Gamelogic.bottomlogpreviouslen:
+                Gamelogic.bottomlogpreviouslen = len(Gamelogic.bottomlog)
                 imgui.set_scroll_here_y(1)
 
         imgui.end()
@@ -1350,7 +1343,8 @@ class Graphics:
                         actiondecorator(imgui.text, cls.theme)(pokemon.name)
                         progressbardecorator(imgui.progress_bar, cls.theme)(pokemon.currenthp / pokemon.actualhp,
                                                                             (
-                                                                            cls.resizewidth(250), cls.resizeheight(20)),
+                                                                                cls.resizewidth(250),
+                                                                                cls.resizeheight(20)),
                                                                             f'{numcon(pokemon.currenthp)}/{numcon(pokemon.actualhp)}')
                         progressbardecorator(imgui.progress_bar, cls.theme)(
                             1 - (pokemon.cd / (pokemon.skill.interval * 120)),
@@ -1362,7 +1356,7 @@ class Graphics:
                                                                  height=cls.resizeheight(370), border=True)
                 if dungeon is not None:
                     for string in dungeon.log:
-                        string=(autospacer155(string,46))
+                        string = (autospacer155(string, 46))
                         actiondecorator(imgui.text, cls.theme)(string[0])
                     if len(dungeon.log) > 100:
                         for i in range(len(dungeon.log) - 100):
@@ -1380,7 +1374,7 @@ class Graphics:
         imgui.set_next_window_size(cls.resizewidth(1050), 16 + cls.resizeheight(335))
         imgui.set_next_window_position(cls.resizewidth(120), 16 + cls.resizeheight(145))
         backgroundecorator(imgui.begin, cls.theme)('Skills', False, cls.flags)
-        temp=0
+        temp = 0
         if Gamelogic.changeskill is not None:
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 30)}']):
                 actiondecorator(imgui.text, cls.theme)(Gamelogic.changeskill.name)
@@ -1391,14 +1385,14 @@ class Graphics:
                 imgui.same_line(position=705)
                 actiondecorator(imgui.text, cls.theme)('Countdown')
                 imgui.same_line(position=940)
-                if actiondecorator(imgui.button,cls.theme)('Back',cls.resizewidth(90),cls.resizeheight(20)):
-                    Gamelogic.partysubtab='Party selection'
-                    temp=1
-                actiondecorator(imgui.text,cls.theme)('Default skill')
+                if actiondecorator(imgui.button, cls.theme)('Back', cls.resizewidth(90), cls.resizeheight(20)):
+                    Gamelogic.partysubtab = 'Party selection'
+                    temp = 1
+                actiondecorator(imgui.text, cls.theme)('Default skill')
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
-                imgui.begin_child('Default skill',height=cls.resizeheight(25),border=True)
+                imgui.begin_child('Default skill', height=cls.resizeheight(25), border=True)
                 imgui.same_line(position=250)
-                actiondecorator(imgui.text,cls.theme)(Gamelogic.changeskill.originalskill.name)
+                actiondecorator(imgui.text, cls.theme)(Gamelogic.changeskill.originalskill.name)
                 imgui.same_line(position=500)
                 actiondecorator(imgui.text, cls.theme)(f'{Gamelogic.changeskill.originalskill.power}')
                 imgui.same_line(position=750)
@@ -1415,16 +1409,16 @@ class Graphics:
                 imgui.same_line(position=750)
                 actiondecorator(imgui.text, cls.theme)(f'{Gamelogic.changeskill.skill.interval}')
                 imgui.same_line(position=940)
-                if actiondecorator(imgui.button,cls.theme)('Remove',cls.resizewidth(90),cls.resizeheight(15)):
-                    Gamelogic.changeskill.skill=Gamelogic.changeskill.originalskill.copy()
-                    Gamelogic.changeskill=None
-                    Gamelogic.partysubtab='Party selection'
+                if actiondecorator(imgui.button, cls.theme)('Remove', cls.resizewidth(90), cls.resizeheight(15)):
+                    Gamelogic.changeskill.skill = Gamelogic.changeskill.originalskill.copy()
+                    Gamelogic.changeskill = None
+                    Gamelogic.partysubtab = 'Party selection'
                 imgui.end_child()
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 30)}']):
                 actiondecorator(imgui.text, cls.theme)('Skill list')
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
                 imgui.begin_child('Skill list', border=True)
-                for num,skill in enumerate(Gamelogic.availableskills):
+                for num, skill in enumerate(Gamelogic.availableskills):
                     imgui.same_line(position=250)
                     actiondecorator(imgui.text, cls.theme)(skill.name)
                     imgui.same_line(position=500)
@@ -1432,23 +1426,42 @@ class Graphics:
                     imgui.same_line(position=750)
                     actiondecorator(imgui.text, cls.theme)(f'{skill.interval}')
                     imgui.same_line(position=940)
-                if actiondecorator(imgui.button,cls.theme)(f'Assign###{num}',cls.resizewidth(90),cls.resizeheight(15)):
-                    Gamelogic.changeskillfunction(Gamelogic.changeskill,skill)
+                if actiondecorator(imgui.button, cls.theme)(f'Assign###{num}', cls.resizewidth(90),
+                                                            cls.resizeheight(15)):
+                    Gamelogic.changeskillfunction(Gamelogic.changeskill, skill)
                 imgui.end_child()
                 if temp:
-                    Gamelogic.changeskill=None
+                    Gamelogic.changeskill = None
 
         imgui.end()
 
-
     @classmethod
-    def draw_training(cls):
-        imgui.set_next_window_size(cls.resizewidth(1075), cls.resizeheight(440))
-        imgui.set_next_window_position(cls.resizewidth(120), cls.resizeheight(55))
-        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
-            backgroundecorator(imgui.begin, cls.theme)('Training', False, cls.flags)
+    def draw_rank(cls):
+        imgui.set_next_window_size(cls.resizewidth(675), cls.resizeheight(340))
+        imgui.set_next_window_position(cls.resizewidth(320), cls.resizeheight(155))
+        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 30)}']):
+            backgroundecorator(imgui.begin, cls.theme)('Rank', False, cls.flags)
+            actualexp=Gamelogic.corestats.baseexp
+            imgui.same_line(position=290)
+            actiondecorator(imgui.text,cls.theme)(f'Exp:{actualexp}/{Gamelogic.exprequiredtorank}')
+            imgui.new_line()
+            imgui.same_line(position=90)
+            progressbardecorator(imgui.progress_bar,cls.theme)(actualexp/Gamelogic.exprequiredtorank,(cls.resizewidth(500),cls.resizeheight(25)))
+            imgui.new_line()
+            use=actualexp<Gamelogic.corestats.exprequiredtorank
+            imgui.same_line(position=220)
+            if cls.disabledecorator(imgui.button,use)('Rank up',cls.resizewidth(250),cls.resizeheight(30)) and not use:
+
+                Gamelogic.corestats.rank+=1
+                Gamelogic.corestats.exprequiredtorank=round(Gamelogic.corestats.exprequiredtorank*2.2,0)
+            imgui.new_line()
+        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 50)}']):
+            imgui.same_line(position=280)
+            actiondecorator(imgui.text, cls.theme)(f"Rank {Gamelogic.rank}")
+
 
             imgui.end()
+
     @classmethod
     def draw_shop(cls):
         imgui.set_next_window_size(cls.resizewidth(1075), cls.resizeheight(440))
@@ -1457,15 +1470,15 @@ class Graphics:
             backgroundecorator(imgui.begin, cls.theme)('Shop', False, cls.flags)
 
         with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 25)}']):
-            actiondecorator(imgui.text,cls.theme)("Hart's sleazy material shop")
+            actiondecorator(imgui.text, cls.theme)("Hart's sleazy material shop")
         with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 15)}']):
-            imgui.begin_child('Material shop',width=cls.resizewidth(300),border=True)
+            imgui.begin_child('Material shop', width=cls.resizewidth(300), border=True)
             for item in [e for e in Gamelogic.buyablematerials if e.isvisible]:
-                if cls.disabledecorator(imgui.button,False)(f'{item.cost} gold : {item.name}',cls.resizewidth(285),cls.resizeheight(30)):
+                if cls.disabledecorator(imgui.button, False)(f'{item.cost} gold : {item.name}', cls.resizewidth(285),
+                                                             cls.resizeheight(30)):
                     item.buy()
             imgui.end_child()
         imgui.end()
-
 
     @classmethod
     def creategui(cls):
@@ -1491,12 +1504,12 @@ class Graphics:
                 cls.draw_levelup_menu()
             elif Gamelogic.partysubtab == 'Skill':
                 cls.draw_skill_menu()
-        if Gamelogic.tab == 'Training':
-            cls.draw_training()
+        if Gamelogic.tab == 'Rank':
+            if Gamelogic.ritualsubtab == 'Rank':
+                cls.draw_rank()
         if Gamelogic.tab == 'Shop':
             cls.draw_shop()
         if Gamelogic.tab == 'Dungeon':
             cls.draw_dungeon()
         if Gamelogic.tab == 'Settings':
             cls.draw_settings()
-

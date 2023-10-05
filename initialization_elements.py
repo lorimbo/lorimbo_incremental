@@ -6,6 +6,7 @@ import pygame
 import pokemonlist
 import questlines
 
+
 red = (255, 0, 0)
 green = (0, 255, 0)
 blue = (0, 0, 255)
@@ -163,6 +164,7 @@ class Dungeon:
                     for character in [e for e in self.parent.party if e.name == 'You']:
                         character.maxlvl += quantity
             self.cleared = True
+            self.parent.cleareddungeons.append(self.name)
 
     def update(self):
         pass
@@ -173,6 +175,9 @@ class Corestats:
         self.parent = parent
         self.basestats = {'hp': 10, 'patk': 10, 'pdef': 10, 'matk': 10, 'mdef': 10}
         self.modifiers = {'Quests': {'type': 'add', 'hp': 1, 'patk': 0, 'pdef': 0, 'matk': 0, 'mdef': 0}}
+        self.baseexp=2000
+        self.rank=0
+        self.exprequiredtorank = 500
 
     def updatepokemons(self):
         for pokemon in self.parent.party:
@@ -851,10 +856,10 @@ def createshopitems(parent):
 def createmenu(parent):
     menuelement(parent=parent, name='Main', isvisible=True, elementlist=parent.mainelements)
     menuelement(parent=parent, name='Party', isvisible=True, elementlist=parent.mainelements)
-    menuelement(parent=parent, name='Training', isvisible=False, elementlist=parent.mainelements,
-                unlockflags={'Main': 1})
+    menuelement(parent=parent, name='Rank', isvisible=False, elementlist=parent.mainelements,
+                unlockflags={'Father': 7})
     menuelement(parent=parent, name='Shop', isvisible=False, elementlist=parent.mainelements,
-                unlockflags={'Shop': 1})
+                unlockflags={'Enter the sleazy shop':2})
     menuelement(parent=parent, name='Story', isvisible=False, elementlist=parent.mainelements, unlockflags={'Main': 2})
     menuelement(parent=parent, name='Dungeon', isvisible=False, elementlist=parent.mainelements,
                 unlockflags={'Father': 7})
@@ -979,10 +984,20 @@ def createquests(parent):
 def createproceedactions(parent):
     Nextaction(parent=parent,name='Unlock the world',location='Village',unlockflags={'Main': 1}, closingflags={'Main':2}, changeflags={'Main': 1},cost=[['Fate', -10, 0, 0]])
 
+def createcorestats(parent):
+    Information = getgamestate()
+    parent.corestats = Corestats(parent)
+    parent.corestats.basestats = Information['corestats']['basestats']
+    parent.corestats.modifiers = Information['corestats']['modifiers']
+    parent.corestats.baseexp = Information['corestats']['baseexp']
+    parent.corestats.rank = Information['corestats']['rank']
+    parent.corestats.exprequiredtorank = Information['corestats']['exprequiredtorank']
+
 def loadflags(parent):
     Information = getgamestate()
     for flag in Information['flags']:
         parent.flags[flag] = Information['flags'][flag]
+    parent.cleareddungeons=Information['cleareddungeons']
 
 
 def createresources(parent):
@@ -997,6 +1012,8 @@ def createresources(parent):
                                 resources=parent.resources)
     parent.specialgems = Resource(parent, 'Special gems', *Information['resources']['Special gems'],
                                   resources=parent.resources)
+
+
 
 
 def createenergies(parent):
@@ -1030,3 +1047,8 @@ def createdungeons(parent):
     Dungeon(parent=parent, name="Brother fight", location=['Village', 'Surroundings'], changeflags={},
             unlockflags={'Brother': 4}, closingflags={}, firsttime=[['maxlvl', 10]],
             monsterlist=[], boss=parent.pokemonlist[6].copy())
+    for location1 in parent.dungeons:
+        for location2 in parent.dungeons[location1]:
+            for dung in parent.dungeons[location1][location2]:
+                if dung.name in parent.cleareddungeons:
+                    dung.cleared= True
