@@ -76,6 +76,7 @@ for diagram in tree.getroot():
         lines.append([line.attrib['source'],line.attrib['target'],'fillColor=#f8cecc' not in line.attrib['style']])
         redlines=[line for line in lines if not line[2]]
     objects=[e for e in idlist if 'target' not in e.attrib and len(e.attrib['label'])>=3]
+    print(objects)
     def getquestleng(quest,num=0):
         num+=1
         for targetid in  [e[1] for e in lines if e[0]==quest.attrib['id']]:
@@ -109,12 +110,15 @@ for diagram in tree.getroot():
         finalstring += 'changeflags={'
         for i in range(len(childrenlocks)):
             finalstring += f"'{childrenlocks[i].attrib['label']}':{len([e[0] for e in lines if e[1]==childrenlocks[i].attrib['id'] and e[2]])+99},"
-        finalstring += f"'{questlineflag}':{max(1,len([e[0] for e in lines if e[1]==quest.attrib['id'] and e[2]]))},"
+        finalstring += f"'{questlineflag}':{max(1,len([e[0] for e in lines if e[1]==quest.attrib['id'] and e[2]]))}"
+        if numberofchildren!=0:
+            finalstring+=','
         for i in range(numberofchildren):
             finalstring+=f"'{children[i].attrib['label']}':1"
             if i!=numberofchildren-1:
                 finalstring+=','
-
+        if 'flags' in quest.attrib:
+            finalstring+=f',{quest.attrib["flags"]}'
         finalstring+='})'
         filecontent+=f'    {finalstring}\n'
         listofidscreated.append(quest.attrib['id'])

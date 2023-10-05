@@ -103,7 +103,19 @@ class Gamelogic:
             for key in cls.arealongs[cls.subtab]:
                 areaactions.append(key)
         for item in cls.buyablematerials:
-            areaactions.append(item)
+            temp = 0
+            if item.closingflags is not None:
+                for key in item.closingflags.keys():
+                    if item.closingflags[key] <= cls.flags[key]:
+                        temp = 1
+            if item.unlockflags is not None:
+                for key in item.unlockflags.keys():
+                    if item.unlockflags[key] > cls.flags[key]:
+                        temp = 1
+            if temp:
+                item.isvisible = False
+            else:
+                item.isvisible = True
         if cls.subtab in cls.proceedactions.keys():
             for action in cls.proceedactions[cls.subtab]:
                 temp = 0

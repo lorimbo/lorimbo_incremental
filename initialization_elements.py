@@ -339,7 +339,7 @@ class Quests(menuelement):
                 for x in self.parent.resources.keys():
                     for resource in [e for e in self.parent.resources[x] if e.name == name]:
                         resource.max += i[2]
-            elif i[0] == 'stat':
+            elif i[0] == 'stats':
                 name = i[1]
                 self.parent.corestats.modifiers['Quests'][name] += i[2]
                 self.parent.corestats.updatepokemons()
@@ -857,12 +857,12 @@ def createmenu(parent):
     menuelement(parent=parent, name='Main', isvisible=True, elementlist=parent.mainelements)
     menuelement(parent=parent, name='Party', isvisible=True, elementlist=parent.mainelements)
     menuelement(parent=parent, name='Rank', isvisible=False, elementlist=parent.mainelements,
-                unlockflags={'Father': 7})
+                unlockflags={'Talk with father 7/11': 1})
     menuelement(parent=parent, name='Shop', isvisible=False, elementlist=parent.mainelements,
                 unlockflags={'Enter the sleazy shop':2})
     menuelement(parent=parent, name='Story', isvisible=False, elementlist=parent.mainelements, unlockflags={'Main': 2})
     menuelement(parent=parent, name='Dungeon', isvisible=False, elementlist=parent.mainelements,
-                unlockflags={'Father': 7})
+                unlockflags={'Talk with father 7/11': 1})
     menuelement(parent=parent, name='Settings', isvisible=True, elementlist=parent.mainelements)
 
 
@@ -934,16 +934,16 @@ def createinstantactions(parent):
                    location='Common actions', cost=[['Energy', -1, 0, 0]],
                    complete=[['Fate', +1, 0, 0]])
     Instantactions(parent=parent, name='Cut wood', location='Woodcutting',
-                   unlockflags={'Father': 2}, cost=[['Endurance', -1, 0, 0]],
+                   unlockflags={'Talk with father 2/11': 1}, cost=[['Endurance', -1, 0, 0]],
                    complete=[['Wood', 1, 0, 0]])
     Instantactions(parent=parent, name='"Eat" herbs', location='Garden activities',
-                   unlockflags={'Mother': 7}, cost=[['Herbs', -1, 0, 0]],
+                   unlockflags={'Talk with mother 8/10': 1}, cost=[['Herbs', -1, 0, 0]],
                    complete=[['Fate', 5, 0, 0]])
 
 
 def createareainstant(parent):
     Instantactions(parent=parent, name='Look for weeds', isvisible=True, location='Village',
-                   unlockflags={'Mother': 5}, cost=[['Energy', -0.4, 0, 0]], area=True,
+                   unlockflags={'Talk with mother 6/10': 1}, cost=[['Energy', -0.4, 0, 0]], area=True,
                    complete=[['Weeds', 1, 0, 0], ['Gold', 2, 0, 0]])
 
 
@@ -954,7 +954,7 @@ def createlongactions(parent):
     Longaction(parent=parent, name='Parse through weeds', isvisible=True,
                location='Garden', speed=1 / 120, cost=[['Weeds', -5, 0, 0]],
                progresscost=[['Energy', -1 / 120, 0, 0]], complete=[['Herbs', 1, 0, 0]],
-               unlockflags={'Mother': 5})
+               unlockflags={'Talk with mother 6/10': 1})
     Longaction(parent=parent, name='Meditate', isvisible=True,
                location='Your room', speed=1 / 120,
                progresscost=[['Energy', -1 / 120, 0, 0]], complete=[['Fate', 1, 0, 0]],
@@ -965,7 +965,7 @@ def createarealongs(parent):
     Longaction(parent=parent, name='Exercise', isvisible=True,
                location='Village', speed=1 / 300, area=True,
                progresscost=[['Energy', -1 / 120, 0, 0]], progresseffect=[['Endurance', 1 / 120, 0, 0]],
-               unlockflags={'Father': 2})
+               unlockflags={'Talk with father 2/11': 1})
 
 
 def createquests(parent):
@@ -1017,35 +1017,35 @@ def createresources(parent):
 
 
 def createenergies(parent):
-    Energy(parent=parent, name='Energy', quantity=5, max=5, unlockflags={'Father': 0}, color=red, regen=0)
-    Energy(parent=parent, name='Endurance', quantity=0, max=1, unlockflags={'Father': 2}, color=(255, 255, 0),
+    Energy(parent=parent, name='Energy', quantity=5, max=5, unlockflags={'Enter your home': 0}, color=red, regen=0)
+    Energy(parent=parent, name='Endurance', quantity=0, max=1, unlockflags={'Talk with father 2/11': 1}, color=(255, 255, 0),
            regen=0)
-    Energy(parent=parent, name='Mana', quantity=0, max=1, unlockflags={'Father': 14}, color=(0, 0, 205),
+    Energy(parent=parent, name='Mana', quantity=0, max=1, unlockflags={'Talk with father 7/11': 14}, color=(0, 0, 205),
            isvisible=False,
            regen=1 / 120)
-    Energy(parent=parent, name='Fire', quantity=0, max=1, unlockflags={'Father': 14}, color=orange, isvisible=False,
+    Energy(parent=parent, name='Fire', quantity=0, max=1, unlockflags={'Talk with father 7/11': 14}, color=orange, isvisible=False,
            regen=1 / 120)
-    Energy(parent=parent, name='Wind', quantity=0, max=1, unlockflags={'Father': 14}, color=teal, isvisible=False,
+    Energy(parent=parent, name='Wind', quantity=0, max=1, unlockflags={'Talk with father 7/11': 14}, color=teal, isvisible=False,
            regen=1 / 120)
-    Energy(parent=parent, name='Earth', quantity=0, max=1, unlockflags={'Father': 14}, color=brown, isvisible=False,
+    Energy(parent=parent, name='Earth', quantity=0, max=1, unlockflags={'Talk with father 7/11': 14}, color=brown, isvisible=False,
            regen=1 / 120)
 
 
 def createdungeons(parent):
-    Dungeon(parent=parent, name="Field", location=['Village', 'Surroundings'], changeflags={'Brother': 1},
-            unlockflags={'Mother': 11}, closingflags={}, usualreward=[['resource', 'Special gems', 1, 0, 0]],
+    Dungeon(parent=parent, name="Field", location=['Village', 'Surroundings'], changeflags={'Talk with Francesco 1/3': 1},
+            unlockflags={'Talk with mother 10/10': 2}, closingflags={}, usualreward=[['resource', 'Special gems', 1, 0, 0]],
             firsttime=[['maxlvl', 7]],
             monsterlist=[parent.pokemonlist[i].copy() for i in range(3, 6)])
-    Dungeon(parent=parent, name="Garden", location=['Village', 'Home'], changeflags={'Mother': 1},
-            unlockflags={'Father': 12}, closingflags={}, usualreward=[['resource', 'Magical gems', 1, 0, 0]],
+    Dungeon(parent=parent, name="Garden", location=['Village', 'Home'], changeflags={'Talk with mother 1/10': 1},
+            unlockflags={'Talk with father 11/11': 2}, closingflags={}, usualreward=[['resource', 'Magical gems', 1, 0, 0]],
             firsttime=[['maxlvl', 6]],
             monsterlist=[parent.pokemonlist[i].copy() for i in range(1, 4)])
     Dungeon(parent=parent, name="Training hall", location=['Village', 'Home'], changeflags={'Main': 1},
-            unlockflags={'Father': 7}, closingflags={}, usualreward=[['resource', 'Physical gems', 1, 0, 0]],
+            unlockflags={'Talk with father 7/11': 1}, closingflags={}, usualreward=[['resource', 'Physical gems', 1, 0, 0]],
             firsttime=[['maxlvl', 5],['resource', 'Physical gems', 1, 0, 0],['resource', 'Magical gems', 1, 0, 0],['resource', 'Special gems', 1, 0, 0]],
             monsterlist=[], boss=parent.pokemonlist[0].copy())
     Dungeon(parent=parent, name="Brother fight", location=['Village', 'Surroundings'], changeflags={},
-            unlockflags={'Brother': 4}, closingflags={}, firsttime=[['maxlvl', 10]],
+            unlockflags={'Talk with Francesco 3/3': 2}, closingflags={}, firsttime=[['maxlvl', 10]],
             monsterlist=[], boss=parent.pokemonlist[6].copy())
     for location1 in parent.dungeons:
         for location2 in parent.dungeons[location1]:

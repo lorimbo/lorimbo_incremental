@@ -14,13 +14,13 @@ add rare enemies to dungeons+ add them to the tooltip
 implement story log and add it to the save
 add souls to the save
 gear for the monsters
-add exp/ranks to the save
-add cleared dungeons to save
-add corestats to save
+add unlockablepokemons to the save
 put the wrting hp/atk .... in the party menu
 
 Organizing:
 change default cost,complete exc to None
+move a lot more to corestats
+
 
 Make the game work:
 implement browser(LATER)

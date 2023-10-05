@@ -1261,7 +1261,7 @@ class Graphics:
         imgui.set_next_window_position(cls.resizewidth(0),
                                        list(pygame.display.get_window_size())[1] - cls.resizeheight(100))
         backgroundecorator(imgui.begin, cls.theme)('Bottombar', False, cls.flags)
-        if Gamelogic.flags['Popup']:
+        if 'Popup' in Gamelogic.flags and Gamelogic.flags['Popup']:
             Gamelogic.bottomlog.append(Popups[Gamelogic.flags['Popup']])
             now = datetime.datetime.now()
             Gamelogic.bottomtimes.append(str(now.time())[0:8])
@@ -1443,10 +1443,10 @@ class Graphics:
             backgroundecorator(imgui.begin, cls.theme)('Rank', False, cls.flags)
             actualexp=Gamelogic.corestats.baseexp
             imgui.same_line(position=290)
-            actiondecorator(imgui.text,cls.theme)(f'Exp:{actualexp}/{Gamelogic.exprequiredtorank}')
+            actiondecorator(imgui.text,cls.theme)(f'Exp:{actualexp}/{Gamelogic.corestats.exprequiredtorank}')
             imgui.new_line()
             imgui.same_line(position=90)
-            progressbardecorator(imgui.progress_bar,cls.theme)(actualexp/Gamelogic.exprequiredtorank,(cls.resizewidth(500),cls.resizeheight(25)))
+            progressbardecorator(imgui.progress_bar,cls.theme)(actualexp/Gamelogic.corestats.exprequiredtorank,(cls.resizewidth(500),cls.resizeheight(25)))
             imgui.new_line()
             use=actualexp<Gamelogic.corestats.exprequiredtorank
             imgui.same_line(position=220)
@@ -1457,7 +1457,7 @@ class Graphics:
             imgui.new_line()
         with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 50)}']):
             imgui.same_line(position=280)
-            actiondecorator(imgui.text, cls.theme)(f"Rank {Gamelogic.rank}")
+            actiondecorator(imgui.text, cls.theme)(f"Rank {Gamelogic.corestats.rank}")
 
 
             imgui.end()
