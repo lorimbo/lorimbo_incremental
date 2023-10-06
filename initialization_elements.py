@@ -24,6 +24,8 @@ class Passive:
         self.thing=thing
         self.type=type
         self.quantity=maxpower/2+(maxpower/2)*percentage
+        self.maxpower=maxpower
+        self.percentage=percentage
 
 
 class Skill:
@@ -776,7 +778,7 @@ class Longaction(menuelement):
 class Pokemon(menuelement):
     def __init__(self, hp, atk, dif, satk, sdif, maxlvl=1000, unlocked=0, lvl=0, phys=0, magic=0,
                  special=0, drop=None,
-                 skill=None,num=0, wild=True,originalskill=None,passive=[Passive('Wood','resourcemax',10,1)],
+                 skill=None,num=0, wild=True,originalskill=None,passive=[],
                  *args, **kwargs):
 
         menuelement.__init__(self, *args, **kwargs)
@@ -794,6 +796,10 @@ class Pokemon(menuelement):
         self.special = special
         self.wild = wild
         self.passive=passive
+        for passive in self.passive:
+            passive.percentage = (self.special / self.maxlvl)
+            passive.quantity = passive.maxpower / 2 + (passive.maxpower / 2) * passive.percentage
+
         if drop == None:
             self.drop = {'exp': 1, 'resources': [['Physical gems', 1, 10], ['Magical gems', 1, 10],
                                                  ['Special gems', 1, 10]]}
@@ -820,6 +826,9 @@ class Pokemon(menuelement):
         return copy.deepcopy(self)
 
     def updatestats(self):
+        for passive in self.passive:
+            passive.percentage = (self.special / self.maxlvl)
+            passive.quantity = passive.maxpower / 2 + (passive.maxpower / 2) * passive.percentage
         if self.name == 'You':
             if self.lvl <= 10:
                 self.scaling1 = 1 / 10 + self.phys * 9 / 100
@@ -943,7 +952,7 @@ def createtemplates(parent):
                         maxlvl=partypok['maxlvl'], unlocked=partypok['unlocked'], lvl=partypok['lvl'],
                         phys=partypok['phys'],
                         magic=partypok['magic'], special=partypok['special'], drop=partypok['drop'],
-                        num=partypok['num'])
+                        num=partypok['num'],passive=parent.pokemonlist[partypok['num']-1].passive)
             for reservepok in Information['templates'][num][1]:
                 Pokemon(skill=reservepok['Skill'], originalskill=reservepok['Original skill'], parent=parent, wild=False, elementlist=late[1],
                         hp=reservepok['hp'], name=reservepok['name'], atk=reservepok['atk'],
@@ -951,7 +960,7 @@ def createtemplates(parent):
                         maxlvl=reservepok['maxlvl'], unlocked=reservepok['unlocked'], lvl=reservepok['lvl'],
                         phys=reservepok['phys'],
                         magic=reservepok['magic'], special=reservepok['special'], drop=reservepok['drop'],
-                        num=reservepok['num'])
+                        num=reservepok['num'],passive=parent.pokemonlist[reservepok['num']-1].passive)
             parent.templates.append(late)
 
 
