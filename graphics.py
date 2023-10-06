@@ -708,7 +708,7 @@ class Graphics:
                                    imgui.get_color_u32_rgba(*[e / 255 for e in Themes[cls.theme]['buttontextcolor']],
                                                             1),
                                    str(round(energy.quantity, 1)) + '/' + str(
-                                       round(energy.max, 0)))
+                                       round(energy.max, 1)))
                 draw_list.path_rect(cls.resizewidth(1210), cls.resizeheight(30 + num * 25), cls.resizewidth(1210 + 270),
                                     cls.resizeheight(50 + num * 25))
             draw_list.path_stroke(imgui.get_color_u32_rgba(1, 1, 1, 1), flags=0, thickness=1)
@@ -991,7 +991,6 @@ class Graphics:
                         reservecopy = [i.copy() for i in Gamelogic.reserve]
                         Gamelogic.templates[i].append(partycopy)
                         Gamelogic.templates[i].append(reservecopy)
-                        print('ok')
 
                     imgui.same_line()
         imgui.end()
@@ -1322,11 +1321,23 @@ class Graphics:
             if Gamelogic.activedungeon is not None:
                 backgroundecorator(imgui.begin_child, cls.theme)("Your party", width=cls.resizewidth(970 / 3),
                                                                  height=cls.resizeheight(370), border=True)
-                for pokemon in Gamelogic.activedungeon.party:
+                for num,pokemon in enumerate(Gamelogic.activedungeon.party):
                     actiondecorator(imgui.text, cls.theme)(pokemon.name)
                     progressbardecorator(imgui.progress_bar, cls.theme)(pokemon.currenthp / pokemon.actualhp,
                                                                         (cls.resizewidth(250), cls.resizeheight(20)),
                                                                         f'{numcon(pokemon.currenthp)}/{numcon(pokemon.actualhp)}')
+                    imgui.same_line()
+                    use=num==0
+                    if cls.disabledecorator(imgui.arrow_button,use)(f'{num}',imgui.DIRECTION_UP) and not use:
+                        il=Gamelogic.activedungeon.party[num].copy()
+                        Gamelogic.activedungeon.party[num]=Gamelogic.activedungeon.party[num-1].copy()
+                        Gamelogic.activedungeon.party[num - 1]=il
+                    imgui.same_line()
+                    use = num == min(5,len(Gamelogic.activedungeon.party)-1)
+                    if cls.disabledecorator(imgui.arrow_button, use)(f'##{num}', imgui.DIRECTION_DOWN) and not use:
+                        il = Gamelogic.activedungeon.party[num].copy()
+                        Gamelogic.activedungeon.party[num] = Gamelogic.activedungeon.party[num + 1].copy()
+                        Gamelogic.activedungeon.party[num + 1] = il
                     progressbardecorator(imgui.progress_bar, cls.theme)(
                         (1 - (pokemon.cd / (pokemon.skill.interval * 120))),
                         (cls.resizewidth(250), cls.resizeheight(20)),
@@ -1442,7 +1453,7 @@ class Graphics:
         with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 30)}']):
             backgroundecorator(imgui.begin, cls.theme)('Rank', False, cls.flags)
             actualexp=Gamelogic.corestats.baseexp
-            imgui.same_line(position=290)
+            imgui.same_line(position=270)
             actiondecorator(imgui.text,cls.theme)(f'Exp:{actualexp}/{Gamelogic.corestats.exprequiredtorank}')
             imgui.new_line()
             imgui.same_line(position=90)

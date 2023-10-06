@@ -3,9 +3,9 @@ habits/some kinda of upgrade system
 resources effects with tooltips
 astral plane
 party effects with tooltips
+PARTY EFFECTS SHOULD BE SAVED
 implement pokemon/skill type 
 implement skills effects
-reserve is not ordered
 add a dojo that allowes you to buy skills 
 offline rewards
 name/title
@@ -16,6 +16,7 @@ add souls to the save
 gear for the monsters
 add unlockablepokemons to the save
 put the wrting hp/atk .... in the party menu
+improve the game system
 
 Organizing:
 change default cost,complete exc to None

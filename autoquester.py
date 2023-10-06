@@ -76,7 +76,6 @@ for diagram in tree.getroot():
         lines.append([line.attrib['source'],line.attrib['target'],'fillColor=#f8cecc' not in line.attrib['style']])
         redlines=[line for line in lines if not line[2]]
     objects=[e for e in idlist if 'target' not in e.attrib and len(e.attrib['label'])>=3]
-    print(objects)
     def getquestleng(quest,num=0):
         num+=1
         for targetid in  [e[1] for e in lines if e[0]==quest.attrib['id']]:
@@ -105,7 +104,10 @@ for diagram in tree.getroot():
         finalstring+=f',cost={convertcost(quest.attrib["cost"])},'
         finalstring+=f'complete={convertcomplete(quest.attrib["complete"])},'
         finalstring += f'location={convertlocation(quest.attrib["location"])},'
-        finalstring += 'unlockflags={'+f"'{questlineflag}':{questlineflagamount}"+'},'
+        finalstring += 'unlockflags={'+f"'{questlineflag}':{questlineflagamount}"
+        if 'openflags' in quest.attrib:
+            finalstring+=f',{quest.attrib["openflags"]}'
+        finalstring +="},"
         finalstring += 'closingflags={' + f"'{questlineflag}':{questlineflagamount+max(1,len([e[0] for e in lines if e[1]==quest.attrib['id'] and e[2]]))}" + '},'
         finalstring += 'changeflags={'
         for i in range(len(childrenlocks)):
@@ -132,7 +134,6 @@ for diagram in tree.getroot():
             createquest(element,element.attrib['label'],1)
 with open('automaticquests/villagequest.py', "w") as file1:
     file1.write(filecontent)
-print(filecontent)
 
 
 

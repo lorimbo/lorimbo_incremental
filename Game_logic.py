@@ -78,14 +78,17 @@ class Gamelogic:
     musicvolume = 0.1
     cleareddungeons=[]
     corestats=None
+    framecounter=0
 
 
     @classmethod
     def changetemplateto(cls,num):
         partycopy=[e.copy() for e in cls.templates[num][0]]
         reservecopy=[e.copy() for e in cls.templates[num][1]]
+        cls.passiveremove()
         cls.party=partycopy
         cls.reserve = reservecopy
+        cls.passivesadd()
 
 
     @classmethod
@@ -226,12 +229,17 @@ class Gamelogic:
 
     @classmethod
     def removepokemonfromparty(cls, pos):
+        cls.passiveremove()
         cls.reserve.append(cls.party.pop(pos))
+        cls.passivesadd()
         cls.remove = None
 
     @classmethod
     def addpokemontoparty(cls, pos):
+        cls.passiveremove()
         cls.party.append(cls.reserve.pop(pos))
+        cls.passivesadd()
+
         cls.add = None
 
     @classmethod
@@ -303,6 +311,7 @@ class Gamelogic:
         Information["corestats"]["baseexp"]=cls.corestats.baseexp
         Information["corestats"]["rank"]=cls.corestats.rank
         Information["corestats"]["exprequiredtorank"]=cls.corestats.exprequiredtorank
+        Information["corestats"]["improvedactions"] = cls.corestats.improvedactions
         for flag in cls.flags:
             if cls.flags[flag]!=0:
                 Information['flags'][flag]=cls.flags[flag]
@@ -416,6 +425,16 @@ class Gamelogic:
         for energy in cls.energies:
             if energy.quantity < energy.max:
                 energy.quantity += energy.regen
+    @classmethod
+    def regenitems(cls):
+        for key in cls.resources:
+            for item in cls.resources[key]:
+                if item.regen:
+                    time=int(round(120/item.regen,0))
+                    if cls.framecounter%time==0:
+                        item.quantity+=1
+                        if item.quantity>item.max:
+                            item.quantity=item.max
 
     @classmethod
     def updatebuttons(cls):
@@ -602,13 +621,64 @@ class Gamelogic:
                     final.append(e)
         cls.reserve=final
 
+    @classmethod
+    def passivesadd(cls):
+        resourcelist=[resource for key in cls.resources for resource in cls.resources[key]]
+        for pokemon in cls.party:
+            for passive in [passive for passive in pokemon.passive if passive.type=="resourcemax"]:
+                for resource in [resource for resource in resourcelist if resource.name==passive.thing]:
+                    resource.max+=passive.quantity
+            for passive in [passive for passive in pokemon.passive if passive.type=="resourceregen"]:
+                for resource in [resource for resource in resourcelist if resource.name==passive.thing]:
+                    resource.regen+=passive.quantity
+
+            for passive in [passive for passive in pokemon.passive if passive.type == "energymax"]:
+                for energy in [energy for energy in cls.energies if energy.name==passive.thing]:
+                    energy.max+=passive.quantity
+            for passive in [passive for passive in pokemon.passive if passive.type == "energyregen"]:
+                for energy in [energy for energy in cls.energies if energy.name==passive.thing]:
+                    energy.regen+=passive.quantity
+            for passive in [passive for passive in pokemon.passive if passive.type == "addstats"]:
+                cls.corestats.modifiers["Party additive"][passive.thing] += passive.quantity
+            for passive in [passive for passive in pokemon.passive if passive.type == "mulstats"]:
+                cls.corestats.modifiers["Party multiplicative"][passive.thing] += passive.quantity
+            for passive in [passive for passive in pokemon.passive if passive.type == "longimprove"]:
+                if passive.thing not in cls.corestats.improvedactions:
+                    cls.corestats.improvedactions[passive.thing]=0
+                cls.corestats.improvedactions[passive.thing]+=passive.quantity
+
+    @classmethod
+    def passiveremove(cls):
+        resourcelist = [resource for key in cls.resources for resource in cls.resources[key]]
+        for pokemon in cls.party:
+            for passive in [passive for passive in pokemon.passive if passive.type == "resourcemax"]:
+                for resource in [resource for resource in resourcelist if resource.name == passive.thing]:
+                    resource.max -= passive.quantity
+            for passive in [passive for passive in pokemon.passive if passive.type=="resourceregen"]:
+                for resource in [resource for resource in resourcelist if resource.name==passive.thing]:
+                    resource.regen-=passive.quantity
+            for passive in [passive for passive in pokemon.passive if passive.type == "energymax"]:
+                for energy in [energy for energy in cls.energies if energy.name==passive.thing]:
+                    energy.max-=passive.quantity
+                    energy.quantity=max(0,energy.quantity-passive.quantity)
+            for passive in [passive for passive in pokemon.passive if passive.type == "energyregen"]:
+                for energy in [energy for energy in cls.energies if energy.name==passive.thing]:
+                    energy.regen-=passive.quantity
+            for passive in [passive for passive in pokemon.passive if passive.type == "addstats"]:
+                cls.corestats.modifiers["Party additive"][passive.thing]-=passive.quantity
+            for passive in [passive for passive in pokemon.passive if passive.type == "mulstats"]:
+                cls.corestats.modifiers["Party multiplicative"][passive.thing] -= passive.quantity
+            for passive in [passive for passive in pokemon.passive if passive.type == "longimprove"]:
+                cls.corestats.improvedactions[passive.thing] -= passive.quantity
 
 
 
     @classmethod
     def frameaction(cls):
+        cls.framecounter+=1
         cls.updatebuttons()
         cls.regenenergies()
+        cls.regenitems()
         cls.longactionprogress()
         cls.checkflags()
         cls.reorderreserve()

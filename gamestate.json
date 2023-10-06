@@ -7,9 +7,9 @@
                   "dif": 1,
                   "satk": 1,
                   "sdif": 1,
-                  "maxlvl": 10,
+                  "maxlvl": 15,
                   "unlocked": 0,
-                  "lvl": 0,
+                  "lvl": 15,
                   "phys": 0,
                   "magic": 0,
                   "special": 0,
@@ -54,11 +54,128 @@
                   ]
             }
       ],
-      "reserve": [],
+      "reserve": [
+            {
+                  "name": "Butterfly",
+                  "hp": 80,
+                  "atk": 80,
+                  "dif": 80,
+                  "satk": 80,
+                  "sdif": 80,
+                  "maxlvl": 10,
+                  "unlocked": 0,
+                  "lvl": 6,
+                  "phys": 1,
+                  "magic": 1,
+                  "special": 1,
+                  "drop": {
+                        "exp": 2,
+                        "resources": [
+                              [
+                                    "Butterfly wings",
+                                    1,
+                                    30
+                              ],
+                              [
+                                    "Physical gems",
+                                    1,
+                                    10
+                              ],
+                              [
+                                    "Magical gems",
+                                    1,
+                                    10
+                              ],
+                              [
+                                    "Special gems",
+                                    1,
+                                    10
+                              ]
+                        ]
+                  },
+                  "num": 2,
+                  "Skill": [
+                        "Tackle",
+                        7,
+                        2.8,
+                        "Phys",
+                        false,
+                        false,
+                        false
+                  ],
+                  "Original skill": [
+                        "Tackle",
+                        7,
+                        2.8,
+                        "Phys",
+                        false,
+                        false,
+                        false
+                  ]
+            },
+            {
+                  "name": "Frog",
+                  "hp": 91.2,
+                  "atk": 100.8,
+                  "dif": 91.2,
+                  "satk": 96,
+                  "sdif": 100.8,
+                  "maxlvl": 12,
+                  "unlocked": 0,
+                  "lvl": 6,
+                  "phys": 1,
+                  "magic": 1,
+                  "special": 1,
+                  "drop": {
+                        "exp": 2,
+                        "resources": [
+                              [
+                                    "Frog legs",
+                                    1,
+                                    10
+                              ],
+                              [
+                                    "Physical gems",
+                                    1,
+                                    10
+                              ],
+                              [
+                                    "Magical gems",
+                                    1,
+                                    10
+                              ],
+                              [
+                                    "Special gems",
+                                    1,
+                                    10
+                              ]
+                        ]
+                  },
+                  "num": 3,
+                  "Skill": [
+                        "Jump attack",
+                        6,
+                        2.3,
+                        "Phys",
+                        false,
+                        false,
+                        false
+                  ],
+                  "Original skill": [
+                        "Jump attack",
+                        6,
+                        2.3,
+                        "Phys",
+                        false,
+                        false,
+                        false
+                  ]
+            }
+      ],
       "resources": {
             "Wood": [
-                  1000,
-                  1,
+                  0,
+                  10,
                   {
                         "Talk with father 2/11": 1
                   },
@@ -129,17 +246,17 @@
                   0
             ],
             "Fate": [
-                  1000,
-                  10,
+                  0,
+                  45,
                   {
                         "Enter your home": 0
                   },
                   "Fate",
-                  0
+                  1
             ],
             "Physical gems": [
-                  0,
-                  1,
+                  2,
+                  20,
                   {
                         "Talk with father 7/11": 1
                   },
@@ -147,8 +264,8 @@
                   0
             ],
             "Magical gems": [
-                  0,
                   1,
+                  20,
                   {
                         "Talk with father 7/11": 1
                   },
@@ -157,7 +274,7 @@
             ],
             "Special gems": [
                   0,
-                  1,
+                  20,
                   {
                         "Talk with father 7/11": 1
                   },
@@ -165,8 +282,24 @@
                   0
             ]
       },
-      "flags": {"Popup": 1,"Enter your home": 1},
-      "cleareddungeons": [],
+      "flags": {
+            "Enter your home": 2,
+            "Talk with father 7/11": 2,
+            "Main": 1,
+            "Talk with father 2/11": 2,
+            "Talk with father 1/11": 2,
+            "Talk with father 3/11": 2,
+            "Talk with father 4/11": 2,
+            "Talk with father 5/11": 2,
+            "Talk with father 6/11": 2,
+            "Talk with father 8/11": 2,
+            "Talk with father 9/11": 2,
+            "Talk with father 10/11": 2,
+            "Talk with father 11/11": 2
+      },
+      "cleareddungeons": [
+            "Training hall"
+      ],
       "templates": [
             [],
             []
@@ -182,15 +315,32 @@
             "modifiers": {
                   "Quests": {
                         "type": "add",
-                        "hp": 1,
+                        "hp": 6,
+                        "patk": 5,
+                        "pdef": 5,
+                        "matk": 5,
+                        "mdef": 5
+                  },
+                  "Party additive": {
+                        "type": "add",
+                        "hp": 0,
                         "patk": 0,
                         "pdef": 0,
                         "matk": 0,
                         "mdef": 0
+                  },
+                  "Party multiplicative": {
+                        "type": "mul",
+                        "hp": 1,
+                        "patk": 1,
+                        "pdef": 1,
+                        "matk": 1,
+                        "mdef": 1
                   }
             },
-            "baseexp": 2000,
+            "baseexp": 2010,
             "rank": 0,
-            "exprequiredtorank": 500
+            "exprequiredtorank": 500,
+            "improvedactions": {}
       }
 }

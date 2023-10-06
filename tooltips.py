@@ -32,16 +32,16 @@ description = {
     'Talk with father 9/11': 'Physical gems improve hp,atk and def, magical gems improve matk and mdef, and special gems currently do nothing',
     'Talk with father 10/11': 'I will now proceed to get in character for this whole charade',
     'Talk with father 11/11': 'Little soldier!"Would you mind fetching your mom?She is in the garden',
-    'Talk to Mother 1/10': 'Ehy sweetie, how did you get here?The garden is dangerous',
-    'Talk to Mother 2/10': 'Oh you want to help me with the garden?How nice!',
-    'Talk to Mother 3/10': 'Well you are old enough to go around in the village',
-    'Talk to Mother 4/10': 'So i guess you can help me too',
-    'Talk to Mother 5/10': "Let's start by getting some weeds from the garden",
-    'Talk to Mother 6/10': 'Next step is to parse through the weeds to find something useful',
-    'Talk to Mother 7/10': 'These herbs were used by people to connect with their inner self',
-    'Talk to Mother 8/10': "Or at least that's the old folks at the village like to say",
-    'Talk to Mother 9/10': "I wouldn't know, after all i've never used them myself eheh",
-    'Talk to Mother 10/10': "Anyway it's time for dinner, go fetch your brother in the fields",
+    'Talk with mother 1/10': 'Ehy sweetie, how did you get here?The garden is dangerous',
+    'Talk with mother 2/10': 'Oh you want to help me with the garden?How nice!',
+    'Talk with mother 3/10': 'Well you are old enough to go around in the village',
+    'Talk with mother 4/10': 'So i guess you can help me too',
+    'Talk with mother 5/10': "Let's start by getting some weeds from the garden",
+    'Talk with mother 6/10': 'Next step is to parse through the weeds to find something useful',
+    'Talk with mother 7/10': 'These herbs were used by people to connect with their inner self',
+    'Talk with mother 8/10': "Or at least that's the old folks at the village like to say",
+    'Talk with mother 9/10': "I wouldn't know, after all i've never used them myself eheh",
+    'Talk with mother 10/10': "Anyway it's time for dinner, go fetch your brother in the fields",
 
 }
 itemsdescription = {'Wood': 'Suitable wood for making firewood'}
@@ -183,7 +183,7 @@ def questTooltip(name, cost, complete, requirements):
                 finaltooltip.append(f'{i[1]} : {i[2]} ({numcon(i[3])}/{numcon(i[4])})')
             elif i[0] == 'max':
                 finaltooltip.append(f'{i[1]} {i[0]} : +{i[2]}')
-            elif i[0] == 'stat':
+            elif i[0] == 'stats':
                 finaltooltip.append(f'{statdict[i[1]]} : {i[2]}')
     return finaltooltip
 

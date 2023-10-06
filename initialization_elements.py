@@ -19,6 +19,13 @@ teal = (84, 186, 227)
 brown = (139, 69, 19)
 
 
+class Passive:
+    def __init__(self,thing,type,maxpower,percentage):
+        self.thing=thing
+        self.type=type
+        self.quantity=maxpower/2+(maxpower/2)*percentage
+
+
 class Skill:
     def __init__(self, name, power, interval, category, cost=False, type=False, effect=False, unlockflags=False):
         self.name = name
@@ -174,7 +181,10 @@ class Corestats:
     def __init__(self, parent):
         self.parent = parent
         self.basestats = {'hp': 10, 'patk': 10, 'pdef': 10, 'matk': 10, 'mdef': 10}
-        self.modifiers = {'Quests': {'type': 'add', 'hp': 1, 'patk': 0, 'pdef': 0, 'matk': 0, 'mdef': 0}}
+        self.modifiers = {'Quests': {'type': 'add', 'hp': 1, 'patk': 0, 'pdef': 0, 'matk': 0, 'mdef': 0},
+                          'Party additive':{'type': 'add', 'hp': 0, 'patk': 0, 'pdef': 0, 'matk': 0, 'mdef': 0},
+                          'Party multiplicative':{'type': 'mul', 'hp': 0, 'patk': 0, 'pdef': 0, 'matk': 0, 'mdef': 0}}
+        self.improvedactions=[]
         self.baseexp=2000
         self.rank=0
         self.exprequiredtorank = 500
@@ -688,13 +698,16 @@ class Longaction(menuelement):
         return self.costpaid
 
     def dopassiveeffect(self):
+        m=1
+        if self.name in self.parent.corestats.improvedactions:
+            m+=self.parent.corestats.improvedactions[self.name]
         for i in self.progresseffect:
             costname = i[0]
             for energy in [e for e in self.parent.energies if e.name == costname]:
-                if energy.quantity >= -i[1] and energy.quantity + i[
-                    1] < energy.max:
-                    energy.quantity += i[1]
+                if energy.quantity >= -i[1] and energy.quantity + i[1]*m < energy.max:
+                    energy.quantity += (i[1]*m)
                 elif costname == 'Energy':
+                    energy.quantity=energy.max
                     for key in self.parent.longactions:
                         for e in self.parent.longactions[key]:
                             if e.previouslyactive:
@@ -709,18 +722,23 @@ class Longaction(menuelement):
                 continue
             for x in self.parent.resources.keys():
                 for resource in [e for e in self.parent.resources[x] if e.name == costname]:
-                    if resource.quantity > -i[1] and resource.quantity + i[1] < resource.max:
-                        self.parent.resources[x][costname].quantity += i[1]
+                    if resource.quantity > -i[1]*m:
+                        if resource.quantity + i[1]*m < resource.max:
+                            self.parent.resources[x][costname].quantity += i[1]*m
+                        else:
+                            self.parent.resources[x][costname].quantity=self.parent.resources[x][costname].max
+
 
     def dopassiveaction(self):
         for i in self.progresscost:
             if i[1] != 0:
+                temp=1
                 costname = i[0]
                 for energy in [e for e in self.parent.energies if e.name == costname]:
                     if energy.quantity >= -i[1]:
                         energy.quantity += i[1]
-                        self.dopassiveeffect()
                     elif costname == 'Energy':
+                        temp=0
                         self.previouslyactive = True
                         self.parent.longactions['Common longactions'][0].activation()
                     continue
@@ -728,22 +746,29 @@ class Longaction(menuelement):
                     for resource in [e for e in self.parent.resources[x] if e.name == costname]:
                         if resource.quantity > -i[1]:
                             resource.quantity += i[1]
-
-                            self.dopassiveeffect()
+                        else:
+                            temp=0
+                if temp:
+                    self.dopassiveeffect()
             else:
                 self.dopassiveeffect()
 
     def dofinishaction(self):
+        m = 1
+        if self.name in self.parent.corestats.improvedactions:
+            m += self.parent.corestats.improvedactions[self.name]
         for i in self.complete:
             costname = i[0]
             for energy in [e for e in self.parent.energies if e.name == costname]:
-                if energy.quantity >= -i[1]:
-                    energy.quantity += i[1]
+                if energy.quantity >= -i[1]*m:
+                    energy.quantity += i[1]*m
+                    if energy.quantity>energy.max:
+                        energy.quantity=energy.max
                 continue
             for x in self.parent.resources.keys():
                 for resource in [e for e in self.parent.resources[x] if e.name == costname]:
-                    if resource.quantity > -i[1]:
-                        resource.quantity += i[1]
+                    if resource.quantity > -i[1]*m:
+                        resource.quantity += i[1]*m
                         if resource.quantity > resource.max:
                             resource.quantity = resource.max
 
@@ -751,7 +776,7 @@ class Longaction(menuelement):
 class Pokemon(menuelement):
     def __init__(self, hp, atk, dif, satk, sdif, maxlvl=1000, unlocked=0, lvl=0, phys=0, magic=0,
                  special=0, drop=None,
-                 skill=None,num=0, wild=True,originalskill=None,
+                 skill=None,num=0, wild=True,originalskill=None,passive=[Passive('Wood','resourcemax',10,1)],
                  *args, **kwargs):
 
         menuelement.__init__(self, *args, **kwargs)
@@ -768,6 +793,7 @@ class Pokemon(menuelement):
         self.magic = magic
         self.special = special
         self.wild = wild
+        self.passive=passive
         if drop == None:
             self.drop = {'exp': 1, 'resources': [['Physical gems', 1, 10], ['Magical gems', 1, 10],
                                                  ['Special gems', 1, 10]]}
@@ -893,7 +919,7 @@ def createpokemon(parent):
     for pokemonkey in Information['party']:
         Pokemon(skill=pokemonkey['Skill'],originalskill=pokemonkey['Original skill'],parent=parent, wild=False, elementlist=parent.party, hp=pokemonkey['hp'],name=pokemonkey['name'],atk=pokemonkey['atk'],
                 dif=pokemonkey['dif'],satk=pokemonkey['satk'],sdif=pokemonkey['sdif'],maxlvl=pokemonkey['maxlvl'],unlocked=pokemonkey['unlocked'],lvl=pokemonkey['lvl'],phys=pokemonkey['phys'],
-                magic=pokemonkey['magic'],special=pokemonkey['special'],drop=pokemonkey['drop'],num=pokemonkey['num'])
+                magic=pokemonkey['magic'],special=pokemonkey['special'],drop=pokemonkey['drop'],num=pokemonkey['num'],passive=parent.pokemonlist[pokemonkey['num']-1].passive)
     for pokemonkey in Information['reserve']:
 
         Pokemon(skill=pokemonkey['Skill'], originalskill=pokemonkey['Original skill'], parent=parent, wild=False, elementlist=parent.reserve,
@@ -901,7 +927,7 @@ def createpokemon(parent):
                 dif=pokemonkey['dif'], satk=pokemonkey['satk'], sdif=pokemonkey['sdif'], maxlvl=pokemonkey['maxlvl'],
                 unlocked=pokemonkey['unlocked'], lvl=pokemonkey['lvl'], phys=pokemonkey['phys'],
                 magic=pokemonkey['magic'], special=pokemonkey['special'], drop=pokemonkey['drop'],
-                num=pokemonkey['num'])
+                num=pokemonkey['num'],passive=parent.pokemonlist[pokemonkey['num']-1].passive)
 
 def createtemplates(parent):
     Information = getgamestate()
@@ -991,6 +1017,7 @@ def createcorestats(parent):
     parent.corestats.modifiers = Information['corestats']['modifiers']
     parent.corestats.baseexp = Information['corestats']['baseexp']
     parent.corestats.rank = Information['corestats']['rank']
+    parent.corestats.improvedactions = Information['corestats']['improvedactions']
     parent.corestats.exprequiredtorank = Information['corestats']['exprequiredtorank']
 
 def loadflags(parent):
