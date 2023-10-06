@@ -921,10 +921,18 @@ def createpartytabs(parent):
                 unlockflags={'Main': 0})
     menuelement(parent=parent, name='Skill', isvisible=True, elementlist=parent.partyelements, unlockflags={'Main': 0})
 
+def createsouls(parent):
+    Information = getgamestate()
+    parent.souls=Information['souls']
+
 
 def createpokemon(parent):
     Information = getgamestate()
     pokemonlist.createpokemonlist(parent)
+    for pokemonkey in Information['unlockablepokemons']:
+        Pokemon(skill=pokemonkey['Skill'],originalskill=pokemonkey['Original skill'],parent=parent, wild=False, elementlist=parent.unlockablepokemons, hp=pokemonkey['hp'],name=pokemonkey['name'],atk=pokemonkey['atk'],
+                dif=pokemonkey['dif'],satk=pokemonkey['satk'],sdif=pokemonkey['sdif'],maxlvl=pokemonkey['maxlvl'],unlocked=pokemonkey['unlocked'],lvl=pokemonkey['lvl'],phys=pokemonkey['phys'],
+                magic=pokemonkey['magic'],special=pokemonkey['special'],drop=pokemonkey['drop'],num=pokemonkey['num'],passive=parent.pokemonlist[pokemonkey['num']-1].passive)
     for pokemonkey in Information['party']:
         Pokemon(skill=pokemonkey['Skill'],originalskill=pokemonkey['Original skill'],parent=parent, wild=False, elementlist=parent.party, hp=pokemonkey['hp'],name=pokemonkey['name'],atk=pokemonkey['atk'],
                 dif=pokemonkey['dif'],satk=pokemonkey['satk'],sdif=pokemonkey['sdif'],maxlvl=pokemonkey['maxlvl'],unlocked=pokemonkey['unlocked'],lvl=pokemonkey['lvl'],phys=pokemonkey['phys'],

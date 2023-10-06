@@ -301,6 +301,7 @@ class Gamelogic:
         Information = json.load(f)
         Information['party'] = []
         Information['reserve'] = []
+        Information['unlockablepokemons']=[]
         Information['resources']={}
         Information['flags']={}
         Information['templates']=[]
@@ -312,6 +313,7 @@ class Gamelogic:
         Information["corestats"]["rank"]=cls.corestats.rank
         Information["corestats"]["exprequiredtorank"]=cls.corestats.exprequiredtorank
         Information["corestats"]["improvedactions"] = cls.corestats.improvedactions
+        Information["souls"]=cls.souls
         for flag in cls.flags:
             if cls.flags[flag]!=0:
                 Information['flags'][flag]=cls.flags[flag]
@@ -367,6 +369,30 @@ class Gamelogic:
                                                      x.originalskill.interval, x.originalskill.category,
                                                      x.originalskill.cost, x.originalskill.type, x.originalskill.effect]
                     Information["templates"][num][1].append(pokemondict)
+
+
+        for x in cls.unlockablepokemons:
+            pokemondict = {}
+            pokemondict["name"] = x.name
+            pokemondict["hp"] = x.hp
+            pokemondict["atk"] = x.patk
+            pokemondict["dif"] = x.pdef
+            pokemondict["satk"] = x.matk
+            pokemondict["sdif"] = x.mdef
+            pokemondict["maxlvl"] = x.maxlvl
+            pokemondict["unlocked"] = x.unlocked
+            pokemondict["lvl"] = x.lvl
+            pokemondict["phys"] = x.phys
+            pokemondict["magic"] = x.magic
+            pokemondict["special"] = x.special
+            pokemondict["drop"] = x.drop
+            pokemondict["num"] = x.number
+            pokemondict["Skill"] = [x.skill.name, x.skill.power, x.skill.interval, x.skill.category, x.skill.cost,
+                                    x.skill.type, x.skill.effect]
+            pokemondict["Original skill"] = [x.originalskill.name, x.originalskill.power, x.originalskill.interval,
+                                             x.originalskill.category,
+                                             x.originalskill.cost, x.originalskill.type, x.originalskill.effect]
+            Information["unlockablepokemon"].append(pokemondict)
 
 
         for x in cls.party:
@@ -637,7 +663,7 @@ class Gamelogic:
                     energy.max+=passive.quantity
             for passive in [passive for passive in pokemon.passive if passive.type == "energyregen"]:
                 for energy in [energy for energy in cls.energies if energy.name==passive.thing]:
-                    energy.regen+=passive.quantity
+                    energy.regen+=passive.quantity/120
             for passive in [passive for passive in pokemon.passive if passive.type == "addstats"]:
                 cls.corestats.modifiers["Party additive"][passive.thing] += passive.quantity
             for passive in [passive for passive in pokemon.passive if passive.type == "mulstats"]:
@@ -663,7 +689,7 @@ class Gamelogic:
                     energy.quantity=max(0,energy.quantity-passive.quantity)
             for passive in [passive for passive in pokemon.passive if passive.type == "energyregen"]:
                 for energy in [energy for energy in cls.energies if energy.name==passive.thing]:
-                    energy.regen-=passive.quantity
+                    energy.regen-=passive.quantity/120
             for passive in [passive for passive in pokemon.passive if passive.type == "addstats"]:
                 cls.corestats.modifiers["Party additive"][passive.thing]-=passive.quantity
             for passive in [passive for passive in pokemon.passive if passive.type == "mulstats"]:

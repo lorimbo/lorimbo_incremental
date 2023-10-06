@@ -120,6 +120,20 @@ def pokemontooltip(pokemon, status, soul=None):
     finaltooltip.append(f'Pdef :{numcon(pokemon.actualpdef)}({numcon(pokemon.scaling1 * 100)}%)')
     finaltooltip.append(f'Matk :{numcon(pokemon.actualmatk)}({numcon(pokemon.scaling2 * 100)}%)')
     finaltooltip.append(f'Mdef :{numcon(pokemon.actualmdef)}({numcon(pokemon.scaling2 * 100)}%)')
+    if len(pokemon.passive):
+        finaltooltip.append('[Effect when in party]')
+        for passive in pokemon.passive:
+            dict={'patk':'Phisical attack','pdef':'Phisical defense','hp':'Healt','matk':'Magic attack','mdef':'Magic defense'}
+            if passive.type=='resourcemax' or passive.type=='energymax':
+                finaltooltip.append(f'{passive.thing} max: +{numcon(passive.quantity)}')
+            if passive.type=='resourceregen'or passive.type=='energyregen':
+                finaltooltip.append(f'{passive.thing} regen: +{numcon(passive.quantity)}/s')
+            if passive.type=='addstats':
+                finaltooltip.append(f'{dict[passive.thing]} :+{numcon(passive.quantity)}')
+            if passive.type == 'mulstats':
+                finaltooltip.append(f'{dict[passive.thing]} :+{numcon(passive.quantity*100)}%')
+            if passive.type == 'longimprove':
+                finaltooltip.append(f'{passive.thing} effect: +{numcon(passive.quantity*100)}%')
     if soul is not None:
         finaltooltip.append(f'<<summon cost>>')
         finaltooltip.append(soul)

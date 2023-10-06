@@ -22,15 +22,17 @@ def createpokemonlist(parent):
             name="Frog", parent=parent, elementlist=parent.pokemonlist, skill=["Jump attack", 6, 2.3, "Phys"],
             passive=[Passive('patk','addstats',1,1),Passive('pdef','addstats',1,1),
                      Passive('matk','addstats',1,1),Passive('mdef','addstats',1,1),
-                     Passive('hp','addstats',1,1)]
+                     Passive('hp','addstats',1,1),Passive('patk','mulstats',0.5,1),Passive('pdef','mulstats',0.5,1),
+                     Passive('matk','mulstats',0.5,1),Passive('mdef','mulstats',0.5,1),
+                     Passive('hp','mulstats',0.5,1)]
         ),
         Pokemon(
             150, 105, 126, 105, 114, 15, 0, 15, 15, 15, 15,num=4,
             drop={"exp": 3, "resources": [["Physical gems", 1, 10], ["Magical gems", 1, 10], ["Special gems", 1, 10]]},
             name="Worm", parent=parent, elementlist=parent.pokemonlist, skill=["Roll over", 8, 2.4, "Phys"],
-            passive=[Passive('patk','mulstats',0.5,1),Passive('pdef','mulstats',0.5,1),
-                     Passive('matk','mulstats',0.5,1),Passive('mdef','mulstats',0.5,1),
-                     Passive('hp','mulstats',0.5,1)]
+            passive=[Passive('Wood',"resourcemax",10,1),Passive('Wood',"resourceregen",1,1)
+                     ,Passive('Energy',"energymax",10,1),Passive('Energy',"energyregen",1,1),
+                     Passive('Rest',"longimprove",1,1)]
         ),
         Pokemon(
             133, 171, 144.4, 152, 159.6, 19, 0, 19, 19, 19, 19,num=5,
