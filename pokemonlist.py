@@ -13,7 +13,7 @@ def createpokemonlist(parent):
             drop={"exp": 2, "resources": [["Butterfly wings", 1, 30], ["Physical gems", 1, 10], ["Magical gems", 1, 10],
                                           ["Special gems", 1, 10]]},
             name="Butterfly", parent=parent, elementlist=parent.pokemonlist,
-            passive=[Passive('Fate',"resourceregen",1,1)]
+            passive=[Passive('Gold',"resourcemax",40,1)]
         ),
         Pokemon(
             91.2, 100.8, 91.2, 96, 100.8, 12, 0, 12, 12, 12, 12,num=3,

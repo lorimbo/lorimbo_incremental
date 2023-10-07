@@ -46,7 +46,8 @@ class Gamelogic:
     mainsubelements = []
     buyablematerials=[]
     partyelements = []
-    availableskills=[initialization_elements.Skill('Tackle', 7, 2.8, 'Phys', None, None, None, None)]
+    availableskills=[]
+    learnableskills = []
     instantactions = {}
     proceedactions={}
     longactions = {}
@@ -280,6 +281,7 @@ class Gamelogic:
     def initializegame(cls):
         initialization_elements.createcorestats(cls)
         initialization_elements.loadflags(cls)
+        initialization_elements.createskilllists(cls)
         initialization_elements.createmenu(cls)
         initialization_elements.createshopitems(cls)
         initialization_elements.createmainsubmenu(cls)
@@ -316,6 +318,12 @@ class Gamelogic:
         Information["corestats"]["improvedactions"] = cls.corestats.improvedactions
         Information["souls"]=cls.souls
         Information["mainname"]=cls.mainname
+        Information["availableskill"]=[]
+        Information["learnableskills"]=[]
+        for skill in cls.learnableskills:
+            Information["learnableskills"].append([[skill[0].name, skill[0].power, skill[0].interval, skill[0].category, skill[0].cost, skill[0].type, skill[0].effect,skill[0].unlockflags],skill[1]])
+        for skill in cls.availableskills:
+            Information["availableskill"].append([skill.name, skill.power, skill.interval, skill.category, skill.cost, skill.type, skill.effect,skill.unlockflags])
         for flag in cls.flags:
             if cls.flags[flag]!=0:
                 Information['flags'][flag]=cls.flags[flag]
@@ -344,9 +352,9 @@ class Gamelogic:
                     pokemondict["special"] = x.special
                     pokemondict["drop"] = x.drop
                     pokemondict["num"] = x.number
-                    pokemondict["Skill"]=[x.skill.name, x.skill.power, x.skill.interval, x.skill.category, x.skill.cost, x.skill.type, x.skill.effect]
+                    pokemondict["Skill"]=[x.skill.name, x.skill.power, x.skill.interval, x.skill.category, x.skill.cost, x.skill.type, x.skill.effect,x.skill.unlockflags]
                     pokemondict["Original skill"] = [x.originalskill.name, x.originalskill.power, x.originalskill.interval, x.originalskill.category,
-                                            x.originalskill.cost, x.originalskill.type, x.originalskill.effect]
+                                            x.originalskill.cost, x.originalskill.type, x.originalskill.effect,x.originalskill.unlockflags]
 
                     Information["templates"][num][0].append(pokemondict)
                 for x in (template[1]):
@@ -366,10 +374,10 @@ class Gamelogic:
                     pokemondict["drop"] = x.drop
                     pokemondict["num"] = x.number
                     pokemondict["Skill"] = [x.skill.name, x.skill.power, x.skill.interval, x.skill.category,
-                                            x.skill.cost, x.skill.type, x.skill.effect]
+                                            x.skill.cost, x.skill.type, x.skill.effect,x.skill.unlockflags]
                     pokemondict["Original skill"] = [x.originalskill.name, x.originalskill.power,
                                                      x.originalskill.interval, x.originalskill.category,
-                                                     x.originalskill.cost, x.originalskill.type, x.originalskill.effect]
+                                                     x.originalskill.cost, x.originalskill.type, x.originalskill.effect,x.originalskill.unlockflags]
                     Information["templates"][num][1].append(pokemondict)
 
 
@@ -390,10 +398,10 @@ class Gamelogic:
             pokemondict["drop"] = x.drop
             pokemondict["num"] = x.number
             pokemondict["Skill"] = [x.skill.name, x.skill.power, x.skill.interval, x.skill.category, x.skill.cost,
-                                    x.skill.type, x.skill.effect]
+                                    x.skill.type, x.skill.effect,x.skill.unlockflags]
             pokemondict["Original skill"] = [x.originalskill.name, x.originalskill.power, x.originalskill.interval,
                                              x.originalskill.category,
-                                             x.originalskill.cost, x.originalskill.type, x.originalskill.effect]
+                                             x.originalskill.cost, x.originalskill.type, x.originalskill.effect,x.originalskill.unlockflags]
             Information["unlockablepokemon"].append(pokemondict)
 
 
@@ -414,10 +422,10 @@ class Gamelogic:
             pokemondict["drop"]=x.drop
             pokemondict["num"]=x.number
             pokemondict["Skill"] = [x.skill.name, x.skill.power, x.skill.interval, x.skill.category, x.skill.cost,
-                                    x.skill.type, x.skill.effect]
+                                    x.skill.type, x.skill.effect,x.skill.unlockflags]
             pokemondict["Original skill"] = [x.originalskill.name, x.originalskill.power, x.originalskill.interval,
                                              x.originalskill.category,
-                                             x.originalskill.cost, x.originalskill.type, x.originalskill.effect]
+                                             x.originalskill.cost, x.originalskill.type, x.originalskill.effect,x.originalskill.unlockflags]
             Information["party"].append(pokemondict)
         for x in cls.reserve:
             pokemondict = {}
@@ -436,10 +444,10 @@ class Gamelogic:
             pokemondict["drop"] = x.drop
             pokemondict["num"] = x.number
             pokemondict["Skill"] = [x.skill.name, x.skill.power, x.skill.interval, x.skill.category, x.skill.cost,
-                                    x.skill.type, x.skill.effect]
+                                    x.skill.type, x.skill.effect,x.skill.unlockflags]
             pokemondict["Original skill"] = [x.originalskill.name, x.originalskill.power, x.originalskill.interval,
                                              x.originalskill.category,
-                                             x.originalskill.cost, x.originalskill.type, x.originalskill.effect]
+                                             x.originalskill.cost, x.originalskill.type, x.originalskill.effect,x.originalskill.unlockflags]
             Information["reserve"].append(pokemondict)
 
         out_file = open("gamestate.json", "w")

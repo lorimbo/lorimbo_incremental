@@ -920,6 +920,7 @@ def createpartytabs(parent):
     menuelement(parent=parent, name='Bestiary', isvisible=True, elementlist=parent.partyelements,
                 unlockflags={'Main': 0})
     menuelement(parent=parent, name='Skill', isvisible=True, elementlist=parent.partyelements, unlockflags={'Main': 0})
+    menuelement(parent=parent, name='Dojo', isvisible=True, elementlist=parent.partyelements)#unlockflags={'Talk with zen master 4/4': 2}
 
 def createsouls(parent):
     Information = getgamestate()
@@ -1012,6 +1013,7 @@ def createarealongs(parent):
                unlockflags={'Talk with father 2/11': 1})
 
 
+
 def createquests(parent):
     questlines.createquests(parent)
 
@@ -1024,6 +1026,12 @@ def createquests(parent):
                              ['stat', 'matk', 5, 0, 0], ['stat', 'mdef', 10, 0, 0]],
                    location=['Village', 'old house 2'],
                    unlockflags={'Dubious home': 0, }, closingflags={'Dubious home': 3}, changeflags={'Dubious home': 1})'''
+def createskilllists(parent):
+    Information = getgamestate()
+    for skill in Information["availableskill"]:
+        parent.availableskills.append(Skill(*skill))
+    for skill in Information["learnableskills"]:
+        parent.learnableskills.append([Skill(*skill[0]),skill[1]])
 
 def createproceedactions(parent):
     Nextaction(parent=parent,name='Unlock the world',location='Village',unlockflags={'Main': 1}, closingflags={'Main':2}, changeflags={'Main': 1},cost=[['Fate', -10, 0, 0]])

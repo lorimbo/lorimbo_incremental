@@ -781,7 +781,7 @@ class Graphics:
             Stats = Gamelogic.corestats.finalstats()
             imgui.new_line()
             imgui.same_line(position=cls.resizewidth(150))
-            actiondecorator(imgui.text, cls.theme)('[Core Stats]')
+            actiondecorator(imgui.text, cls.theme)('[Base Stats]')
             imgui.same_line()
             for key in Stats:
                 actiondecorator(imgui.text, cls.theme)(key + ':' + numcon(Stats[key]))
@@ -810,6 +810,20 @@ class Graphics:
         imgui.new_line()
         with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 40)}']):
             actiondecorator(imgui.text, cls.theme)('Party')
+        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
+            imgui.same_line(position=135)
+            actiondecorator(imgui.text,cls.theme)('lvl')
+            imgui.same_line(position=260)
+            actiondecorator(imgui.text, cls.theme)('hp')
+            imgui.same_line(position=360)
+            actiondecorator(imgui.text, cls.theme)('patk')
+            imgui.same_line(position=460)
+            actiondecorator(imgui.text, cls.theme)('pdef')
+            imgui.same_line(position=560)
+            actiondecorator(imgui.text, cls.theme)('matk')
+            imgui.same_line(position=660)
+            actiondecorator(imgui.text, cls.theme)('mdef')
+
         imgui.begin_child("Child 1", height=cls.resizeheight(80), border=True, flags=cls.resourcesflags)
 
         for num, pokemon in enumerate(Gamelogic.party):
@@ -1388,6 +1402,63 @@ class Graphics:
 
         imgui.end()
 
+
+    @classmethod
+    def draw_dojo(cls):
+        imgui.set_next_window_size(cls.resizewidth(1050), 16 + cls.resizeheight(335))
+        imgui.set_next_window_position(cls.resizewidth(120), 16 + cls.resizeheight(145))
+        backgroundecorator(imgui.begin, cls.theme)('Skills', False, cls.flags)
+        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 30)}']):
+            imgui.same_line(position=120)
+            actiondecorator(imgui.text,cls.theme)('Learn physical skills')
+            imgui.same_line(position=640)
+            actiondecorator(imgui.text, cls.theme)('Learn magical skills')
+            imgui.begin_child('Physical skills',width=cls.resizewidth(500),border=True)
+            pop=None
+            for num,skill in enumerate(Gamelogic.learnableskills):
+                flagcheck=True
+                if skill[0].unlockflags:
+                    for flag in skill[0].unlockflags:
+                        if flag not in Gamelogic.flags or Gamelogic.flags[flag]<skill[0].unlockflags[flag]:
+                            flagcheck=False
+                if flagcheck:
+                    if skill[0].category=='Phys':
+                        gold = [e for e in Gamelogic.resources['Gold'] if e.name == 'Gold'][0]
+                        use= gold.quantity<skill[1]
+                        imgui.same_line(position=100)
+                        if cls.disabledecorator(imgui.button,use)(f'{skill[0].name}',cls.resizewidth(250),cls.resizeheight(30)) and not use:
+                            gold.quantity-=skill[1]
+                            Gamelogic.availableskills.append(skill[0].copy())
+                            pop=num
+                        imgui.new_line()
+            imgui.end_child()
+            imgui.same_line()
+            imgui.begin_child('Magical skills', width=cls.resizewidth(500), border=True)
+            for num,skill in enumerate(Gamelogic.learnableskills):
+                flagcheck=True
+                if skill[0].unlockflags:
+                    for flag in skill[0].unlockflags:
+                        if flag not in Gamelogic.flags or Gamelogic.flags[flag]<skill[0].unlockflags[flag]:
+                            flagcheck=False
+                if flagcheck:
+                    if skill[0].category=='Magic':
+                        gold = [e for e in Gamelogic.resources['Gold'] if e.name == 'Gold'][0]
+                        use= gold.quantity<skill[1]
+                        imgui.same_line(position=100)
+                        if cls.disabledecorator(imgui.button,use)(f'{skill[0].name}',cls.resizewidth(250),cls.resizeheight(30)) and not use:
+                            gold.quantity-=skill[1]
+                            Gamelogic.availableskills.append(skill[0].copy())
+                            pop=num
+            imgui.end_child()
+            if pop is not None:
+                Gamelogic.learnableskills.pop(pop)
+
+
+
+
+
+        imgui.end()
+
     @classmethod
     def draw_skill_menu(cls):
         imgui.set_next_window_size(cls.resizewidth(1050), 16 + cls.resizeheight(335))
@@ -1399,7 +1470,9 @@ class Graphics:
                 actiondecorator(imgui.text, cls.theme)(Gamelogic.changeskill.name)
                 imgui.same_line(position=250)
                 actiondecorator(imgui.text, cls.theme)('Name')
-                imgui.same_line(position=480)
+                imgui.same_line(position=400)
+                actiondecorator(imgui.text, cls.theme)('Category')
+                imgui.same_line(position=560)
                 actiondecorator(imgui.text, cls.theme)('Power')
                 imgui.same_line(position=705)
                 actiondecorator(imgui.text, cls.theme)('Countdown')
@@ -1412,7 +1485,9 @@ class Graphics:
                 imgui.begin_child('Default skill', height=cls.resizeheight(25), border=True)
                 imgui.same_line(position=250)
                 actiondecorator(imgui.text, cls.theme)(Gamelogic.changeskill.originalskill.name)
-                imgui.same_line(position=500)
+                imgui.same_line(position=417)
+                actiondecorator(imgui.text, cls.theme)(f'{Gamelogic.changeskill.originalskill.category}')
+                imgui.same_line(position=584)
                 actiondecorator(imgui.text, cls.theme)(f'{Gamelogic.changeskill.originalskill.power}')
                 imgui.same_line(position=750)
                 actiondecorator(imgui.text, cls.theme)(f'{Gamelogic.changeskill.originalskill.interval}')
@@ -1423,7 +1498,9 @@ class Graphics:
                 imgui.begin_child('Active skill', height=cls.resizeheight(25), border=True)
                 imgui.same_line(position=250)
                 actiondecorator(imgui.text, cls.theme)(Gamelogic.changeskill.skill.name)
-                imgui.same_line(position=500)
+                imgui.same_line(position=417)
+                actiondecorator(imgui.text, cls.theme)(f'{Gamelogic.changeskill.skill.category}')
+                imgui.same_line(position=584)
                 actiondecorator(imgui.text, cls.theme)(f'{Gamelogic.changeskill.skill.power}')
                 imgui.same_line(position=750)
                 actiondecorator(imgui.text, cls.theme)(f'{Gamelogic.changeskill.skill.interval}')
@@ -1440,14 +1517,17 @@ class Graphics:
                 for num, skill in enumerate(Gamelogic.availableskills):
                     imgui.same_line(position=250)
                     actiondecorator(imgui.text, cls.theme)(skill.name)
-                    imgui.same_line(position=500)
+                    imgui.same_line(position=417)
+                    actiondecorator(imgui.text, cls.theme)(f'{skill.category}')
+                    imgui.same_line(position=584)
                     actiondecorator(imgui.text, cls.theme)(f'{skill.power}')
                     imgui.same_line(position=750)
                     actiondecorator(imgui.text, cls.theme)(f'{skill.interval}')
                     imgui.same_line(position=940)
-                if actiondecorator(imgui.button, cls.theme)(f'Assign###{num}', cls.resizewidth(90),
-                                                            cls.resizeheight(15)):
-                    Gamelogic.changeskillfunction(Gamelogic.changeskill, skill)
+                    if actiondecorator(imgui.button, cls.theme)(f'Assign###{num}', cls.resizewidth(90),
+                                                                cls.resizeheight(15)):
+                        Gamelogic.changeskillfunction(Gamelogic.changeskill, skill)
+                    imgui.new_line()
                 imgui.end_child()
                 if temp:
                     Gamelogic.changeskill = None
@@ -1523,6 +1603,8 @@ class Graphics:
                 cls.draw_levelup_menu()
             elif Gamelogic.partysubtab == 'Skill':
                 cls.draw_skill_menu()
+            elif Gamelogic.partysubtab == 'Dojo':
+                cls.draw_dojo()
         if Gamelogic.tab == 'Rank':
             if Gamelogic.ritualsubtab == 'Rank':
                 cls.draw_rank()
