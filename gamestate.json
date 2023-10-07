@@ -59,8 +59,8 @@
       "reserve": [],
       "resources": {
             "Wood": [
-                  0,
-                  1,
+                  996,
+                  5,
                   {
                         "Talk with father 2/11": 1
                   },
@@ -170,7 +170,9 @@
       "flags": {
             "Enter your home": 2,
             "Talk with father 1/11": 2,
-            "Talk with father 2/11": 1
+            "Talk with father 2/11": 2,
+            "Talk with father 3/11": 2,
+            "Talk with father 4/11": 1
       },
       "cleareddungeons": [],
       "templates": [
@@ -241,6 +243,18 @@
                         false
                   ],
                   100
+            ]
+      ],
+      "storylog": [
+            [
+                  "21:48:55",
+                  "You have now unlocked wood!To gain stamina you can use the loop action \"Exercise\"",
+                  "Talk with father 2/11"
+            ],
+            [
+                  "21:48:55",
+                  "Quests, such as the one you are seeing right now, can have a variety of effects",
+                  "Talk with father 3/11"
             ]
       ]
 }

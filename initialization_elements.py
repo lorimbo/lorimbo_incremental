@@ -5,6 +5,8 @@ import copy
 import pygame
 import pokemonlist
 import questlines
+import tooltips
+import datetime
 
 
 red = (255, 0, 0)
@@ -355,6 +357,10 @@ class Quests(menuelement):
                 name = i[1]
                 self.parent.corestats.modifiers['Quests'][name] += i[2]
                 self.parent.corestats.updatepokemons()
+        if self.name in tooltips.description:
+            now = datetime.datetime.now()
+            self.parent.storylog.append([str(now.time())[0:8],tooltips.storydescription[self.name],self.name])
+
 
         if self.changeflags is not None:
             for key in self.changeflags:
@@ -895,7 +901,7 @@ def createmenu(parent):
                 unlockflags={'Talk with father 7/11': 1})
     menuelement(parent=parent, name='Shop', isvisible=False, elementlist=parent.mainelements,
                 unlockflags={'Enter the sleazy shop':2})
-    menuelement(parent=parent, name='Story', isvisible=False, elementlist=parent.mainelements, unlockflags={'Main': 2})
+    menuelement(parent=parent, name='Story', isvisible=False, elementlist=parent.mainelements)
     menuelement(parent=parent, name='Dungeon', isvisible=False, elementlist=parent.mainelements,
                 unlockflags={'Talk with father 7/11': 1})
     menuelement(parent=parent, name='Settings', isvisible=True, elementlist=parent.mainelements)
@@ -1051,6 +1057,7 @@ def loadflags(parent):
     for flag in Information['flags']:
         parent.flags[flag] = Information['flags'][flag]
     parent.cleareddungeons=Information['cleareddungeons']
+    parent.storylog=Information["storylog"]
 
 
 def createresources(parent):

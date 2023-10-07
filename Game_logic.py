@@ -55,6 +55,7 @@ class Gamelogic:
     areainstants={}
     arealongs = {}
     bottomlog=[]
+    storylog=[]
     bottomlogpreviouslen=len(bottomlog)
     bottomtimes=[]
     dungeons = {}
@@ -320,6 +321,7 @@ class Gamelogic:
         Information["mainname"]=cls.mainname
         Information["availableskill"]=[]
         Information["learnableskills"]=[]
+        Information['storylog']=cls.storylog
         for skill in cls.learnableskills:
             Information["learnableskills"].append([[skill[0].name, skill[0].power, skill[0].interval, skill[0].category, skill[0].cost, skill[0].type, skill[0].effect,skill[0].unlockflags],skill[1]])
         for skill in cls.availableskills:
@@ -645,6 +647,7 @@ class Gamelogic:
     @classmethod
     def changeskillfunction(cls,pokemon,skill):
         pokemon.skill=skill.copy()
+        pokemon.cd = pokemon.skill.interval * 120
         cls.changeskill=None
         cls.partysubtab='Party selection'
 

@@ -1430,6 +1430,13 @@ class Graphics:
                             gold.quantity-=skill[1]
                             Gamelogic.availableskills.append(skill[0].copy())
                             pop=num
+                        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
+                            if imgui.is_item_hovered():
+                                with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
+                                    tooltip = tooltips.skilltooltip(skill[0],skill[1])
+                                    for i in tooltip:
+                                        actiondecorator(imgui.text, cls.theme)(f"{i}")
+
                         imgui.new_line()
             imgui.end_child()
             imgui.same_line()
@@ -1449,6 +1456,13 @@ class Graphics:
                             gold.quantity-=skill[1]
                             Gamelogic.availableskills.append(skill[0].copy())
                             pop=num
+                        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
+                            if imgui.is_item_hovered():
+                                with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
+                                    tooltip = tooltips.skilltooltip(skill[0],skill[1])
+                                    for i in tooltip:
+                                        actiondecorator(imgui.text, cls.theme)(f"{i}")
+
             imgui.end_child()
             if pop is not None:
                 Gamelogic.learnableskills.pop(pop)
@@ -1562,6 +1576,21 @@ class Graphics:
             imgui.end()
 
     @classmethod
+    def draw_story(cls):
+        imgui.set_next_window_size(cls.resizewidth(1075), cls.resizeheight(440))
+        imgui.set_next_window_position(cls.resizewidth(120), cls.resizeheight(55))
+        with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 18)}']):
+            backgroundecorator(imgui.begin, cls.theme)('Story', False, cls.flags)
+            for text in Gamelogic.storylog:
+                actiondecorator(imgui.text, cls.theme)(f'[{text[0]}]')
+                imgui.same_line()
+                actiondecorator(imgui.text, cls.theme)(f'{text[2]}:')
+                imgui.same_line()
+                actiondecorator(imgui.text, cls.theme)(f'{text[1]}')
+
+        imgui.end()
+
+    @classmethod
     def draw_shop(cls):
         imgui.set_next_window_size(cls.resizewidth(1075), cls.resizeheight(440))
         imgui.set_next_window_position(cls.resizewidth(120), cls.resizeheight(55))
@@ -1594,7 +1623,7 @@ class Graphics:
         # Submenu
         if Gamelogic.tab == 'Main':
             cls.draw_main()
-        if Gamelogic.tab == 'Party':
+        elif Gamelogic.tab == 'Party':
             cls.draw_party_tabs()
             cls.draw_Adventurer()
             if Gamelogic.partysubtab == 'Party selection':
@@ -1605,12 +1634,14 @@ class Graphics:
                 cls.draw_skill_menu()
             elif Gamelogic.partysubtab == 'Dojo':
                 cls.draw_dojo()
-        if Gamelogic.tab == 'Rank':
+        elif Gamelogic.tab == 'Rank':
             if Gamelogic.ritualsubtab == 'Rank':
                 cls.draw_rank()
-        if Gamelogic.tab == 'Shop':
+        elif Gamelogic.tab == 'Shop':
             cls.draw_shop()
-        if Gamelogic.tab == 'Dungeon':
+        elif Gamelogic.tab == 'Story':
+            cls.draw_story()
+        elif Gamelogic.tab == 'Dungeon':
             cls.draw_dungeon()
-        if Gamelogic.tab == 'Settings':
+        elif Gamelogic.tab == 'Settings':
             cls.draw_settings()

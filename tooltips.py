@@ -44,10 +44,14 @@ description = {
     'Talk with mother 10/10': "Anyway it's time for dinner, go fetch your brother in the fields",
 
 }
+storydescription=description.copy()
 itemsdescription = {'Wood': 'Suitable wood for making firewood'}
 pokemondescription = {'You': 'You are beautiful'}
+skilldescription={}
 for key in description:
     description[key] = autospacer(description[key])
+for key in skilldescription:
+    skilldescription[key] = autospacer(skilldescription[key])
 for key in itemsdescription:
     itemsdescription[key] = autospacer(itemsdescription[key])
 for key in pokemondescription:
@@ -138,6 +142,24 @@ def pokemontooltip(pokemon, status, soul=None):
         finaltooltip.append(f'<<summon cost>>')
         finaltooltip.append(soul)
     return finaltooltip
+
+def skilltooltip(skill,cost):
+    finaltooltip = []
+    finaltooltip.append(f'{skill.name}')
+    if skill.name in skilldescription:
+        for i in skilldescription[skill.name]:
+            finaltooltip.append(i)
+    finaltooltip.append(f'Cost:{cost} gold')
+    finaltooltip.append(f'Power:{skill.power}')
+    finaltooltip.append(f'Countdown:{skill.interval}')
+    finaltooltip.append(f'Category:{skill.category}')
+    if skill.type is not False:
+        finaltooltip.append(f'Type:{skill.type}')
+    else:
+        finaltooltip.append(f'Type: Neutral')
+    return finaltooltip
+
+
 
 
 def resourceTooltip(name, quantity, max, effect=None):

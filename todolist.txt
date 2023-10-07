@@ -1,23 +1,28 @@
 Functionality:
-habits/some kinda of upgrade system
+habits/some kinda of upgrade system(must be thought out)
 resources effects with tooltips(do i even want this?)
-astral plane
+astral plane(do i even want this)
 implement pokemon/skill type 
-implement skills effects
-add a dojo that allowes you to buy skills 
+implement skills effects(must be thought out)
 offline rewards
 You's passive
 titles
-put magic/phys in skill selection
 add rare enemies to dungeons+ add them to the tooltip
 implement story log and add it to the save
 gear for the monsters
-put the writing hp/atk .... in the party menu
 improve the game system
+make a bestiary
+put the zen master questline into [Village,Dojo]
+
+
+Content:
+add more quest to the village section
+start forest up
 
 Organizing:
 change default cost,complete exc to None
 move a lot more to corestats
+add credits
 
 
 Make the game work:
@@ -26,6 +31,7 @@ implement exe(DONE)
 
 
 Usability:
+add more themes(and maybe fix asuka's theme)
 add bold helvetica and use it for energies
 rename things to avoid being copyrighted
 (VERY DANGEROUS) INTRODUCE TIME TRAVEL INTO THE QUEST AUTOMATIZATION (AKA MAKE QUESTS FLOW INTO PREVIOUS QUESTS)
@@ -34,3 +40,4 @@ add more tutorials for the start regarding souls, and how to level up exactly
 BUGS:
 sometimes the fight crashes and i am not sure why(seems to be fixed but needs to be looked into)
 clicking on a dungeon resets the turn order to 0 0(should be fixed too, look into it)
+tackle 3 starts late in combat
