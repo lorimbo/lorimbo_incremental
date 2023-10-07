@@ -1,7 +1,7 @@
 {
       "party": [
             {
-                  "name": "You",
+                  "name": "Lorimbo",
                   "hp": 5,
                   "atk": 1,
                   "dif": 1,
@@ -130,7 +130,7 @@
             ],
             "Fate": [
                   0,
-                  10,
+                  20,
                   {
                         "Enter your home": 0
                   },
@@ -166,7 +166,9 @@
             ]
       },
       "flags": {
-            "Enter your home": 1,"Popup": 1
+            "Enter your home": 2,
+            "Talk with father 1/11": 2,
+            "Talk with father 2/11": 1
       },
       "cleareddungeons": [],
       "templates": [
@@ -197,5 +199,6 @@
             "improvedactions": {}
       },
       "unlockablepokemons": [],
-      "souls": {}
+      "souls": {},
+      "mainname": "Lorimbo"
 }

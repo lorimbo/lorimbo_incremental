@@ -770,8 +770,16 @@ class Graphics:
         imgui.set_next_window_size(cls.resizewidth(1050), cls.resizeheight(65))
         imgui.set_next_window_position(cls.resizewidth(120), 16 + cls.resizeheight(80))
         backgroundecorator(imgui.begin, cls.theme)('Adventurer', False, cls.flags)
-        Stats = Gamelogic.corestats.finalstats()
+        char=[pokemon for pokemon in Gamelogic.party if pokemon.name==Gamelogic.mainname][0]
         with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 30)}']):
+            imgui.push_item_width(cls.resizewidth(230))
+            changed, text_val = actiondecorator(imgui.input_text,cls.theme)('Your name',char.name,15 )
+            imgui.pop_item_width()
+            if changed:
+                char.name=text_val
+                Gamelogic.mainname=text_val
+            Stats = Gamelogic.corestats.finalstats()
+            imgui.new_line()
             imgui.same_line(position=cls.resizewidth(150))
             actiondecorator(imgui.text, cls.theme)('[Core Stats]')
             imgui.same_line()
@@ -893,7 +901,7 @@ class Graphics:
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
 
-                use = (pokemon.name == 'You')
+                use = (pokemon.name == Gamelogic.mainname)
                 imgui.same_line(position=cls.resizewidth(940))
                 if cls.disabledecorator(imgui.button, use)(f'Remove##{num}', width=cls.resizewidth(90)) and not use:
                     Gamelogic.remove = num
@@ -1005,7 +1013,7 @@ class Graphics:
         imgui.begin_child("Child 1", height=cls.resizeheight(110), border=True)
         for num, pokemon in enumerate(Gamelogic.party):
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
-                if pokemon.name == 'You':
+                if pokemon.name ==Gamelogic.mainname:
                     text10 = f'1 fate:({numcon(Gamelogic.fate.quantity)})'
                 else:
                     text10 = f'1 {pokemon.name} soul ({numcon(Gamelogic.souls[pokemon.name])})'
@@ -1025,7 +1033,7 @@ class Graphics:
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
                 imgui.same_line(position=cls.resizewidth(280))
-                if pokemon.name == 'You':
+                if pokemon.name == Gamelogic.mainname:
                     use = not Gamelogic.fate.quantity or pokemon.lvl >= pokemon.maxlvl
                 elif pokemon.name in Gamelogic.souls:
                     use = not Gamelogic.souls[pokemon.name] or pokemon.lvl >= pokemon.maxlvl

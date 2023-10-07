@@ -31,6 +31,7 @@ def numcon(n):
 
 
 class Gamelogic:
+    mainname='You'
     ritualsubtab='Rank'
     energies = []
     unlockedenergies = []
@@ -133,7 +134,7 @@ class Gamelogic:
                 if temp:
                     action.isvisible = False
                 else:
-                    if not action.isvisible:
+                    if not action.isvisible and cls.framecounter!=0 and cls.framecounter!=1:
                         cls.bottomlog.append( [f"Unlocked the {action.name} option to proceed in the {cls.subtab} location!"])
                         now = datetime.datetime.now()
                         cls.bottomtimes.append( str(now.time())[0:8])
@@ -152,7 +153,7 @@ class Gamelogic:
             if temp:
                 action.isvisible = False
             else:
-                if not action.isvisible:
+                if not action.isvisible and cls.framecounter!=0 and cls.framecounter!=1:
                     cls.bottomlog.append([f"Unlocked the {action.name} action in the {cls.subtab} location!"])
                     now = datetime.datetime.now()
                     cls.bottomtimes.append(str(now.time())[0:8])
@@ -172,7 +173,7 @@ class Gamelogic:
                     if temp:
                         action.isvisible = False
                     else:
-                        if not action.isvisible:
+                        if not action.isvisible and cls.framecounter!=0 and cls.framecounter!=1:
                             now = datetime.datetime.now()
                             cls.bottomtimes.append(str(now.time())[0:8])
                             if actionlist is cls.dungeons[cls.subtab]:
@@ -196,7 +197,7 @@ class Gamelogic:
                 if temp:
                     element.isvisible = False
                 else:
-                    if not element.isvisible:
+                    if not element.isvisible and cls.framecounter!=0 and cls.framecounter!=1:
                         now = datetime.datetime.now()
                         cls.bottomtimes.append(str(now.time())[0:8])
                         cls.bottomlog.append([f"Unlocked the {element.name} Menu!"])
@@ -314,6 +315,7 @@ class Gamelogic:
         Information["corestats"]["exprequiredtorank"]=cls.corestats.exprequiredtorank
         Information["corestats"]["improvedactions"] = cls.corestats.improvedactions
         Information["souls"]=cls.souls
+        Information["mainname"]=cls.mainname
         for flag in cls.flags:
             if cls.flags[flag]!=0:
                 Information['flags'][flag]=cls.flags[flag]
@@ -497,7 +499,7 @@ class Gamelogic:
             pokemon = cls.reserve[num]
         if information[1] == 'Level':
             if pokemon.lvl < pokemon.maxlvl:
-                if pokemon.name == 'You':
+                if pokemon.name == cls.mainname:
                     if cls.fate.quantity:
                         cls.fate.quantity -= 1
                         pokemon.lvl += 1

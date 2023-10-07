@@ -1,21 +1,18 @@
 Functionality:
 habits/some kinda of upgrade system
-resources effects with tooltips
+resources effects with tooltips(do i even want this?)
 astral plane
-party effects with tooltips
-PARTY EFFECTS SHOULD BE SAVED
 implement pokemon/skill type 
 implement skills effects
 add a dojo that allowes you to buy skills 
 offline rewards
-name/title
+You's passive
+titles
 put magic/phys in skill selection
 add rare enemies to dungeons+ add them to the tooltip
 implement story log and add it to the save
-add souls to the save
 gear for the monsters
-add unlockablepokemons to the save
-put the wrting hp/atk .... in the party menu
+put the writing hp/atk .... in the party menu
 improve the game system
 
 Organizing:

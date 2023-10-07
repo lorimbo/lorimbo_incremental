@@ -170,7 +170,7 @@ class Dungeon:
                             resource.max += i[2]
                 elif i[0] == 'maxlvl':
                     quantity = i[1]
-                    for character in [e for e in self.parent.party if e.name == 'You']:
+                    for character in [e for e in self.parent.party if e.name ==self.parent.mainname]:
                         character.maxlvl += quantity
             self.cleared = True
             self.parent.cleareddungeons.append(self.name)
@@ -829,7 +829,7 @@ class Pokemon(menuelement):
         for passive in self.passive:
             passive.percentage = (self.special / self.maxlvl)
             passive.quantity = passive.maxpower / 2 + (passive.maxpower / 2) * passive.percentage
-        if self.name == 'You':
+        if self.name == self.parent.mainname:
             if self.lvl <= 10:
                 self.scaling1 = 1 / 10 + self.phys * 9 / 100
                 self.scaling2 = 1 / 10 + self.magic * 9 / 100
@@ -929,6 +929,7 @@ def createsouls(parent):
 def createpokemon(parent):
     Information = getgamestate()
     pokemonlist.createpokemonlist(parent)
+    parent.mainname=Information['mainname']
     for pokemonkey in Information['unlockablepokemons']:
         Pokemon(skill=pokemonkey['Skill'],originalskill=pokemonkey['Original skill'],parent=parent, wild=False, elementlist=parent.unlockablepokemons, hp=pokemonkey['hp'],name=pokemonkey['name'],atk=pokemonkey['atk'],
                 dif=pokemonkey['dif'],satk=pokemonkey['satk'],sdif=pokemonkey['sdif'],maxlvl=pokemonkey['maxlvl'],unlocked=pokemonkey['unlocked'],lvl=pokemonkey['lvl'],phys=pokemonkey['phys'],
