@@ -3,6 +3,7 @@ import initialization_elements
 import random
 import pygame
 import datetime
+import math
 
 red = (255, 0, 0)
 green = (0, 255, 0)
@@ -82,6 +83,7 @@ class Gamelogic:
     cleareddungeons=[]
     corestats=None
     framecounter=0
+
 
 
     @classmethod
@@ -317,6 +319,7 @@ class Gamelogic:
         Information["corestats"]["rank"]=cls.corestats.rank
         Information["corestats"]["exprequiredtorank"]=cls.corestats.exprequiredtorank
         Information["corestats"]["improvedactions"] = cls.corestats.improvedactions
+        Information["corestats"]["expdropbonus"] = cls.corestats.expdropbonus
         Information["souls"]=cls.souls
         Information["mainname"]=cls.mainname
         Information["availableskill"]=[]
@@ -530,6 +533,11 @@ class Gamelogic:
             if pokemon.special < pokemon.lvl:
                 pokemon.special += 1
                 cls.specialgems.quantity -= 1
+                if pokemon.special<31:
+                    cls.corestats.expdropbonus=round(pokemon.special/6,1)
+                else:
+                    cls.corestats.expdropbonus=round(0.1+5.5*math.log(pokemon.special/10,3),1)
+
         pokemon.updatestats()
         cls.levelup = None
 
@@ -552,7 +560,8 @@ class Gamelogic:
                 alive2[0].cd = alive2[0].skill.interval * 120
                 cls.activedungeon.log.append(
                     f'Enemy {alive2[0].name} fainted!')
-                cls.corestats.baseexp += alive2[0].drop['exp']
+                cls.corestats.baseexp += (alive2[0].drop['exp']+cls.corestats.expdropbonus)
+                cls.corestats.baseexp(round(cls.corestats.baseexp,1))
                 droplog = f'Enemy {alive2[0].name} dropped {alive2[0].drop["exp"]} exp'
                 for resource in alive2[0].drop['resources']:
                     name = resource[0]

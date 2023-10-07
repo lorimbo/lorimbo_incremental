@@ -192,6 +192,7 @@ class Corestats:
         self.baseexp=2000
         self.rank=0
         self.exprequiredtorank = 500
+        self.expdropbonus=0
 
     def updatepokemons(self):
         for pokemon in self.parent.party:
@@ -358,8 +359,8 @@ class Quests(menuelement):
                 self.parent.corestats.modifiers['Quests'][name] += i[2]
                 self.parent.corestats.updatepokemons()
         if self.name in tooltips.description:
-            now = datetime.datetime.now()
-            self.parent.storylog.append([str(now.time())[0:8],tooltips.storydescription[self.name],self.name])
+            now = (datetime.datetime.now())
+            self.parent.storylog.append([str(now)[0:19],tooltips.storydescription[self.name],self.name])
 
 
         if self.changeflags is not None:
@@ -1051,6 +1052,7 @@ def createcorestats(parent):
     parent.corestats.rank = Information['corestats']['rank']
     parent.corestats.improvedactions = Information['corestats']['improvedactions']
     parent.corestats.exprequiredtorank = Information['corestats']['exprequiredtorank']
+    parent.corestats.expdropbonus = Information['corestats']['expdropbonus']
 
 def loadflags(parent):
     Information = getgamestate()

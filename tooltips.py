@@ -113,7 +113,7 @@ def templatetooltip(partytemplate):
         finaltooltip.append(f'-{pokemon.skill.name}')
     return finaltooltip
 
-def pokemontooltip(pokemon, status, soul=None):
+def pokemontooltip(pokemon, status, soul=None,expbonus=None):
     finaltooltip = []
     if pokemon.name in pokemondescription.keys():
         for i in pokemondescription[pokemon.name]:
@@ -124,6 +124,10 @@ def pokemontooltip(pokemon, status, soul=None):
     finaltooltip.append(f'Pdef :{numcon(pokemon.actualpdef)}({numcon(pokemon.scaling1 * 100)}%)')
     finaltooltip.append(f'Matk :{numcon(pokemon.actualmatk)}({numcon(pokemon.scaling2 * 100)}%)')
     finaltooltip.append(f'Mdef :{numcon(pokemon.actualmdef)}({numcon(pokemon.scaling2 * 100)}%)')
+    if expbonus is not None:
+        finaltooltip.append('[Effect when in party]')
+        finaltooltip.append(f'exp drop amount:{expbonus}')
+
     if len(pokemon.passive):
         finaltooltip.append('[Effect when in party]')
         for passive in pokemon.passive:
