@@ -561,7 +561,7 @@ class Gamelogic:
                 cls.activedungeon.log.append(
                     f'Enemy {alive2[0].name} fainted!')
                 cls.corestats.baseexp += (alive2[0].drop['exp']+cls.corestats.expdropbonus)
-                cls.corestats.baseexp(round(cls.corestats.baseexp,1))
+                cls.corestats.baseexp=(round(cls.corestats.baseexp,1))
                 droplog = f'Enemy {alive2[0].name} dropped {alive2[0].drop["exp"]} exp'
                 for resource in alive2[0].drop['resources']:
                     name = resource[0]

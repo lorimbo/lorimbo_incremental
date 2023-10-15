@@ -17,12 +17,12 @@
                         "exp": 1,
                         "resources": [
                               [
-                                    "Physical gems",
+                                    "Strength gems",
                                     1,
                                     10
                               ],
                               [
-                                    "Magical gems",
+                                    "Magic gems",
                                     1,
                                     10
                               ],
@@ -139,7 +139,7 @@
                   "Fate",
                   0
             ],
-            "Physical gems": [
+            "Strength gems": [
                   0,
                   1,
                   {
@@ -148,7 +148,7 @@
                   "Gems",
                   0
             ],
-            "Magical gems": [
+            "Magic gems": [
                   0,
                   1,
                   {

@@ -29,7 +29,7 @@ description = {
     'Talk with father 6/11': "Let's now talk about dungeons: this will be another way of proceeding in the story",
     'Talk with father 7/11': 'You have unlocked your first dungeon, you can find it in the "Dungeons" section',
     'Talk with father 8/11': 'Dungeons drop gems , that you can use to make your party more powerful in the party tab',
-    'Talk with father 9/11': 'Physical gems improve hp,atk and def, magical gems improve matk and mdef, and special gems currently do nothing',
+    'Talk with father 9/11': 'Strength gems improve hp,atk and def, magic gems improve matk and mdef, and special gems currently do nothing',
     'Talk with father 10/11': 'I will now proceed to get in character for this whole charade',
     'Talk with father 11/11': 'Little soldier!"Would you mind fetching your mom?She is in the garden',
     'Talk with mother 1/10': 'Ehy sweetie, how did you get here?The garden is dangerous',

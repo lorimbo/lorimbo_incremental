@@ -3,17 +3,18 @@ habits/some kinda of upgrade system(must be thought out)
 resources effects with tooltips(do i even want this?)
 astral plane(do i even want this)
 implement pokemon/skill type 
+introduce supereffective damage
 implement skills effects(must be thought out)
 offline rewards
-You's passive
+You's passive(bonusexp done,not sure how treat the others)
 titles
 add rare enemies to dungeons+ add them to the tooltip
-implement story log and add it to the save
 gear for the monsters
 improve the game system
 make a bestiary
-put the zen master questline into [Village,Dojo]
-
+change the combat system to be cooler
+implement boss behaviour
+implement multiple skills from enemies
 
 Content:
 add more quest to the village section
@@ -40,4 +41,3 @@ add more tutorials for the start regarding souls, and how to level up exactly
 BUGS:
 sometimes the fight crashes and i am not sure why(seems to be fixed but needs to be looked into)
 clicking on a dungeon resets the turn order to 0 0(should be fixed too, look into it)
-tackle 3 starts late in combat

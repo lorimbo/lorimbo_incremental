@@ -1069,24 +1069,24 @@ class Graphics:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
                 imgui.same_line(position=cls.resizewidth(530))
                 use = not Gamelogic.physgems.quantity or pokemon.phys >= pokemon.lvl
-                if cls.disabledecorator(imgui.button, use)(f'Physical##{num}', 90):
+                if cls.disabledecorator(imgui.button, use)(f'Strength##{num}', 90):
                     Gamelogic.levelup = ['Party', 'Physical', num]
                 if imgui.is_item_hovered():
                     with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
                         actiondecorator(imgui.text, cls.theme)(f"{pokemon.name}             lvl{numcon(pokemon.lvl)}")
                         tooltip = tooltips.pokemontooltip(pokemon, 'In the party',
-                                                          f'1 physical gem:({numcon(Gamelogic.physgems.quantity)})',expbonus)
+                                                          f'1 Strength gem:({numcon(Gamelogic.physgems.quantity)})',expbonus)
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
                 imgui.same_line(spacing=cls.resizewidth(40))
                 use = not Gamelogic.magicgems.quantity or pokemon.magic >= pokemon.lvl
-                if cls.disabledecorator(imgui.button, use)(f'Magical##{num}', 90):
+                if cls.disabledecorator(imgui.button, use)(f'Magic##{num}', 90):
                     Gamelogic.levelup = ['Party', 'Magical', num]
                 if imgui.is_item_hovered():
                     with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
                         actiondecorator(imgui.text, cls.theme)(f"{pokemon.name}             lvl{numcon(pokemon.lvl)}")
                         tooltip = tooltips.pokemontooltip(pokemon, 'In the party',
-                                                          f'1 magical gem:({numcon(Gamelogic.magicgems.quantity)})',expbonus)
+                                                          f'1 Magic gem:({numcon(Gamelogic.magicgems.quantity)})',expbonus)
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
                 imgui.same_line(spacing=cls.resizewidth(40))
@@ -1108,7 +1108,7 @@ class Graphics:
                     with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
                         actiondecorator(imgui.text, cls.theme)(f"{pokemon.name}             lvl{numcon(pokemon.lvl)}")
                         tooltip = tooltips.pokemontooltip(pokemon, 'In the party',
-                                                          f'1 physical gem:({numcon(Gamelogic.physgems.quantity)})',expbonus)
+                                                          f'1 Strength gem:({numcon(Gamelogic.physgems.quantity)})',expbonus)
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
             imgui.same_line(position=cls.resizewidth(690))
@@ -1118,7 +1118,7 @@ class Graphics:
                     with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
                         actiondecorator(imgui.text, cls.theme)(f"{pokemon.name}             lvl{numcon(pokemon.lvl)}")
                         tooltip = tooltips.pokemontooltip(pokemon, 'In the party',
-                                                          f'1 magical gem:({numcon(Gamelogic.magicgems.quantity)})',expbonus)
+                                                          f'1 Magic gem:({numcon(Gamelogic.magicgems.quantity)})',expbonus)
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
             imgui.same_line(position=cls.resizewidth(820))
@@ -1172,25 +1172,25 @@ class Graphics:
                 imgui.same_line(position=cls.resizewidth(530))
 
                 use = not Gamelogic.physgems.quantity or pokemon.phys >= pokemon.lvl
-                if cls.disabledecorator(imgui.button, use)(f'Physical##{1000 + num}', 90):
+                if cls.disabledecorator(imgui.button, use)(f'Strength##{1000 + num}', 90):
                     Gamelogic.levelup = ['Reserve', 'Physical', num]
                 if imgui.is_item_hovered():
                     with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
                         actiondecorator(imgui.text, cls.theme)(f"{pokemon.name}             lvl{numcon(pokemon.lvl)}")
                         tooltip = tooltips.pokemontooltip(pokemon, 'Free',
-                                                          f'1 physical gem:({numcon(Gamelogic.physgems.quantity)})')
+                                                          f'1 Strength gem:({numcon(Gamelogic.physgems.quantity)})')
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
 
                 imgui.same_line(spacing=cls.resizewidth(40))
                 use = not Gamelogic.magicgems.quantity or pokemon.magic >= pokemon.lvl
-                if cls.disabledecorator(imgui.button, use)(f'Magical##{1000 + num}', 90):
+                if cls.disabledecorator(imgui.button, use)(f'Magic##{1000 + num}', 90):
                     Gamelogic.levelup = ['Reserve', 'Magical', num]
                 if imgui.is_item_hovered():
                     with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
                         actiondecorator(imgui.text, cls.theme)(f"{pokemon.name}             lvl{numcon(pokemon.lvl)}")
                         tooltip = tooltips.pokemontooltip(pokemon, 'Free',
-                                                          f'1 magical gem:({numcon(Gamelogic.magicgems.quantity)})')
+                                                          f'1 Magic gem:({numcon(Gamelogic.magicgems.quantity)})')
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
 
@@ -1213,7 +1213,7 @@ class Graphics:
                 if imgui.is_item_hovered():
                     with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
                         actiondecorator(imgui.text, cls.theme)(f"{pokemon.name}             lvl{numcon(pokemon.lvl)}")
-                        tooltip = tooltips.pokemontooltip(pokemon, 'Free', f'1 physical gem')
+                        tooltip = tooltips.pokemontooltip(pokemon, 'Free', f'1 Strength gem')
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
             imgui.same_line(position=cls.resizewidth(690))
@@ -1222,7 +1222,7 @@ class Graphics:
                 if imgui.is_item_hovered():
                     with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
                         actiondecorator(imgui.text, cls.theme)(f"{pokemon.name}             lvl{numcon(pokemon.lvl)}")
-                        tooltip = tooltips.pokemontooltip(pokemon, 'Free', f'1 magical gem')
+                        tooltip = tooltips.pokemontooltip(pokemon, 'Free', f'1 Magic gem')
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
             imgui.same_line(position=cls.resizewidth(820))
@@ -1572,6 +1572,7 @@ class Graphics:
             if cls.disabledecorator(imgui.button,use)('Rank up',cls.resizewidth(250),cls.resizeheight(30)) and not use:
 
                 Gamelogic.corestats.rank+=1
+                Gamelogic.corestats.skillpoints+=1
                 Gamelogic.corestats.exprequiredtorank=round(Gamelogic.corestats.exprequiredtorank*2.2,0)
             imgui.new_line()
         with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 50)}']):
@@ -1613,6 +1614,9 @@ class Graphics:
                     item.buy()
             imgui.end_child()
         imgui.end()
+    @classmethod
+    def draw_training(cls):
+        pass
 
     @classmethod
     def creategui(cls):
@@ -1643,6 +1647,8 @@ class Graphics:
         elif Gamelogic.tab == 'Rank':
             if Gamelogic.ritualsubtab == 'Rank':
                 cls.draw_rank()
+        elif Gamelogic.tab=='Training':
+            cls.draw_training()
         elif Gamelogic.tab == 'Shop':
             cls.draw_shop()
         elif Gamelogic.tab == 'Story':

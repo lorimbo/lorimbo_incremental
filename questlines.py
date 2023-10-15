@@ -224,12 +224,12 @@ def fatherquestline(parent):
     Quests(parent=parent, name='Talk to Father 8/12',
            location=['Village', 'Home'],
            unlockflags={'Father': 7}, closingflags={'Father': 8}, changeflags={'Father': 1, 'Popup': 5},
-           cost=[['Physical gems', -1, 0, 0]], complete=[['max', 'Physical gems', 19, 0, 0]],
+           cost=[['Strength gems', -1, 0, 0]], complete=[['max', 'Strength gems', 19, 0, 0]],
            )
     Quests(parent=parent, name='Talk to Father 9/12',
            location=['Village', 'Home'],
            unlockflags={'Father': 8}, closingflags={'Father': 9}, changeflags={'Father': 1},
-           cost=[['Magical gems', -1, 0, 0]], complete=[['max', 'Magical gems', 19, 0, 0]],
+           cost=[['Magic gems', -1, 0, 0]], complete=[['max', 'Magical gems', 19, 0, 0]],
            )
     Quests(parent=parent, name='Talk to Father 10/12',
            location=['Village', 'Home'],

@@ -193,6 +193,7 @@ class Corestats:
         self.rank=0
         self.exprequiredtorank = 500
         self.expdropbonus=0
+        self.skillpoints=0
 
     def updatepokemons(self):
         for pokemon in self.parent.party:
@@ -808,7 +809,7 @@ class Pokemon(menuelement):
             passive.quantity = passive.maxpower / 2 + (passive.maxpower / 2) * passive.percentage
 
         if drop == None:
-            self.drop = {'exp': 1, 'resources': [['Physical gems', 1, 10], ['Magical gems', 1, 10],
+            self.drop = {'exp': 1, 'resources': [['Strength gems', 1, 10], ['Magic gems', 1, 10],
                                                  ['Special gems', 1, 10]]}
         else:
             self.drop = drop
@@ -900,6 +901,7 @@ def createmenu(parent):
     menuelement(parent=parent, name='Party', isvisible=True, elementlist=parent.mainelements)
     menuelement(parent=parent, name='Rank', isvisible=False, elementlist=parent.mainelements,
                 unlockflags={'Talk with father 7/11': 1})
+    menuelement(parent=parent, name='Training', isvisible=False, elementlist=parent.mainelements)
     menuelement(parent=parent, name='Shop', isvisible=False, elementlist=parent.mainelements,
                 unlockflags={'Enter the sleazy shop':2})
     menuelement(parent=parent, name='Story', isvisible=False, elementlist=parent.mainelements)
@@ -1065,12 +1067,12 @@ def loadflags(parent):
 def createresources(parent):
     Information = getgamestate()
     for resourcename in Information['resources']:
-        if resourcename not in ['Fate', 'Physical gems', 'Magical gems', 'Special gems']:
+        if resourcename not in ['Fate', 'Strength gems', 'Magic gems', 'Special gems']:
             Resource(parent, resourcename, *Information['resources'][resourcename], resources=parent.resources)
     parent.fate = Resource(parent, 'Fate', *Information['resources']['Fate'], 0, resources=parent.resources)
-    parent.physgems = Resource(parent, 'Physical gems', *Information['resources']['Physical gems'],
+    parent.physgems = Resource(parent, 'Strength gems', *Information['resources']['Strength gems'],
                                resources=parent.resources)
-    parent.magicgems = Resource(parent, 'Magical gems', *Information['resources']['Magical gems'],
+    parent.magicgems = Resource(parent, 'Magic gems', *Information['resources']['Magic gems'],
                                 resources=parent.resources)
     parent.specialgems = Resource(parent, 'Special gems', *Information['resources']['Special gems'],
                                   resources=parent.resources)
@@ -1099,12 +1101,12 @@ def createdungeons(parent):
             firsttime=[['maxlvl', 7]],
             monsterlist=[parent.pokemonlist[i].copy() for i in range(3, 6)])
     Dungeon(parent=parent, name="Garden", location=['Village', 'Home'], changeflags={'Talk with mother 1/10': 1},
-            unlockflags={'Talk with father 11/11': 2}, closingflags={}, usualreward=[['resource', 'Magical gems', 1, 0, 0]],
+            unlockflags={'Talk with father 11/11': 2}, closingflags={}, usualreward=[['resource', 'Magic gems', 1, 0, 0]],
             firsttime=[['maxlvl', 6]],
             monsterlist=[parent.pokemonlist[i].copy() for i in range(1, 4)])
     Dungeon(parent=parent, name="Training hall", location=['Village', 'Home'], changeflags={'Main': 1},
             unlockflags={'Talk with father 7/11': 1}, closingflags={}, usualreward=[['resource', 'Physical gems', 1, 0, 0]],
-            firsttime=[['maxlvl', 5],['resource', 'Physical gems', 1, 0, 0],['resource', 'Magical gems', 1, 0, 0],['resource', 'Special gems', 1, 0, 0]],
+            firsttime=[['maxlvl', 5],['resource', 'Strength gems', 1, 0, 0],['resource', 'Magic gems', 1, 0, 0],['resource', 'Special gems', 1, 0, 0]],
             monsterlist=[], boss=parent.pokemonlist[0].copy())
     Dungeon(parent=parent, name="Brother fight", location=['Village', 'Surroundings'], changeflags={},
             unlockflags={'Talk with Francesco 3/3': 2}, closingflags={}, firsttime=[['maxlvl', 10]],
