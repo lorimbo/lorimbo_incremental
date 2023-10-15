@@ -34,15 +34,18 @@
                         ]
                   },
                   "num": 0,
+                  "velocity": 1,
                   "Skill": [
-                        "Tackle",
-                        7,
-                        2.8,
-                        "Phys",
-                        false,
-                        false,
-                        false,
-                        false
+                        [
+                              "Tackle",
+                              7,
+                              2.8,
+                              "Phys",
+                              false,
+                              false,
+                              false,
+                              false
+                        ]
                   ],
                   "Original skill": [
                         "Tackle",
@@ -202,7 +205,18 @@
       "unlockablepokemons": [],
       "souls": {},
       "mainname": "You",
-      "availableskill": [],
+      "availableskill": [
+            [
+                  "Tackle2",
+                  7,
+                  2.8,
+                  "Phys",
+                  false,
+                  false,
+                  false,
+                  false
+            ]
+      ],
       "learnableskills": [
             [
                   [

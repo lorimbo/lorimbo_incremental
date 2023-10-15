@@ -32,6 +32,7 @@ def numcon(n):
 
 
 class Gamelogic:
+    auto=False
     mainname='You'
     ritualsubtab='Rank'
     energies = []
@@ -61,8 +62,8 @@ class Gamelogic:
     bottomtimes=[]
     dungeons = {}
     activedungeon = None
-    activepartypokemon = 0
-    activeenemypokemon = 0
+    pokemonattacking=None
+    stageofselection = 0
     souls = {}
     pokemonlist = []
     reserve = []
@@ -75,6 +76,8 @@ class Gamelogic:
     add = None
     levelup = None
     changeskill = None
+    addskill=None
+    removeskill=None
     partylenmax = 5
     fps = 120
     fpscounter=''
@@ -357,7 +360,11 @@ class Gamelogic:
                     pokemondict["special"] = x.special
                     pokemondict["drop"] = x.drop
                     pokemondict["num"] = x.number
-                    pokemondict["Skill"]=[x.skill.name, x.skill.power, x.skill.interval, x.skill.category, x.skill.cost, x.skill.type, x.skill.effect,x.skill.unlockflags]
+                    pokemondict["velocity"]=x.velocity
+                    skilllist=[]
+                    for singleskill in x.skill:
+                        skilllist.append([singleskill.name, singleskill.power, singleskill.interval, singleskill.category, singleskill.cost, singleskill.type, singleskill.effect,singleskill.unlockflags])
+                    pokemondict["Skill"]=skilllist
                     pokemondict["Original skill"] = [x.originalskill.name, x.originalskill.power, x.originalskill.interval, x.originalskill.category,
                                             x.originalskill.cost, x.originalskill.type, x.originalskill.effect,x.originalskill.unlockflags]
 
@@ -378,8 +385,13 @@ class Gamelogic:
                     pokemondict["special"] = x.special
                     pokemondict["drop"] = x.drop
                     pokemondict["num"] = x.number
-                    pokemondict["Skill"] = [x.skill.name, x.skill.power, x.skill.interval, x.skill.category,
-                                            x.skill.cost, x.skill.type, x.skill.effect,x.skill.unlockflags]
+                    pokemondict["velocity"] = x.velocity
+                    skilllist = []
+                    for singleskill in x.skill:
+                        skilllist.append(
+                            [singleskill.name, singleskill.power, singleskill.interval, singleskill.category,
+                             singleskill.cost, singleskill.type, singleskill.effect, singleskill.unlockflags])
+                    pokemondict["Skill"] = skilllist
                     pokemondict["Original skill"] = [x.originalskill.name, x.originalskill.power,
                                                      x.originalskill.interval, x.originalskill.category,
                                                      x.originalskill.cost, x.originalskill.type, x.originalskill.effect,x.originalskill.unlockflags]
@@ -402,8 +414,13 @@ class Gamelogic:
             pokemondict["special"] = x.special
             pokemondict["drop"] = x.drop
             pokemondict["num"] = x.number
-            pokemondict["Skill"] = [x.skill.name, x.skill.power, x.skill.interval, x.skill.category, x.skill.cost,
-                                    x.skill.type, x.skill.effect,x.skill.unlockflags]
+            pokemondict["velocity"] = x.velocity
+            skilllist = []
+            for singleskill in x.skill:
+                skilllist.append(
+                    [singleskill.name, singleskill.power, singleskill.interval, singleskill.category, singleskill.cost,
+                     singleskill.type, singleskill.effect, singleskill.unlockflags])
+            pokemondict["Skill"] = skilllist
             pokemondict["Original skill"] = [x.originalskill.name, x.originalskill.power, x.originalskill.interval,
                                              x.originalskill.category,
                                              x.originalskill.cost, x.originalskill.type, x.originalskill.effect,x.originalskill.unlockflags]
@@ -426,8 +443,13 @@ class Gamelogic:
             pokemondict["special"] = x.special
             pokemondict["drop"]=x.drop
             pokemondict["num"]=x.number
-            pokemondict["Skill"] = [x.skill.name, x.skill.power, x.skill.interval, x.skill.category, x.skill.cost,
-                                    x.skill.type, x.skill.effect,x.skill.unlockflags]
+            pokemondict["velocity"] = x.velocity
+            skilllist = []
+            for singleskill in x.skill:
+                skilllist.append(
+                    [singleskill.name, singleskill.power, singleskill.interval, singleskill.category, singleskill.cost,
+                     singleskill.type, singleskill.effect, singleskill.unlockflags])
+            pokemondict["Skill"] = skilllist
             pokemondict["Original skill"] = [x.originalskill.name, x.originalskill.power, x.originalskill.interval,
                                              x.originalskill.category,
                                              x.originalskill.cost, x.originalskill.type, x.originalskill.effect,x.originalskill.unlockflags]
@@ -448,8 +470,13 @@ class Gamelogic:
             pokemondict["special"] = x.special
             pokemondict["drop"] = x.drop
             pokemondict["num"] = x.number
-            pokemondict["Skill"] = [x.skill.name, x.skill.power, x.skill.interval, x.skill.category, x.skill.cost,
-                                    x.skill.type, x.skill.effect,x.skill.unlockflags]
+            pokemondict["velocity"] = x.velocity
+            skilllist = []
+            for singleskill in x.skill:
+                skilllist.append(
+                    [singleskill.name, singleskill.power, singleskill.interval, singleskill.category, singleskill.cost,
+                     singleskill.type, singleskill.effect, singleskill.unlockflags])
+            pokemondict["Skill"] = skilllist
             pokemondict["Original skill"] = [x.originalskill.name, x.originalskill.power, x.originalskill.interval,
                                              x.originalskill.category,
                                              x.originalskill.cost, x.originalskill.type, x.originalskill.effect,x.originalskill.unlockflags]
@@ -545,120 +572,129 @@ class Gamelogic:
     def dungeonprogress(cls):
         alive = [pokemon for pokemon in cls.activedungeon.party if pokemon.currenthp]
         alive2 = [pokemon for pokemon in cls.activedungeon.currentlayout[cls.activedungeon.floor] if pokemon.currenthp]
-
-        alive[cls.activepartypokemon].cd -= 1
-        if alive[cls.activepartypokemon].cd == 0:
-            damagedealt = alive[cls.activepartypokemon].skill.useskill(alive[cls.activepartypokemon], alive2[0])
-            if cls.tab == cls.mainelements[5].name:
-                hit = pygame.mixer.Sound('Sounds/hitting.wav')
-                hit.set_volume(cls.volume)
-                pygame.mixer.Sound.play(hit)
-            alive[cls.activepartypokemon].cd = alive[cls.activepartypokemon].skill.interval * 120
+        if cls.pokemonattacking is None:
+            for num,pokemon in enumerate(alive):
+                pokemon.cd+=pokemon.velocity/480
+                if pokemon.cd>1:
+                    cls.pokemonattacking=pokemon
+                    Gamelogic.stageofselection =1
+            for num,pokemon in enumerate(alive2):
+                pokemon.cd+=pokemon.velocity/480
+                if pokemon.cd>1:
+                    skillnum=random.randint(0,len(alive2[num].skill)-1)
+                    alive2[num].cd=1-alive2[num].skill[skillnum].interval/4
+                    target=alive[random.randint(0,len(alive)-1)]
+                    damagedealt = alive2[num].skill[skillnum].useskill(alive2[num], target)
+                    cls.activedungeon.log.append(
+                        f'Enemy {alive2[num].name} dealt {numcon(damagedealt)} dmg to {target.name}')
+                    if cls.tab == "Dungeon":
+                        hit = pygame.mixer.Sound('Sounds/ouch.wav')
+                        hit.set_volume(cls.volume)
+                        pygame.mixer.Sound.play(hit)
+                    if target.currenthp == 0:
+                        cls.activedungeon.log.append(
+                            f'{target.name} fainted!')
+                        target.cd = 0
+                        alive = [pokemon for pokemon in cls.activedungeon.party if pokemon.currenthp]
+                        if not len(alive):
+                            cls.activedungeon.generate()
+                            cls.activedungeon.log.append('You and your party were defeated')
+                            cls.regenpokemonhealt(cls.party[0:5])
+                            cls.pokemonattacking=None
+                            Gamelogic.stageofselection = 0
+                            return
+        else:
+            if cls.auto:
+                cls.attackchosen(cls.pokemonattacking, alive2[0],
+                                       cls.pokemonattacking.originalskill)
+                cls.pokemonattacking = None
+                cls.stageofselection = 0
+    @classmethod
+    def attackchosen(cls,pokemon,target,skill):
+        damagedealt = skill.useskill(pokemon, target)
+        pokemon.cd=1-skill.interval/4
+        cls.activedungeon.log.append(
+            f'{pokemon.name} dealt {numcon(damagedealt)} dmg to enemy {target.name}')
+        if cls.tab == "Dungeon":
+            hit = pygame.mixer.Sound('Sounds/hitting.wav')
+            hit.set_volume(cls.volume)
+            pygame.mixer.Sound.play(hit)
+        if target.currenthp == 0:
+            target.cd = 0
             cls.activedungeon.log.append(
-                f'{alive[cls.activepartypokemon].name} dealt {numcon(damagedealt)} dmg to {alive2[0].name}')
-            if alive2[0].currenthp == 0:
-                alive2[0].cd = alive2[0].skill.interval * 120
-                cls.activedungeon.log.append(
-                    f'Enemy {alive2[0].name} fainted!')
-                cls.corestats.baseexp += (alive2[0].drop['exp']+cls.corestats.expdropbonus)
-                cls.corestats.baseexp=(round(cls.corestats.baseexp,1))
-                droplog = f'Enemy {alive2[0].name} dropped {alive2[0].drop["exp"]} exp'
-                for resource in alive2[0].drop['resources']:
-                    name = resource[0]
-                    quantity = resource[1]
-                    lootchance = resource[2]
-                    for x in cls.resources.keys():
-                        for resource2 in [e for e in cls.resources[x] if e.name == name]:
-                            n = random.randint(0, 100)
-                            if n <= lootchance:
-                                resource2.quantity += quantity
-                                if resource2.quantity > resource2.max:
-                                    resource2.quantity = resource2.max
-                                droplog += f', {quantity} {name}'
-                n = random.randint(0, 100)
-                souldrop = 1
-                if n <= 33 and alive2[0].name not in ['Training dummy']:
-                    if alive2[0].name not in cls.souls:
-                        pokemontounlock = alive2[0].copy()
-                        cls.souls[pokemontounlock.name] = 0
-                        pokemontounlock.phys = 1
-                        pokemontounlock.magic = 1
-                        pokemontounlock.special = 1
-                        pokemontounlock.lvl = 5
-                        pokemontounlock.wild = False
+                f'Enemy {target.name} fainted!')
+            cls.corestats.baseexp += (target.drop['exp'] + cls.corestats.expdropbonus)
+            cls.corestats.baseexp = (round(cls.corestats.baseexp, 1))
+            droplog = f'Enemy {target.name} dropped {target.drop["exp"]} exp'
+            for resource in target.drop['resources']:
+                name = resource[0]
+                quantity = resource[1]
+                lootchance = resource[2]
+                for x in cls.resources.keys():
+                    for resource2 in [e for e in cls.resources[x] if e.name == name]:
+                        n = random.randint(0, 100)
+                        if n <= lootchance:
+                            resource2.quantity += quantity
+                            if resource2.quantity > resource2.max:
+                                resource2.quantity = resource2.max
+                            droplog += f', {quantity} {name}'
+            n = random.randint(0, 100)
+            souldrop = 1
+            if n <= 33 and target.name not in ['Training dummy']:
+                if target.name not in cls.souls:
+                    pokemontounlock = target.copy()
+                    cls.souls[pokemontounlock.name] = 0
+                    pokemontounlock.phys = 1
+                    pokemontounlock.magic = 1
+                    pokemontounlock.special = 1
+                    pokemontounlock.lvl = 5
+                    pokemontounlock.wild = False
 
-                        cls.unlockablepokemons.append(pokemontounlock)
-                    cls.souls[alive2[0].name] += souldrop
+                    cls.unlockablepokemons.append(pokemontounlock)
+                cls.souls[target.name] += souldrop
 
-                    droplog += f',{souldrop} {alive2[0].name} soul'
+                droplog += f',{souldrop} {target.name} soul'
 
-                cls.activedungeon.log.append(droplog)
-                alive2 = [pokemon for pokemon in cls.activedungeon.currentlayout[cls.activedungeon.floor] if
-                          pokemon.currenthp]
-                cls.activeenemypokemon = max(0, cls.activeenemypokemon - 1)
-                if not len(alive2):
-                    cls.activepartypokemon = 0
-                    cls.activeenemypokemon = 0
-                    cls.activedungeon.floor += 1
-
-                    if cls.activedungeon.floor >= len(cls.activedungeon.currentlayout):
-                        cls.activedungeon.generate()
-                        cls.activedungeon.log.append('You cleared the dungeon!')
-                        victory=pygame.mixer.Sound('Sounds/victory.mp3')
-                        victory.set_volume(cls.volume)
-                        pygame.mixer.Sound.play(victory)
-                        cls.regenpokemonhealt(cls.party[0:5])
-                        cls.activedungeon.docomplete()
-                        if cls.activedungeon.changeflags is not None:
-                            for key in cls.activedungeon.changeflags:
-                                cls.flags[key] += cls.activedungeon.changeflags[key]
-                        cls.activedungeon.changeflags = None
-                    return
-
-            cls.activepartypokemon += 1
-            if cls.activepartypokemon > len(alive) - 1:
-                cls.activepartypokemon = 0
-        if cls.activeenemypokemon>len(alive2)-1:
-            cls.activeenemypokemon = len(alive2) - 1
-        alive2[cls.activeenemypokemon].cd -= 1
-        if alive2[cls.activeenemypokemon].cd == 0:
-            damagedealt = alive2[cls.activeenemypokemon].skill.useskill(alive2[cls.activeenemypokemon], alive[0])
-            if cls.tab == cls.mainelements[5].name:
-                hit = pygame.mixer.Sound('Sounds/ouch.wav')
-                hit.set_volume(cls.volume)
-                pygame.mixer.Sound.play(hit)
-            alive2[cls.activeenemypokemon].cd = alive2[cls.activeenemypokemon].skill.interval * 120
-            cls.activedungeon.log.append(
-                f'Enemy {alive2[cls.activeenemypokemon].name} dealt {numcon(damagedealt)} dmg to {alive[0].name}')
-            if alive[0].currenthp == 0:
-                cls.activedungeon.log.append(
-                    f'{alive[0].name} fainted!')
-                alive[0].cd = alive[0].skill.interval * 120
-                alive = [pokemon for pokemon in cls.activedungeon.party if pokemon.currenthp]
-                cls.activepartypokemon = max(0, cls.activepartypokemon - 1)
-                cls.activeenemypokemon+=1
-                if not len(alive):
-                    cls.activepartypokemon = 0
-                    cls.activeenemypokemon = 0
+            cls.activedungeon.log.append(droplog)
+            alive2 = [pokemon for pokemon in cls.activedungeon.currentlayout[cls.activedungeon.floor] if
+                      pokemon.currenthp]
+            if not len(alive2):
+                cls.activedungeon.floor += 1
+                if cls.activedungeon.floor >= len(cls.activedungeon.currentlayout):
                     cls.activedungeon.generate()
-                    cls.activedungeon.log.append('You and your party were defeated')
+                    cls.activedungeon.log.append('You cleared the dungeon!')
+                    victory = pygame.mixer.Sound('Sounds/victory.mp3')
+                    victory.set_volume(cls.volume)
+                    pygame.mixer.Sound.play(victory)
                     cls.regenpokemonhealt(cls.party[0:5])
+                    cls.activedungeon.docomplete()
+                    if cls.activedungeon.changeflags is not None:
+                        for key in cls.activedungeon.changeflags:
+                            cls.flags[key] += cls.activedungeon.changeflags[key]
+                    cls.activedungeon.changeflags = None
                 return
-            cls.activeenemypokemon += 1
-            if cls.activeenemypokemon > len(alive2) - 1:
-                cls.activeenemypokemon = 0
 
     @classmethod
     def regenpokemonhealt(cls, list):
         for pokemon in list:
             pokemon.currenthp = pokemon.actualhp
-
+    #TOCHANGE
     @classmethod
     def changeskillfunction(cls,pokemon,skill):
         pokemon.skill=skill.copy()
         pokemon.cd = pokemon.skill.interval * 120
         cls.changeskill=None
         cls.partysubtab='Party selection'
+
+    @classmethod
+    def addskillfunction(cls,pokemon,skill):
+        pokemon.skill.append(skill.copy())
+        cls.addskill = None
+    @classmethod
+    def removeskillfunction(cls,pokemon,num):
+        pokemon.skill.pop(num)
+        cls.removeskill =None
+
 
     @classmethod
     def reorderreserve(cls):

@@ -237,6 +237,8 @@ class Graphics:
     fontfactor = 1
     toggles = {}
     theme = 'rey'
+    skillchosen=None
+
 
     @classmethod
     def update_window_size(cls):
@@ -635,8 +637,8 @@ class Graphics:
                                 pygame.mixer.Sound.play(hit)
                                 if Gamelogic.activedungeon is None or not Gamelogic.activedungeon.name == dungeon.name:
                                     dungeon.generate()
-                                    Gamelogic.activepartypokemon = 0
-                                    Gamelogic.activeenemypokemon = 0
+                                    Gamelogic.pokemonattacking = None
+                                    Gamelogic.stageofselection = 0
                                 Gamelogic.activedungeon = dungeon
                                 Gamelogic.tab = 'Dungeon'
                             if imgui.is_item_hovered():
@@ -1332,16 +1334,24 @@ class Graphics:
             if actiondecorator(imgui.button, cls.theme)('Quit', cls.resizewidth(90), cls.resizeheight(30)):
                 Gamelogic.activedungeon = None
                 Gamelogic.tab = 'Main'
+                Gamelogic.pokemonattacking = None
+                Gamelogic.stageofselection = 0
             imgui.same_line(position=cls.resizewidth(630))
             if actiondecorator(imgui.button, cls.theme)('Back', cls.resizewidth(90), cls.resizeheight(30)):
                 Gamelogic.tab = 'Main'
+
             imgui.same_line(position=cls.resizewidth(730))
             if actiondecorator(imgui.button, cls.theme)('Restart', cls.resizewidth(90), cls.resizeheight(30)):
-                Gamelogic.activepartypokemon = 0
-                Gamelogic.activeenemypokemon = 0
+                Gamelogic.pokemonattacking = None
+                Gamelogic.stageofselection = 0
                 Gamelogic.activedungeon.generate()
                 Gamelogic.activedungeon.log.append('You restarted the dungeon')
                 Gamelogic.regenpokemonhealt(Gamelogic.party[0:5])
+            imgui.same_line(position=cls.resizewidth(830))
+            if actiondecorator(imgui.button, cls.theme)('Auto', cls.resizewidth(90), cls.resizeheight(30)):
+                Gamelogic.auto= not Gamelogic.auto
+            imgui.same_line()
+            actiondecorator(imgui.text,cls.theme)(f'Auto:{Gamelogic.auto}')
 
             imgui.end_child()
             imgui.text('')
@@ -1367,9 +1377,8 @@ class Graphics:
                         Gamelogic.activedungeon.party[num] = Gamelogic.activedungeon.party[num + 1].copy()
                         Gamelogic.activedungeon.party[num + 1] = il
                     progressbardecorator(imgui.progress_bar, cls.theme)(
-                        (1 - (pokemon.cd / (pokemon.skill.interval * 120))),
-                        (cls.resizewidth(250), cls.resizeheight(20)),
-                        str(pokemon.skill.name))
+                        pokemon.cd,
+                        (cls.resizewidth(250), cls.resizeheight(10)))
                 imgui.end_child()
 
                 imgui.same_line(spacing=cls.resizewidth(40))
@@ -1386,13 +1395,41 @@ class Graphics:
                                                                                 cls.resizeheight(20)),
                                                                             f'{numcon(pokemon.currenthp)}/{numcon(pokemon.actualhp)}')
                         progressbardecorator(imgui.progress_bar, cls.theme)(
-                            1 - (pokemon.cd / (pokemon.skill.interval * 120)),
-                            (cls.resizewidth(250), cls.resizeheight(20)),
-                            str(pokemon.skill.name))
+                            pokemon.cd,
+                            (cls.resizewidth(250), cls.resizeheight(10)))
                 imgui.end_child()
                 imgui.same_line(spacing=cls.resizewidth(30))
+                imgui.begin_group()
                 backgroundecorator(imgui.begin_child, cls.theme)("Child 3", width=cls.resizewidth(970 / 3),
-                                                                 height=cls.resizeheight(370), border=True)
+                                                                 height=cls.resizeheight(100), border=True)
+
+                aliveenemies = [enemy for enemy in dungeon.currentlayout[dungeon.floor][
+                                                   0:min(5, len(dungeon.currentlayout[dungeon.floor]))] if
+                                enemy.currenthp]
+
+                if dungeon is not None:
+                    if Gamelogic.pokemonattacking is not None:
+                        if not Gamelogic.auto:
+                            if Gamelogic.stageofselection==1:
+                                actiondecorator(imgui.text, cls.theme)('Select Skill')
+                                for skill in Gamelogic.pokemonattacking.skill:
+                                    if actiondecorator(imgui.button,cls.theme)(skill.name,cls.resizewidth(150),cls.resizeheight(15)):
+                                        cls.skillchosen=skill
+                                        Gamelogic.pokemonattacking.cd=1-skill.interval/4
+                                        Gamelogic.stageofselection =2
+                            elif Gamelogic.stageofselection==2:
+                                actiondecorator(imgui.text,cls.theme)('Select Target')
+                                for num,pokemon in enumerate(aliveenemies):
+                                    if actiondecorator(imgui.button,cls.theme)(f'{pokemon.name}##{num}',cls.resizewidth(150),cls.resizeheight(15)):
+                                        Gamelogic.attackchosen(Gamelogic.pokemonattacking,pokemon,cls.skillchosen)
+                                        Gamelogic.stageofselection = 0
+                                        cls.skillchosen=None
+                                        Gamelogic.pokemonattacking=None
+
+
+                imgui.end_child()
+                backgroundecorator(imgui.begin_child, cls.theme)("Child 5", width=cls.resizewidth(970 / 3),
+                                                                 height=cls.resizeheight(270), border=True)
                 if dungeon is not None:
                     for string in dungeon.log:
                         string = (autospacer155(string, 46))
@@ -1405,6 +1442,7 @@ class Graphics:
                         imgui.set_scroll_here_y(1)
 
                 imgui.end_child()
+                imgui.end_group()
 
         imgui.end()
 
@@ -1500,9 +1538,9 @@ class Graphics:
                 if actiondecorator(imgui.button, cls.theme)('Back', cls.resizewidth(90), cls.resizeheight(20)):
                     Gamelogic.partysubtab = 'Party selection'
                     temp = 1
-                actiondecorator(imgui.text, cls.theme)('Default skill')
+                actiondecorator(imgui.text, cls.theme)('Automatic skill')
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
-                imgui.begin_child('Default skill', height=cls.resizeheight(25), border=True)
+                imgui.begin_child('Automatic skill', height=cls.resizeheight(25), border=True)
                 imgui.same_line(position=250)
                 actiondecorator(imgui.text, cls.theme)(Gamelogic.changeskill.originalskill.name)
                 imgui.same_line(position=417)
@@ -1515,20 +1553,24 @@ class Graphics:
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 30)}']):
                 actiondecorator(imgui.text, cls.theme)('Active skill')
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
-                imgui.begin_child('Active skill', height=cls.resizeheight(25), border=True)
-                imgui.same_line(position=250)
-                actiondecorator(imgui.text, cls.theme)(Gamelogic.changeskill.skill.name)
-                imgui.same_line(position=417)
-                actiondecorator(imgui.text, cls.theme)(f'{Gamelogic.changeskill.skill.category}')
-                imgui.same_line(position=584)
-                actiondecorator(imgui.text, cls.theme)(f'{Gamelogic.changeskill.skill.power}')
-                imgui.same_line(position=750)
-                actiondecorator(imgui.text, cls.theme)(f'{Gamelogic.changeskill.skill.interval}')
-                imgui.same_line(position=940)
-                if actiondecorator(imgui.button, cls.theme)('Remove', cls.resizewidth(90), cls.resizeheight(15)):
-                    Gamelogic.changeskill.skill = Gamelogic.changeskill.originalskill.copy()
-                    Gamelogic.changeskill = None
-                    Gamelogic.partysubtab = 'Party selection'
+                imgui.begin_child('Active skills', height=cls.resizeheight(100), border=True)
+                for num, skill in enumerate(Gamelogic.changeskill.skill):
+                    imgui.same_line(position=250)
+                    actiondecorator(imgui.text, cls.theme)(skill.name)
+                    imgui.same_line(position=417)
+                    actiondecorator(imgui.text, cls.theme)(f'{skill.category}')
+                    imgui.same_line(position=584)
+                    actiondecorator(imgui.text, cls.theme)(f'{skill.power}')
+                    imgui.same_line(position=750)
+                    actiondecorator(imgui.text, cls.theme)(f'{skill.interval}')
+                    imgui.same_line(position=830)
+                    if actiondecorator(imgui.button, cls.theme)(f'Automatize##{num}', cls.resizewidth(100), cls.resizeheight(15)):
+                        Gamelogic.changeskill.originalskill=skill
+                    imgui.same_line(position=940)
+                    use=len(Gamelogic.changeskill.skill)==1
+                    if cls.disabledecorator(imgui.button, use)(f'Remove##{num}', cls.resizewidth(90), cls.resizeheight(15)) and not use:
+                        Gamelogic.removeskillfunction(Gamelogic.changeskill,num)
+                    imgui.new_line()
                 imgui.end_child()
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 30)}']):
                 actiondecorator(imgui.text, cls.theme)('Skill list')
@@ -1544,9 +1586,10 @@ class Graphics:
                     imgui.same_line(position=750)
                     actiondecorator(imgui.text, cls.theme)(f'{skill.interval}')
                     imgui.same_line(position=940)
-                    if actiondecorator(imgui.button, cls.theme)(f'Assign###{num}', cls.resizewidth(90),
-                                                                cls.resizeheight(15)):
-                        Gamelogic.changeskillfunction(Gamelogic.changeskill, skill)
+                    use=len(Gamelogic.changeskill.skill)>=4 or len([skill1 for skill1 in Gamelogic.changeskill.skill if skill1.name==skill.name])>0
+                    if cls.disabledecorator(imgui.button,use)(f'Add###{num}', cls.resizewidth(90),
+                                                                cls.resizeheight(15)) and not use:
+                        Gamelogic.addskillfunction(Gamelogic.changeskill, skill)
                     imgui.new_line()
                 imgui.end_child()
                 if temp:
