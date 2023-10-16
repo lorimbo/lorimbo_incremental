@@ -15,6 +15,8 @@ orange = (255, 100, 0)
 grey = (105, 105, 105)
 teal = (84, 186, 227)
 brown = (139, 69, 19)
+Weak={'Fire':['Water','Ground'],'Grass':['Fire'],'Water':['Electric','Grass'],'Ground':['Water','Grass'],'Electric':['Ground']}
+Strong={'Fire':['Grass'],'Grass':['Water','Ground'],'Water':['Fire','Ground'],'Ground':['Fire','Electric'],'Electric':['Water'],'Dark':['Light'],'Light':['Dark']}
 
 
 def numcon(n):
@@ -361,6 +363,7 @@ class Gamelogic:
                     pokemondict["drop"] = x.drop
                     pokemondict["num"] = x.number
                     pokemondict["velocity"]=x.velocity
+                    pokemondict["type"]=x.type
                     skilllist=[]
                     for singleskill in x.skill:
                         skilllist.append([singleskill.name, singleskill.power, singleskill.interval, singleskill.category, singleskill.cost, singleskill.type, singleskill.effect,singleskill.unlockflags])
@@ -386,6 +389,7 @@ class Gamelogic:
                     pokemondict["drop"] = x.drop
                     pokemondict["num"] = x.number
                     pokemondict["velocity"] = x.velocity
+                    pokemondict["type"] = x.type
                     skilllist = []
                     for singleskill in x.skill:
                         skilllist.append(
@@ -415,6 +419,7 @@ class Gamelogic:
             pokemondict["drop"] = x.drop
             pokemondict["num"] = x.number
             pokemondict["velocity"] = x.velocity
+            pokemondict["type"] = x.type
             skilllist = []
             for singleskill in x.skill:
                 skilllist.append(
@@ -444,6 +449,7 @@ class Gamelogic:
             pokemondict["drop"]=x.drop
             pokemondict["num"]=x.number
             pokemondict["velocity"] = x.velocity
+            pokemondict["type"] = x.type
             skilllist = []
             for singleskill in x.skill:
                 skilllist.append(
@@ -471,6 +477,7 @@ class Gamelogic:
             pokemondict["drop"] = x.drop
             pokemondict["num"] = x.number
             pokemondict["velocity"] = x.velocity
+            pokemondict["type"] = x.type
             skilllist = []
             for singleskill in x.skill:
                 skilllist.append(
@@ -585,7 +592,14 @@ class Gamelogic:
                     alive2[num].cd=1-alive2[num].skill[skillnum].interval/4
                     target=alive[random.randint(0,len(alive)-1)]
                     damagedealt = alive2[num].skill[skillnum].useskill(alive2[num], target)
-                    cls.activedungeon.log.append(
+                    if alive2[num].skill[skillnum].type in Strong and target.type in Strong[alive2[num].skill[skillnum].type]:
+                        cls.activedungeon.log.append(
+                            f"Enemy {alive2[num].name} dealt {numcon(damagedealt)} dmg to {target.name}. It's super effective")
+                    elif target.type in Weak and alive2[num].skill[skillnum].type in Weak[target.type]:
+                        cls.activedungeon.log.append(
+                            f"Enemy {alive2[num].name} dealt {numcon(damagedealt)} dmg to {target.name}. It's not very effective")
+                    else:
+                        cls.activedungeon.log.append(
                         f'Enemy {alive2[num].name} dealt {numcon(damagedealt)} dmg to {target.name}')
                     if cls.tab == "Dungeon":
                         hit = pygame.mixer.Sound('Sounds/ouch.wav')
@@ -613,7 +627,14 @@ class Gamelogic:
     def attackchosen(cls,pokemon,target,skill):
         damagedealt = skill.useskill(pokemon, target)
         pokemon.cd=1-skill.interval/4
-        cls.activedungeon.log.append(
+        if skill.type in Strong and target.type in Strong[skill.type]:
+            cls.activedungeon.log.append(
+                f"{pokemon.name} dealt {numcon(damagedealt)} dmg to enemy {target.name}. It's super effective")
+        elif target.type in Weak and skill.type in Weak[target.type]:
+            cls.activedungeon.log.append(
+                f"{pokemon.name} dealt {numcon(damagedealt)} dmg to enemy {target.name}. It's not very effective")
+        else:
+            cls.activedungeon.log.append(
             f'{pokemon.name} dealt {numcon(damagedealt)} dmg to enemy {target.name}')
         if cls.tab == "Dungeon":
             hit = pygame.mixer.Sound('Sounds/hitting.wav')

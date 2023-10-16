@@ -20,6 +20,9 @@ grey = (105, 105, 105)
 teal = (84, 186, 227)
 brown = (139, 69, 19)
 
+Weak={'Fire':['Water','Ground'],'Grass':['Fire'],'Water':['Electric','Grass'],'Ground':['Water','Grass'],'Electric':['Ground']}
+Strong={'Fire':['Grass'],'Grass':['Water','Ground'],'Water':['Fire','Ground'],'Ground':['Fire','Electric'],'Electric':['Water'],'Dark':['Light'],'Light':['Dark']}
+
 
 class Passive:
     def __init__(self,thing,type,maxpower,percentage):
@@ -31,7 +34,7 @@ class Passive:
 
 
 class Skill:
-    def __init__(self, name, power, interval, category, cost=False, type=False, effect=False, unlockflags=False):
+    def __init__(self, name, power, interval, category, cost=False, type='Normal', effect=False, unlockflags=False):
         self.name = name
         self.power = power
         self.interval = interval
@@ -53,6 +56,11 @@ class Skill:
             basedamage = attack / 2 - target.actualmdef / 4
         if basedamage < 0:
             basedamage = 0
+        if self.type in Strong and target.type in Strong[self.type]:
+            basedamage*=2
+        elif target.type in Weak and self.type in Weak[user.type]:
+            basedamage /= 2
+
         randomdamage = random.uniform(-((basedamage) ** 0.5) / 2, ((basedamage) ** 0.5 / 2))
         damage = max(basedamage + randomdamage, attack / 10)
         target.currenthp -= damage
@@ -786,7 +794,7 @@ class Longaction(menuelement):
 class Pokemon(menuelement):
     def __init__(self, hp, atk, dif, satk, sdif, maxlvl=1000, unlocked=0, lvl=0, phys=0, magic=0,
                  special=0, drop=None,
-                 skill=None,num=0, wild=True,originalskill=None,passive=[],velocity=1,
+                 skill=None,num=0, wild=True,originalskill=None,passive=[],velocity=1,type='Normal',
                  *args, **kwargs):
 
         menuelement.__init__(self, *args, **kwargs)
@@ -806,6 +814,7 @@ class Pokemon(menuelement):
         self.passive=passive
         self.velocity=velocity
         self.cd=0
+        self.type=type
         for passive in self.passive:
             passive.percentage = (self.special / self.maxlvl)
             passive.quantity = passive.maxpower / 2 + (passive.maxpower / 2) * passive.percentage
@@ -944,16 +953,16 @@ def createpokemon(parent):
     pokemonlist.createpokemonlist(parent)
     parent.mainname=Information['mainname']
     for pokemonkey in Information['unlockablepokemons']:
-        Pokemon(velocity=pokemonkey['velocity'],skill=pokemonkey['Skill'],originalskill=pokemonkey['Original skill'],parent=parent, wild=False, elementlist=parent.unlockablepokemons, hp=pokemonkey['hp'],name=pokemonkey['name'],atk=pokemonkey['atk'],
+        Pokemon(type=pokemonkey['type'],velocity=pokemonkey['velocity'],skill=pokemonkey['Skill'],originalskill=pokemonkey['Original skill'],parent=parent, wild=False, elementlist=parent.unlockablepokemons, hp=pokemonkey['hp'],name=pokemonkey['name'],atk=pokemonkey['atk'],
                 dif=pokemonkey['dif'],satk=pokemonkey['satk'],sdif=pokemonkey['sdif'],maxlvl=pokemonkey['maxlvl'],unlocked=pokemonkey['unlocked'],lvl=pokemonkey['lvl'],phys=pokemonkey['phys'],
                 magic=pokemonkey['magic'],special=pokemonkey['special'],drop=pokemonkey['drop'],num=pokemonkey['num'],passive=parent.pokemonlist[pokemonkey['num']-1].passive)
     for pokemonkey in Information['party']:
-        Pokemon(velocity=pokemonkey['velocity'],skill=pokemonkey['Skill'],originalskill=pokemonkey['Original skill'],parent=parent, wild=False, elementlist=parent.party, hp=pokemonkey['hp'],name=pokemonkey['name'],atk=pokemonkey['atk'],
+        Pokemon(type=pokemonkey['type'],velocity=pokemonkey['velocity'],skill=pokemonkey['Skill'],originalskill=pokemonkey['Original skill'],parent=parent, wild=False, elementlist=parent.party, hp=pokemonkey['hp'],name=pokemonkey['name'],atk=pokemonkey['atk'],
                 dif=pokemonkey['dif'],satk=pokemonkey['satk'],sdif=pokemonkey['sdif'],maxlvl=pokemonkey['maxlvl'],unlocked=pokemonkey['unlocked'],lvl=pokemonkey['lvl'],phys=pokemonkey['phys'],
                 magic=pokemonkey['magic'],special=pokemonkey['special'],drop=pokemonkey['drop'],num=pokemonkey['num'],passive=parent.pokemonlist[pokemonkey['num']-1].passive)
     for pokemonkey in Information['reserve']:
 
-        Pokemon(velocity=pokemonkey['velocity'],skill=pokemonkey['Skill'], originalskill=pokemonkey['Original skill'], parent=parent, wild=False, elementlist=parent.reserve,
+        Pokemon(type=pokemonkey['type'],velocity=pokemonkey['velocity'],skill=pokemonkey['Skill'], originalskill=pokemonkey['Original skill'], parent=parent, wild=False, elementlist=parent.reserve,
                 hp=pokemonkey['hp'], name=pokemonkey['name'], atk=pokemonkey['atk'],
                 dif=pokemonkey['dif'], satk=pokemonkey['satk'], sdif=pokemonkey['sdif'], maxlvl=pokemonkey['maxlvl'],
                 unlocked=pokemonkey['unlocked'], lvl=pokemonkey['lvl'], phys=pokemonkey['phys'],

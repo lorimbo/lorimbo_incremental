@@ -12,9 +12,7 @@ add rare enemies to dungeons+ add them to the tooltip
 gear for the monsters
 improve the game system
 make a bestiary
-change the combat system to be cooler
 implement boss behaviour
-implement multiple skills from enemies
 
 Content:
 add more quest to the village section
@@ -39,5 +37,3 @@ rename things to avoid being copyrighted
 add more tutorials for the start regarding souls, and how to level up exactly
 
 BUGS:
-sometimes the fight crashes and i am not sure why(seems to be fixed but needs to be looked into)
-clicking on a dungeon resets the turn order to 0 0(should be fixed too, look into it)

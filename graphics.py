@@ -7,6 +7,8 @@ import datetime
 import tooltips
 from Game_logic import Gamelogic
 from tooltips import actionTooltip
+Weak={'Fire':['Water','Ground'],'Grass':['Fire'],'Water':['Electric','Grass'],'Ground':['Water','Grass'],'Electric':['Ground']}
+Strong={'Fire':['Grass'],'Grass':['Water','Ground'],'Water':['Fire','Ground'],'Ground':['Fire','Electric'],'Electric':['Water'],'Dark':['Light'],'Light':['Dark']}
 
 red = (255, 0, 0)
 green = (0, 255, 0)
@@ -815,16 +817,20 @@ class Graphics:
         with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
             imgui.same_line(position=135)
             actiondecorator(imgui.text,cls.theme)('lvl')
-            imgui.same_line(position=260)
+            imgui.same_line(position=240)
             actiondecorator(imgui.text, cls.theme)('hp')
-            imgui.same_line(position=360)
+            imgui.same_line(position=310)
             actiondecorator(imgui.text, cls.theme)('patk')
-            imgui.same_line(position=460)
+            imgui.same_line(position=390)
             actiondecorator(imgui.text, cls.theme)('pdef')
-            imgui.same_line(position=560)
+            imgui.same_line(position=470)
             actiondecorator(imgui.text, cls.theme)('matk')
-            imgui.same_line(position=660)
+            imgui.same_line(position=550)
             actiondecorator(imgui.text, cls.theme)('mdef')
+            imgui.same_line(position=630)
+            actiondecorator(imgui.text, cls.theme)('vel')
+            imgui.same_line(position=710)
+            actiondecorator(imgui.text, cls.theme)('type')
 
         imgui.begin_child("Child 1", height=cls.resizeheight(80), border=True, flags=cls.resourcesflags)
 
@@ -848,7 +854,7 @@ class Graphics:
                         tooltip = tooltips.pokemontooltip(pokemon, 'In the party',expbonus=expbonus)
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
-                imgui.same_line(position=cls.resizewidth(250))
+                imgui.same_line(position=cls.resizewidth(230))
                 actiondecorator(imgui.text, cls.theme)(numcon(pokemon.actualhp))
                 if imgui.is_item_hovered():
                     with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
@@ -856,7 +862,7 @@ class Graphics:
                         tooltip = tooltips.pokemontooltip(pokemon, 'In the party',expbonus=expbonus)
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
-                imgui.same_line(position=cls.resizewidth(350))
+                imgui.same_line(position=cls.resizewidth(310))
                 actiondecorator(imgui.text, cls.theme)(numcon(pokemon.actualpatk))
                 if imgui.is_item_hovered():
                     with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
@@ -864,7 +870,7 @@ class Graphics:
                         tooltip = tooltips.pokemontooltip(pokemon, 'In the party',expbonus=expbonus)
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
-                imgui.same_line(position=cls.resizewidth(450))
+                imgui.same_line(position=cls.resizewidth(390))
                 actiondecorator(imgui.text, cls.theme)(numcon(pokemon.actualpdef))
                 if imgui.is_item_hovered():
                     with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
@@ -872,7 +878,7 @@ class Graphics:
                         tooltip = tooltips.pokemontooltip(pokemon, 'In the party',expbonus=expbonus)
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
-                imgui.same_line(position=cls.resizewidth(550))
+                imgui.same_line(position=cls.resizewidth(470))
                 actiondecorator(imgui.text, cls.theme)(numcon(pokemon.actualmatk))
                 if imgui.is_item_hovered():
                     with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
@@ -880,7 +886,7 @@ class Graphics:
                         tooltip = tooltips.pokemontooltip(pokemon, 'In the party',expbonus=expbonus)
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
-                imgui.same_line(position=cls.resizewidth(650))
+                imgui.same_line(position=cls.resizewidth(550))
                 actiondecorator(imgui.text, cls.theme)(numcon(pokemon.actualmdef))
                 if imgui.is_item_hovered():
                     with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
@@ -888,7 +894,24 @@ class Graphics:
                         tooltip = tooltips.pokemontooltip(pokemon, 'In the party',expbonus=expbonus)
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
-                imgui.same_line(position=cls.resizewidth(750))
+                imgui.same_line(position=cls.resizewidth(630))
+                actiondecorator(imgui.text, cls.theme)(numcon(pokemon.velocity))
+                if imgui.is_item_hovered():
+                    with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
+                        actiondecorator(imgui.text, cls.theme)(f"{pokemon.name}             lvl{numcon(pokemon.lvl)}")
+                        tooltip = tooltips.pokemontooltip(pokemon, 'In the party', expbonus=expbonus)
+                        for i in tooltip:
+                            actiondecorator(imgui.text, cls.theme)(f"{i}")
+                imgui.same_line(position=cls.resizewidth(700))
+                actiondecorator(imgui.text, cls.theme)(pokemon.type)
+                if imgui.is_item_hovered():
+                    with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
+                        actiondecorator(imgui.text, cls.theme)(f"{pokemon.name}             lvl{numcon(pokemon.lvl)}")
+                        tooltip = tooltips.pokemontooltip(pokemon, 'In the party', expbonus=expbonus)
+                        for i in tooltip:
+                            actiondecorator(imgui.text, cls.theme)(f"{i}")
+
+                imgui.same_line(position=cls.resizewidth(800))
                 use = num == 0
                 if cls.disabledecorator(imgui.arrow_button, use)(f'downbutton##{num}', imgui.DIRECTION_UP):
                     Gamelogic.switch = num - 1
@@ -909,8 +932,8 @@ class Graphics:
                         tooltip = tooltips.pokemontooltip(pokemon, 'In the party',expbonus=expbonus)
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
-                imgui.same_line(position=cls.resizewidth(840))
-                if cls.disabledecorator(imgui.button, False)(f'Skill##{num}', width=cls.resizewidth(90)):
+                imgui.same_line(position=cls.resizewidth(880))
+                if cls.disabledecorator(imgui.button, False)(f'Skill##{num}', width=cls.resizewidth(70)):
                     Gamelogic.changeskill = Gamelogic.party[num]
                     Gamelogic.partysubtab = 'Skill'
                 if imgui.is_item_hovered():
@@ -921,8 +944,8 @@ class Graphics:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
 
                 use = (pokemon.name == Gamelogic.mainname)
-                imgui.same_line(position=cls.resizewidth(940))
-                if cls.disabledecorator(imgui.button, use)(f'Remove##{num}', width=cls.resizewidth(90)) and not use:
+                imgui.same_line(position=cls.resizewidth(960))
+                if cls.disabledecorator(imgui.button, use)(f'Remove##{num}', width=cls.resizewidth(70)) and not use:
                     Gamelogic.remove = num
                 if imgui.is_item_hovered():
                     with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
@@ -952,7 +975,7 @@ class Graphics:
                         tooltip = tooltips.pokemontooltip(pokemon, 'Free')
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
-                imgui.same_line(position=cls.resizewidth(250))
+                imgui.same_line(position=cls.resizewidth(230))
                 actiondecorator(imgui.text, cls.theme)(numcon(pokemon.actualhp))
                 if imgui.is_item_hovered():
                     with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
@@ -960,7 +983,7 @@ class Graphics:
                         tooltip = tooltips.pokemontooltip(pokemon, 'Free')
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
-                imgui.same_line(position=cls.resizewidth(350))
+                imgui.same_line(position=cls.resizewidth(310))
                 actiondecorator(imgui.text, cls.theme)(numcon(pokemon.actualpatk))
                 if imgui.is_item_hovered():
                     with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
@@ -968,7 +991,7 @@ class Graphics:
                         tooltip = tooltips.pokemontooltip(pokemon, 'Free')
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
-                imgui.same_line(position=cls.resizewidth(450))
+                imgui.same_line(position=cls.resizewidth(390))
                 actiondecorator(imgui.text, cls.theme)(numcon(pokemon.actualpdef))
                 if imgui.is_item_hovered():
                     with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
@@ -976,7 +999,7 @@ class Graphics:
                         tooltip = tooltips.pokemontooltip(pokemon, 'Free')
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
-                imgui.same_line(position=cls.resizewidth(550))
+                imgui.same_line(position=cls.resizewidth(470))
                 actiondecorator(imgui.text, cls.theme)(numcon(pokemon.actualmatk))
                 if imgui.is_item_hovered():
                     with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
@@ -984,7 +1007,7 @@ class Graphics:
                         tooltip = tooltips.pokemontooltip(pokemon, 'Free')
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
-                imgui.same_line(position=cls.resizewidth(650))
+                imgui.same_line(position=cls.resizewidth(550))
                 actiondecorator(imgui.text, cls.theme)(numcon(pokemon.actualmdef))
                 if imgui.is_item_hovered():
                     with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
@@ -992,9 +1015,25 @@ class Graphics:
                         tooltip = tooltips.pokemontooltip(pokemon, 'Free')
                         for i in tooltip:
                             actiondecorator(imgui.text, cls.theme)(f"{i}")
+                imgui.same_line(position=cls.resizewidth(630))
+                actiondecorator(imgui.text, cls.theme)(numcon(pokemon.velocity))
+                if imgui.is_item_hovered():
+                    with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
+                        actiondecorator(imgui.text, cls.theme)(f"{pokemon.name}             lvl{numcon(pokemon.lvl)}")
+                        tooltip = tooltips.pokemontooltip(pokemon, 'In the party', expbonus=expbonus)
+                        for i in tooltip:
+                            actiondecorator(imgui.text, cls.theme)(f"{i}")
+                imgui.same_line(position=cls.resizewidth(700))
+                actiondecorator(imgui.text, cls.theme)(pokemon.type)
+                if imgui.is_item_hovered():
+                    with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
+                        actiondecorator(imgui.text, cls.theme)(f"{pokemon.name}             lvl{numcon(pokemon.lvl)}")
+                        tooltip = tooltips.pokemontooltip(pokemon, 'In the party', expbonus=expbonus)
+                        for i in tooltip:
+                            actiondecorator(imgui.text, cls.theme)(f"{i}")
                 use = not len(Gamelogic.party) < Gamelogic.partylenmax
-                imgui.same_line(position=cls.resizewidth(850))
-                if cls.disabledecorator(imgui.button, use)(f'Add##{num}', cls.resizewidth(90)) and not use:
+                imgui.same_line(position=cls.resizewidth(960))
+                if cls.disabledecorator(imgui.button, use)(f'Add##{num}', cls.resizewidth(70)) and not use:
                     Gamelogic.add = num
                 if imgui.is_item_hovered():
                     with tooltipdecorator(imgui.begin_tooltip, cls.theme)():
@@ -1524,16 +1563,18 @@ class Graphics:
         backgroundecorator(imgui.begin, cls.theme)('Skills', False, cls.flags)
         temp = 0
         if Gamelogic.changeskill is not None:
-            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 30)}']):
+            with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
                 actiondecorator(imgui.text, cls.theme)(Gamelogic.changeskill.name)
                 imgui.same_line(position=250)
                 actiondecorator(imgui.text, cls.theme)('Name')
-                imgui.same_line(position=400)
+                imgui.same_line(position=360)
                 actiondecorator(imgui.text, cls.theme)('Category')
-                imgui.same_line(position=560)
+                imgui.same_line(position=480)
                 actiondecorator(imgui.text, cls.theme)('Power')
-                imgui.same_line(position=705)
-                actiondecorator(imgui.text, cls.theme)('Countdown')
+                imgui.same_line(position=580)
+                actiondecorator(imgui.text, cls.theme)('Cooldown')
+                imgui.same_line(position=720)
+                actiondecorator(imgui.text, cls.theme)('Type')
                 imgui.same_line(position=940)
                 if actiondecorator(imgui.button, cls.theme)('Back', cls.resizewidth(90), cls.resizeheight(20)):
                     Gamelogic.partysubtab = 'Party selection'
@@ -1541,28 +1582,32 @@ class Graphics:
                 actiondecorator(imgui.text, cls.theme)('Automatic skill')
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
                 imgui.begin_child('Automatic skill', height=cls.resizeheight(25), border=True)
-                imgui.same_line(position=250)
+                imgui.same_line(position=240)
                 actiondecorator(imgui.text, cls.theme)(Gamelogic.changeskill.originalskill.name)
-                imgui.same_line(position=417)
+                imgui.same_line(position=360)
                 actiondecorator(imgui.text, cls.theme)(f'{Gamelogic.changeskill.originalskill.category}')
-                imgui.same_line(position=584)
+                imgui.same_line(position=480)
                 actiondecorator(imgui.text, cls.theme)(f'{Gamelogic.changeskill.originalskill.power}')
-                imgui.same_line(position=750)
+                imgui.same_line(position=590)
                 actiondecorator(imgui.text, cls.theme)(f'{Gamelogic.changeskill.originalskill.interval}')
+                imgui.same_line(position=705)
+                actiondecorator(imgui.text, cls.theme)(f'{Gamelogic.changeskill.originalskill.type}')
                 imgui.end_child()
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 30)}']):
                 actiondecorator(imgui.text, cls.theme)('Active skill')
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
                 imgui.begin_child('Active skills', height=cls.resizeheight(100), border=True)
                 for num, skill in enumerate(Gamelogic.changeskill.skill):
-                    imgui.same_line(position=250)
+                    imgui.same_line(position=240)
                     actiondecorator(imgui.text, cls.theme)(skill.name)
-                    imgui.same_line(position=417)
+                    imgui.same_line(position=360)
                     actiondecorator(imgui.text, cls.theme)(f'{skill.category}')
-                    imgui.same_line(position=584)
+                    imgui.same_line(position=480)
                     actiondecorator(imgui.text, cls.theme)(f'{skill.power}')
-                    imgui.same_line(position=750)
+                    imgui.same_line(position=590)
                     actiondecorator(imgui.text, cls.theme)(f'{skill.interval}')
+                    imgui.same_line(position=705)
+                    actiondecorator(imgui.text, cls.theme)(f'{skill.type}')
                     imgui.same_line(position=830)
                     if actiondecorator(imgui.button, cls.theme)(f'Automatize##{num}', cls.resizewidth(100), cls.resizeheight(15)):
                         Gamelogic.changeskill.originalskill=skill
@@ -1577,14 +1622,16 @@ class Graphics:
             with imgui.font(cls.Fonts['Helvetica'][f'{int(cls.fontfactor * 20)}']):
                 imgui.begin_child('Skill list', border=True)
                 for num, skill in enumerate(Gamelogic.availableskills):
-                    imgui.same_line(position=250)
+                    imgui.same_line(position=240)
                     actiondecorator(imgui.text, cls.theme)(skill.name)
-                    imgui.same_line(position=417)
+                    imgui.same_line(position=360)
                     actiondecorator(imgui.text, cls.theme)(f'{skill.category}')
-                    imgui.same_line(position=584)
+                    imgui.same_line(position=480)
                     actiondecorator(imgui.text, cls.theme)(f'{skill.power}')
-                    imgui.same_line(position=750)
+                    imgui.same_line(position=590)
                     actiondecorator(imgui.text, cls.theme)(f'{skill.interval}')
+                    imgui.same_line(position=705)
+                    actiondecorator(imgui.text, cls.theme)(f'{skill.type}')
                     imgui.same_line(position=940)
                     use=len(Gamelogic.changeskill.skill)>=4 or len([skill1 for skill1 in Gamelogic.changeskill.skill if skill1.name==skill.name])>0
                     if cls.disabledecorator(imgui.button,use)(f'Add###{num}', cls.resizewidth(90),
