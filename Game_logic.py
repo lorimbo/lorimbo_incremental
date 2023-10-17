@@ -629,7 +629,7 @@ class Gamelogic:
                     else:
                         pokemontoheal=alive[0]
                         for pokemon in alive:
-                            if pokemon.currenthp<=pokemontoheal.currenthop:
+                            if pokemon.currenthp<=pokemontoheal.currenthp:
                                 pokemontoheal=pokemon
                         cls.attackchosen(cls.pokemonattacking, [pokemontoheal],
                                          cls.pokemonattacking.originalskill)

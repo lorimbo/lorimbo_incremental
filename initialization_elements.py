@@ -54,8 +54,8 @@ class Skill:
             damage = max(baseheal + randomheal, baseheal / 2.5)
             if target.currenthp > 0:
                 target.currenthp += damage
-            if target.currenthp > target.hp:
-                target.currenthp = target.hp
+            if target.currenthp > target.actualhp:
+                target.currenthp = target.actualhp
             return damage
 
 
