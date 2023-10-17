@@ -619,94 +619,109 @@ class Gamelogic:
                             return
         else:
             if cls.auto:
-                cls.attackchosen(cls.pokemonattacking, alive2[0],
+                if cls.pokemonattacking.originalskill.effect is not False and "aoe" in cls.pokemonattacking.originalskill.effect:
+                    cls.attackchosen(cls.pokemonattacking, alive2,
+                                     cls.pokemonattacking.originalskill)
+                elif cls.pokemonattacking.originalskill.effect is not False and "heal" in cls.pokemonattacking.originalskill.effect:
+                    if "aoe" in cls.pokemonattacking.originalskill.effect:
+                        cls.attackchosen(cls.pokemonattacking, alive,
+                                         cls.pokemonattacking.originalskill)
+                    else:
+                        pokemontoheal=alive[0]
+                        for pokemon in alive:
+                            if pokemon.currenthp<=pokemontoheal.currenthop:
+                                pokemontoheal=pokemon
+                        cls.attackchosen(cls.pokemonattacking, [pokemontoheal],
+                                         cls.pokemonattacking.originalskill)
+
+
+                else:
+                    cls.attackchosen(cls.pokemonattacking, [alive2[0]],
                                        cls.pokemonattacking.originalskill)
                 cls.pokemonattacking = None
                 cls.stageofselection = 0
     @classmethod
     def attackchosen(cls,pokemon,target,skill):
-        damagedealt = skill.useskill(pokemon, target)
-        pokemon.cd=1-skill.interval/4
-        if skill.type in Strong and target.type in Strong[skill.type]:
-            cls.activedungeon.log.append(
-                f"{pokemon.name} dealt {numcon(damagedealt)} dmg to enemy {target.name}. It's super effective")
-        elif target.type in Weak and skill.type in Weak[target.type]:
-            cls.activedungeon.log.append(
-                f"{pokemon.name} dealt {numcon(damagedealt)} dmg to enemy {target.name}. It's not very effective")
-        else:
-            cls.activedungeon.log.append(
-            f'{pokemon.name} dealt {numcon(damagedealt)} dmg to enemy {target.name}')
-        if cls.tab == "Dungeon":
-            hit = pygame.mixer.Sound('Sounds/hitting.wav')
-            hit.set_volume(cls.volume)
-            pygame.mixer.Sound.play(hit)
-        if target.currenthp == 0:
-            target.cd = 0
-            cls.activedungeon.log.append(
-                f'Enemy {target.name} fainted!')
-            cls.corestats.baseexp += (target.drop['exp'] + cls.corestats.expdropbonus)
-            cls.corestats.baseexp = (round(cls.corestats.baseexp, 1))
-            droplog = f'Enemy {target.name} dropped {target.drop["exp"]} exp'
-            for resource in target.drop['resources']:
-                name = resource[0]
-                quantity = resource[1]
-                lootchance = resource[2]
-                for x in cls.resources.keys():
-                    for resource2 in [e for e in cls.resources[x] if e.name == name]:
-                        n = random.randint(0, 100)
-                        if n <= lootchance:
-                            resource2.quantity += quantity
-                            if resource2.quantity > resource2.max:
-                                resource2.quantity = resource2.max
-                            droplog += f', {quantity} {name}'
-            n = random.randint(0, 100)
-            souldrop = 1
-            if n <= 33 and target.name not in ['Training dummy']:
-                if target.name not in cls.souls:
-                    pokemontounlock = target.copy()
-                    cls.souls[pokemontounlock.name] = 0
-                    pokemontounlock.phys = 1
-                    pokemontounlock.magic = 1
-                    pokemontounlock.special = 1
-                    pokemontounlock.lvl = 5
-                    pokemontounlock.wild = False
+        for target1 in target:
+            damagedealt = skill.useskill(pokemon, target1)
+            pokemon.cd=1-skill.interval/4
+            if skill.effect is not False and "heal" in skill.effect:
+                cls.activedungeon.log.append(
+                    f'{pokemon.name} restored {numcon(damagedealt)} hp of {target1.name}')
 
-                    cls.unlockablepokemons.append(pokemontounlock)
-                cls.souls[target.name] += souldrop
+            else:
+                if skill.type in Strong and target1.type in Strong[skill.type]:
+                    cls.activedungeon.log.append(
+                        f"{pokemon.name} dealt {numcon(damagedealt)} dmg to enemy {target1.name}. It's super effective")
+                elif target1.type in Weak and skill.type in Weak[target1.type]:
+                    cls.activedungeon.log.append(
+                        f"{pokemon.name} dealt {numcon(damagedealt)} dmg to enemy {target1.name}. It's not very effective")
+                else:
+                    cls.activedungeon.log.append(
+                    f'{pokemon.name} dealt {numcon(damagedealt)} dmg to enemy {target1.name}')
+                if cls.tab == "Dungeon":
+                    hit = pygame.mixer.Sound('Sounds/hitting.wav')
+                    hit.set_volume(cls.volume)
+                    pygame.mixer.Sound.play(hit)
+                if target1.currenthp == 0:
+                    target1.cd = 0
+                    cls.activedungeon.log.append(
+                        f'Enemy {target1.name} fainted!')
+                    cls.corestats.baseexp += (target1.drop['exp'] + cls.corestats.expdropbonus)
+                    cls.corestats.baseexp = (round(cls.corestats.baseexp, 1))
+                    droplog = f'Enemy {target1.name} dropped {target1.drop["exp"]} exp'
+                    for resource in target1.drop['resources']:
+                        name = resource[0]
+                        quantity = resource[1]
+                        lootchance = resource[2]
+                        for x in cls.resources.keys():
+                            for resource2 in [e for e in cls.resources[x] if e.name == name]:
+                                n = random.randint(0, 100)
+                                if n <= lootchance:
+                                    resource2.quantity += quantity
+                                    if resource2.quantity > resource2.max:
+                                        resource2.quantity = resource2.max
+                                    droplog += f', {quantity} {name}'
+                    n = random.randint(0, 100)
+                    souldrop = 1
+                    if n <= 33 and target1.name not in ['Training dummy']:
+                        if target1.name not in cls.souls:
+                            pokemontounlock = target1.copy()
+                            cls.souls[pokemontounlock.name] = 0
+                            pokemontounlock.phys = 1
+                            pokemontounlock.magic = 1
+                            pokemontounlock.special = 1
+                            pokemontounlock.lvl = 5
+                            pokemontounlock.wild = False
 
-                droplog += f',{souldrop} {target.name} soul'
+                            cls.unlockablepokemons.append(pokemontounlock)
+                        cls.souls[target1.name] += souldrop
 
-            cls.activedungeon.log.append(droplog)
-            alive2 = [pokemon for pokemon in cls.activedungeon.currentlayout[cls.activedungeon.floor] if
-                      pokemon.currenthp]
-            if not len(alive2):
-                cls.activedungeon.floor += 1
-                if cls.activedungeon.floor >= len(cls.activedungeon.currentlayout):
-                    cls.activedungeon.generate()
-                    cls.activedungeon.log.append('You cleared the dungeon!')
-                    victory = pygame.mixer.Sound('Sounds/victory.mp3')
-                    victory.set_volume(cls.volume)
-                    pygame.mixer.Sound.play(victory)
-                    cls.regenpokemonhealt(cls.party[0:5])
-                    cls.activedungeon.docomplete()
-                    if cls.activedungeon.changeflags is not None:
-                        for key in cls.activedungeon.changeflags:
-                            cls.flags[key] += cls.activedungeon.changeflags[key]
-                    cls.activedungeon.changeflags = None
-                return
+                        droplog += f',{souldrop} {target1.name} soul'
+
+                    cls.activedungeon.log.append(droplog)
+                    alive2 = [pokemon for pokemon in cls.activedungeon.currentlayout[cls.activedungeon.floor] if
+                              pokemon.currenthp]
+                    if not len(alive2):
+                        cls.activedungeon.floor += 1
+                        if cls.activedungeon.floor >= len(cls.activedungeon.currentlayout):
+                            cls.activedungeon.generate()
+                            cls.activedungeon.log.append('You cleared the dungeon!')
+                            victory = pygame.mixer.Sound('Sounds/victory.mp3')
+                            victory.set_volume(cls.volume)
+                            pygame.mixer.Sound.play(victory)
+                            cls.regenpokemonhealt(cls.party[0:5])
+                            cls.activedungeon.docomplete()
+                            if cls.activedungeon.changeflags is not None:
+                                for key in cls.activedungeon.changeflags:
+                                    cls.flags[key] += cls.activedungeon.changeflags[key]
+                            cls.activedungeon.changeflags = None
+                        return
 
     @classmethod
     def regenpokemonhealt(cls, list):
         for pokemon in list:
             pokemon.currenthp = pokemon.actualhp
-    #TOCHANGE
-    @classmethod
-    def changeskillfunction(cls,pokemon,skill):
-        pokemon.skill=skill.copy()
-        pokemon.cd = pokemon.skill.interval * 120
-        cls.changeskill=None
-        cls.partysubtab='Party selection'
-
     @classmethod
     def addskillfunction(cls,pokemon,skill):
         pokemon.skill.append(skill.copy())

@@ -1440,11 +1440,12 @@ class Graphics:
                 imgui.same_line(spacing=cls.resizewidth(30))
                 imgui.begin_group()
                 backgroundecorator(imgui.begin_child, cls.theme)("Child 3", width=cls.resizewidth(970 / 3),
-                                                                 height=cls.resizeheight(100), border=True)
+                                                                 height=cls.resizeheight(110), border=True)
 
                 aliveenemies = [enemy for enemy in dungeon.currentlayout[dungeon.floor][
                                                    0:min(5, len(dungeon.currentlayout[dungeon.floor]))] if
                                 enemy.currenthp]
+                aliveallies=[ally for ally in dungeon.party if ally.currenthp]
 
                 if dungeon is not None:
                     if Gamelogic.pokemonattacking is not None:
@@ -1457,18 +1458,36 @@ class Graphics:
                                         Gamelogic.pokemonattacking.cd=1-skill.interval/4
                                         Gamelogic.stageofselection =2
                             elif Gamelogic.stageofselection==2:
-                                actiondecorator(imgui.text,cls.theme)('Select Target')
-                                for num,pokemon in enumerate(aliveenemies):
-                                    if actiondecorator(imgui.button,cls.theme)(f'{pokemon.name}##{num}',cls.resizewidth(150),cls.resizeheight(15)):
-                                        Gamelogic.attackchosen(Gamelogic.pokemonattacking,pokemon,cls.skillchosen)
-                                        Gamelogic.stageofselection = 0
-                                        cls.skillchosen=None
-                                        Gamelogic.pokemonattacking=None
+                                if cls.skillchosen.effect is not False and "aoe" in cls.skillchosen.effect:
+                                    if "heal" in cls.skillchosen.effect:
+                                        Gamelogic.attackchosen(Gamelogic.pokemonattacking, aliveallies,
+                                                               cls.skillchosen)
+                                    else:
+                                        Gamelogic.attackchosen(Gamelogic.pokemonattacking, aliveenemies, cls.skillchosen)
+                                    Gamelogic.stageofselection = 0
+                                    cls.skillchosen = None
+                                    Gamelogic.pokemonattacking = None
+                                else:
+                                    actiondecorator(imgui.text,cls.theme)('Select Target')
+                                    if cls.skillchosen.effect is not False and "heal" in cls.skillchosen.effect:
+                                        for num,pokemon in enumerate(aliveallies):
+                                            if actiondecorator(imgui.button,cls.theme)(f'{pokemon.name}##{num}',cls.resizewidth(150),cls.resizeheight(15)):
+                                                Gamelogic.attackchosen(Gamelogic.pokemonattacking,[pokemon],cls.skillchosen)
+                                                Gamelogic.stageofselection = 0
+                                                cls.skillchosen=None
+                                                Gamelogic.pokemonattacking=None
+                                    else:
+                                        for num,pokemon in enumerate(aliveenemies):
+                                            if actiondecorator(imgui.button,cls.theme)(f'{pokemon.name}##{num}',cls.resizewidth(150),cls.resizeheight(15)):
+                                                Gamelogic.attackchosen(Gamelogic.pokemonattacking,[pokemon],cls.skillchosen)
+                                                Gamelogic.stageofselection = 0
+                                                cls.skillchosen=None
+                                                Gamelogic.pokemonattacking=None
 
 
                 imgui.end_child()
                 backgroundecorator(imgui.begin_child, cls.theme)("Child 5", width=cls.resizewidth(970 / 3),
-                                                                 height=cls.resizeheight(270), border=True)
+                                                                 height=cls.resizeheight(260), border=True)
                 if dungeon is not None:
                     for string in dungeon.log:
                         string = (autospacer155(string, 46))

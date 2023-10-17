@@ -224,7 +224,27 @@
                   "Magic",
                   false,
                   "Fire",
+                  ["aoe"],
+                  false
+            ],
+            [
+                  "Heal",
+                  5,
+                  2,
+                  "Magic",
                   false,
+                  "Fire",
+                  ["heal"],
+                  false
+            ],
+            [
+                  "Party heal",
+                  5,
+                  2,
+                  "Magic",
+                  false,
+                  "Fire",
+                  ["aoe","heal"],
                   false
             ]
       ],

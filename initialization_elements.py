@@ -47,28 +47,41 @@ class Skill:
         return copy.deepcopy(self)
 
     def useskill(self, user, target):
-        multiplier = 1 + self.power / 10
-        if self.category == 'Phys':
-            attack = multiplier * user.actualpatk
-            basedamage = attack / 2 - target.actualpdef / 4
+        if self.effect is not False and "heal" in self.effect:
+            multiplier = 1 + self.power / 10
+            baseheal = multiplier * user.actualmatk/4
+            randomheal = random.uniform(-((baseheal) ** 0.5) / 2, ((baseheal) ** 0.5 / 2))
+            damage = max(baseheal + randomheal, baseheal / 2.5)
+            if target.currenthp > 0:
+                target.currenthp += damage
+            if target.currenthp > target.hp:
+                target.currenthp = target.hp
+            return damage
+
+
         else:
-            attack = multiplier * user.actualmatk
-            basedamage = attack / 2 - target.actualmdef / 4
-        if basedamage < 0:
-            basedamage = 0
-        if self.type in Strong and target.type in Strong[self.type]:
-            basedamage*=2
-        elif target.type in Weak and self.type in Weak[user.type]:
-            basedamage /= 2
+            multiplier = 1 + self.power / 10
+            if self.category == 'Phys':
+                attack = multiplier * user.actualpatk
+                basedamage = attack / 2 - target.actualpdef / 4
+            else:
+                attack = multiplier * user.actualmatk
+                basedamage = attack / 2 - target.actualmdef / 4
+            if basedamage < 0:
+                basedamage = 0
+            if self.type in Strong and target.type in Strong[self.type]:
+                basedamage*=2
+            elif target.type in Weak and self.type in Weak[target.type]:
+                basedamage /= 2
 
-        randomdamage = random.uniform(-((basedamage) ** 0.5) / 2, ((basedamage) ** 0.5 / 2))
-        damage = max(basedamage + randomdamage, attack / 10)
-        target.currenthp -= damage
+            randomdamage = random.uniform(-((basedamage) ** 0.5) / 2, ((basedamage) ** 0.5 / 2))
+            damage = max(basedamage + randomdamage, attack / 10)
+            target.currenthp -= damage
 
-        if target.currenthp < 0:
-            target.currenthp = 0
-            target.cd = 0
-        return damage
+            if target.currenthp < 0:
+                target.currenthp = 0
+                target.cd = 0
+            return damage
 
 
 def numcon(n):
@@ -123,6 +136,8 @@ class Dungeon:
         self.party = []
         for pokemon in self.parent.party[0:min(5, len(self.parent.party))]:
             self.party.append(pokemon.copy())
+        for pokemon in self.party:
+            pokemon.cd=round(random.random()/4,1)
         if self.boss is None:
             for i in range(5):
                 k = randint(0, 4)
@@ -131,9 +146,11 @@ class Dungeon:
                 for j in range(n):
                     k = randint(0, len(self.monsterlist) - 1)
                     self.currentlayout[i].append(self.monsterlist[k].copy())
+                    self.currentlayout[i][-1].cd=round(random.random()/4,1)
         else:
             self.currentlayout.append([])
             self.currentlayout[0].append(self.boss.copy())
+
 
     def docomplete(self):
         if self.usualrewards is not None:
