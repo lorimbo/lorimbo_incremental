@@ -12,7 +12,6 @@ improve the game system
 make a bestiary
 implement boss behaviour
 buff spells
-new pokemons have spells than can't be replaced once removed
 add skill effects to skill menu so they are visible
 
 Content:

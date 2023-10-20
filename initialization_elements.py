@@ -47,6 +47,8 @@ class Skill:
         return copy.deepcopy(self)
 
     def useskill(self, user, target):
+        if self.power==0:
+            return 0
         if self.effect is not False and "heal" in self.effect:
             multiplier = 1 + self.power / 10
             baseheal = multiplier * user.actualmatk/4
@@ -81,6 +83,7 @@ class Skill:
             if target.currenthp < 0:
                 target.currenthp = 0
                 target.cd = 0
+                target.turn=0
             return damage
 
 
@@ -138,6 +141,7 @@ class Dungeon:
             self.party.append(pokemon.copy())
         for pokemon in self.party:
             pokemon.cd=round(random.random()/4,1)
+            pokemon.turn=0
         if self.boss is None:
             for i in range(5):
                 k = randint(0, 4)
@@ -147,6 +151,7 @@ class Dungeon:
                     k = randint(0, len(self.monsterlist) - 1)
                     self.currentlayout[i].append(self.monsterlist[k].copy())
                     self.currentlayout[i][-1].cd=round(random.random()/4,1)
+                    self.currentlayout[i][-1].turn=0
         else:
             self.currentlayout.append([])
             self.currentlayout[0].append(self.boss.copy())
@@ -832,6 +837,7 @@ class Pokemon(menuelement):
         self.velocity=velocity
         self.cd=0
         self.type=type
+        self.turn=0
         for passive in self.passive:
             passive.percentage = (self.special / self.maxlvl)
             passive.quantity = passive.maxpower / 2 + (passive.maxpower / 2) * passive.percentage

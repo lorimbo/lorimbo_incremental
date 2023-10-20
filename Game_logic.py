@@ -576,6 +576,12 @@ class Gamelogic:
         cls.levelup = None
 
     @classmethod
+    def monsterai(cls,pokemon):
+        if pokemon.name=="Training dummy":
+            return [0,1,1,0,0][pokemon.turn%5]
+        return random.randint(0,len(pokemon.skill)-1)
+
+    @classmethod
     def dungeonprogress(cls):
         alive = [pokemon for pokemon in cls.activedungeon.party if pokemon.currenthp]
         alive2 = [pokemon for pokemon in cls.activedungeon.currentlayout[cls.activedungeon.floor] if pokemon.currenthp]
@@ -588,19 +594,20 @@ class Gamelogic:
             for num,pokemon in enumerate(alive2):
                 pokemon.cd+=pokemon.velocity/480
                 if pokemon.cd>1:
-                    skillnum=random.randint(0,len(alive2[num].skill)-1)
+                    skillnum=cls.monsterai(alive2[num])
                     alive2[num].cd=1-alive2[num].skill[skillnum].interval/4
+                    alive2[num].turn+=1
                     target=alive[random.randint(0,len(alive)-1)]
                     damagedealt = alive2[num].skill[skillnum].useskill(alive2[num], target)
                     if alive2[num].skill[skillnum].type in Strong and target.type in Strong[alive2[num].skill[skillnum].type]:
                         cls.activedungeon.log.append(
-                            f"Enemy {alive2[num].name} dealt {numcon(damagedealt)} dmg to {target.name}. It's super effective")
+                            f"Enemy {alive2[num].name} used {alive2[num].skill[skillnum].name} and dealt {numcon(damagedealt)} dmg to {target.name}. It's super effective")
                     elif target.type in Weak and alive2[num].skill[skillnum].type in Weak[target.type]:
                         cls.activedungeon.log.append(
-                            f"Enemy {alive2[num].name} dealt {numcon(damagedealt)} dmg to {target.name}. It's not very effective")
+                            f"Enemy {alive2[num].name} used {alive2[num].skill[skillnum].name} and dealt {numcon(damagedealt)} dmg to {target.name}. It's not very effective")
                     else:
                         cls.activedungeon.log.append(
-                        f'Enemy {alive2[num].name} dealt {numcon(damagedealt)} dmg to {target.name}')
+                        f'Enemy {alive2[num].name} used {alive2[num].skill[skillnum].name} and dealt {numcon(damagedealt)} dmg to {target.name}')
                     if cls.tab == "Dungeon":
                         hit = pygame.mixer.Sound('Sounds/ouch.wav')
                         hit.set_volume(cls.volume)
@@ -609,6 +616,7 @@ class Gamelogic:
                         cls.activedungeon.log.append(
                             f'{target.name} fainted!')
                         target.cd = 0
+                        target.turn=0
                         alive = [pokemon for pokemon in cls.activedungeon.party if pokemon.currenthp]
                         if not len(alive):
                             cls.activedungeon.generate()
@@ -665,6 +673,7 @@ class Gamelogic:
                     pygame.mixer.Sound.play(hit)
                 if target1.currenthp == 0:
                     target1.cd = 0
+                    target1.turn= 0
                     cls.activedungeon.log.append(
                         f'Enemy {target1.name} fainted!')
                     cls.corestats.baseexp += (target1.drop['exp'] + cls.corestats.expdropbonus)

@@ -1288,6 +1288,10 @@ class Graphics:
                     Gamelogic.reserve.append(pokemon)
                     pop = num
                     Gamelogic.levelup = ['Reserve', 'Level', len(Gamelogic.reserve) - 1]
+                    skillnames=[skill.name for skill in Gamelogic.availableskills]
+                    for skill in pokemon.skill:
+                        if skill.name not in skillnames:
+                            Gamelogic.availableskills.append(skill)
         if pop is not None:
             Gamelogic.unlockablepokemons.pop(pop)
             pop = None

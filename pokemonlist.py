@@ -5,7 +5,7 @@ def createpokemonlist(parent):
         Pokemon(
             10, 0, 0, 0, 0, 10, 0, 10, 10, 10, 10,num=1,
             drop={"exp": 1, "resources": [["Strength gems", 1, 10], ["Magic gems", 1, 10], ["Special gems", 1, 10]]},
-            skill=[["Silently judge", 0, 2, "Phys"]], name="Training dummy", parent=parent, elementlist=parent.pokemonlist,velocity=0.8,type='Normal'
+            skill=[["Silently judge", 0, 2, "Phys"],["Wait",0,3,"phys"]], name="Training dummy", parent=parent, elementlist=parent.pokemonlist,velocity=0.8,type='Normal'
         ),
 
         Pokemon(
